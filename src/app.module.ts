@@ -12,6 +12,7 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
+import { TipoAlimentoModule } from './tipo-alimento/tipo-alimento.module';
 
 @Module({
   imports: [EmpresaModule, TipoAlimentoModule, PlanPsbModule, ProgramaModule, OperarioModule, VersionPlanModule, PasoLimpiezaModule, ProductoQuimicoModule, RegistroModule, ChecklistLimpiezaModule, VerificacionLimpiezaModule],
