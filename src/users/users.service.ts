@@ -12,13 +12,13 @@ export class UsersService {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  create(dto: CreateUserDto) {
+  async create(dto: CreateUserDto) {
     const user = this.userRepo.create(dto);
-    return this.userRepo.save(user);
+    return await this.userRepo.save(user);
   }
 
-  findAll() {
-    return this.userRepo.find({ relations: ['empresa'] });
+  async findAll() {
+    return await this.userRepo.find({ relations: ['empresa'] });
   }
 
   async findOne(id: string) {
