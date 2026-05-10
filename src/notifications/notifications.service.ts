@@ -12,17 +12,17 @@ export class NotificationsService {
     private readonly notificationRepo: Repository<Notification>,
   ) {}
 
-  create(dto: CreateNotificationDto) {
+  async create(dto: CreateNotificationDto) {
     const notification = this.notificationRepo.create(dto);
-    return this.notificationRepo.save(notification);
+    return await this.notificationRepo.save(notification);
   }
 
-  findAll() {
-    return this.notificationRepo.find();
+  async findAll() {
+    return await this.notificationRepo.find();
   }
 
-  findByUsuario(usuario_id: string) {
-    return this.notificationRepo.find({ where: { usuario_id } });
+  async findByUsuario(usuario_id: string) {
+    return await this.notificationRepo.find({ where: { usuario_id } });
   }
 
   async findOne(id: string) {
