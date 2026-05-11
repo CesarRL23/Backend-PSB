@@ -2,45 +2,54 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { VerificacionLimpieza } from './entities/verificacion-limpieza.entity';
-import { CreateVerificacionLimpiezaDto } from './dto/create-verificacion-limpieza.dto';
-import { UpdateVerificacionLimpiezaDto } from './dto/update-verificacion-limpieza.dto';
+import { RegistroLimpieza } from './entities/registro-limpieza.entity';
+import { CreateRegistroLimpiezaDto } from './dto/create-registro-limpieza.dto';
+import { UpdateRegistroLimpiezaDto } from './dto/update-registro-limpieza.dto';
 
 @Injectable()
-export class VerificacionLimpiezaService {
+export class RegistroLimpiezaService {
 
   constructor(
-    @InjectRepository(VerificacionLimpieza)
-    private readonly repo: Repository<VerificacionLimpieza>,
+    @InjectRepository(RegistroLimpieza)
+    private readonly repo: Repository<RegistroLimpieza>,
   ) {}
 
   // ─── Crear ───────────────────────────────────────────────────────────────────
 
-  async create(dto: CreateVerificacionLimpiezaDto): Promise<VerificacionLimpieza> {
+  async create(dto: CreateRegistroLimpiezaDto): Promise<RegistroLimpieza> {
     const entity = this.repo.create(dto);
     return this.repo.save(entity);
   }
 
-  // ─── Listar por registro de limpieza ─────────────────────────────────────────
+  // ─── Listar todos ────────────────────────────────────────────────────────────
 
-  async findByRegistroLimpieza(registroLimpiezaId: string): Promise<VerificacionLimpieza[]> {
+  async findAll(): Promise<RegistroLimpieza[]> {
     return this.repo.find({
-      where: { registroLimpiezaId },
-      relations: ['responsable'],
-      order: { fechaPrueba: 'DESC' },
+      relations: ['registro', 'programaLimpieza'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  // ─── Listar por registro base ─────────────────────────────────────────────────
+
+  async findByRegistro(registroId: string): Promise<RegistroLimpieza[]> {
+    return this.repo.find({
+      where: { registroId },
+      relations: ['programaLimpieza'],
+      order: { createdAt: 'DESC' },
     });
   }
 
   // ─── Buscar uno ──────────────────────────────────────────────────────────────
 
-  async findOne(id: string): Promise<VerificacionLimpieza> {
+  async findOne(id: string): Promise<RegistroLimpieza> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ['registroLimpieza', 'responsable'],
+      relations: ['registro', 'programaLimpieza'],
     });
 
     if (!entity) {
-      throw new NotFoundException(`VerificacionLimpieza #${id} no encontrada`);
+      throw new NotFoundException(`RegistroLimpieza #${id} no encontrado`);
     }
 
     return entity;
@@ -48,7 +57,7 @@ export class VerificacionLimpiezaService {
 
   // ─── Actualizar ──────────────────────────────────────────────────────────────
 
-  async update(id: string, dto: UpdateVerificacionLimpiezaDto): Promise<VerificacionLimpieza> {
+  async update(id: string, dto: UpdateRegistroLimpiezaDto): Promise<RegistroLimpieza> {
     const entity = await this.findOne(id);
     Object.assign(entity, dto);
     return this.repo.save(entity);

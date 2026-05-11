@@ -6,28 +6,31 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ProductoQuimico } from './entities/producto-quimico.entity';
-import { CreateProductoQuimicoDto } from './dto/create-producto-quimico.dto';
-import { UpdateProductoQuimicoDto } from './dto/update-producto-quimico.dto';
+import { PasoLimpiezaPq } from './entities/paso-limpieza-pq.entity';
+import { CreatePasoLimpiezaPqDto } from './dto/create-paso-limpieza-pq.dto';
+import { UpdatePasoLimpiezaPqDto } from './dto/update-paso-limpieza-pq.dto';
 
 @Injectable()
-export class ProductoQuimicoService {
+export class PasoLimpiezaPqService {
 
   constructor(
-    @InjectRepository(ProductoQuimico)
-    private readonly repo: Repository<ProductoQuimico>,
+    @InjectRepository(PasoLimpiezaPq)
+    private readonly repo: Repository<PasoLimpiezaPq>,
   ) {}
 
   // ─── Crear ───────────────────────────────────────────────────────────────────
 
-  async create(dto: CreateProductoQuimicoDto): Promise<ProductoQuimico> {
+  async create(dto: CreatePasoLimpiezaPqDto): Promise<PasoLimpiezaPq> {
     const existente = await this.repo.findOne({
-      where: { codigo: dto.codigo },
+      where: {
+        pasoLimpiezaId: dto.pasoLimpiezaId,
+        productoQuimicoId: dto.productoQuimicoId,
+      },
     });
 
     if (existente) {
       throw new ConflictException(
-        `Ya existe un producto químico con el código "${dto.codigo}"`,
+        `Este producto químico ya está asignado a ese paso de limpieza`,
       );
     }
 
@@ -35,19 +38,25 @@ export class ProductoQuimicoService {
     return this.repo.save(entity);
   }
 
-  // ─── Listar ──────────────────────────────────────────────────────────────────
+  // ─── Listar por paso de limpieza ─────────────────────────────────────────────
 
-  async findAll(): Promise<ProductoQuimico[]> {
-    return this.repo.find({ order: { nombre: 'ASC' } });
+  async findByPasoLimpieza(pasoLimpiezaId: string): Promise<PasoLimpiezaPq[]> {
+    return this.repo.find({
+      where: { pasoLimpiezaId },
+      relations: ['productoQuimico'],
+    });
   }
 
   // ─── Buscar uno ──────────────────────────────────────────────────────────────
 
-  async findOne(id: string): Promise<ProductoQuimico> {
-    const entity = await this.repo.findOne({ where: { id } });
+  async findOne(id: string): Promise<PasoLimpiezaPq> {
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: ['pasoLimpieza', 'productoQuimico'],
+    });
 
     if (!entity) {
-      throw new NotFoundException(`ProductoQuimico #${id} no encontrado`);
+      throw new NotFoundException(`PasoLimpiezaPq #${id} no encontrado`);
     }
 
     return entity;
@@ -55,14 +64,19 @@ export class ProductoQuimicoService {
 
   // ─── Actualizar ──────────────────────────────────────────────────────────────
 
-  async update(id: string, dto: UpdateProductoQuimicoDto): Promise<ProductoQuimico> {
+  async update(id: string, dto: UpdatePasoLimpiezaPqDto): Promise<PasoLimpiezaPq> {
     const entity = await this.findOne(id);
 
-    if (dto.codigo && dto.codigo !== entity.codigo) {
-      const conflicto = await this.repo.findOne({ where: { codigo: dto.codigo } });
+    if (dto.productoQuimicoId && dto.productoQuimicoId !== entity.productoQuimicoId) {
+      const conflicto = await this.repo.findOne({
+        where: {
+          pasoLimpiezaId: entity.pasoLimpiezaId,
+          productoQuimicoId: dto.productoQuimicoId,
+        },
+      });
       if (conflicto) {
         throw new ConflictException(
-          `Ya existe un producto químico con el código "${dto.codigo}"`,
+          `Este producto químico ya está asignado a ese paso de limpieza`,
         );
       }
     }
