@@ -11,9 +11,9 @@ import {
 import { Programa } from '../../programa/entities/programa.entity';
 import { User } from '../../users/entities/user.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
-import { RegistroResiduos } from './registro-residuos.entity';
-import { RegistroPlagas } from './registro-plagas.entity';
-import { RegistroLimpieza } from './registro-limpieza.entity';
+import { RegistroResiduo } from '../../registro-residuos/entities/registro-residuo.entity';
+import { RegistroPlagas } from '../../registro-plagas/entities/registro-plagas.entity';
+import { RegistroLimpieza } from '../../registro-limpieza/entities/registro-limpieza.entity';
 import { RegistroAgua } from '../../registro-agua/entities/registro-agua.entity';
 
 export enum EstadoRegistro {
@@ -72,8 +72,8 @@ export class Registro {
   @OneToMany(() => Notification, () => Notification)
   notificaciones!: Notification[];
 
-  @OneToMany(() => RegistroResiduos, () => RegistroResiduos)
-  residuos!: RegistroResiduos[];
+  @OneToMany(() => RegistroResiduo, () => RegistroResiduo)
+  residuos!: RegistroResiduo[];
 
   @OneToMany(() => RegistroAgua, () => RegistroAgua)
   agua!: RegistroAgua[];
