@@ -5,11 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { PlanPsb } from '../../plan-psb/entities/plan-psb.entity';
+import { PlanPsb } from '../../plan_psb/entities/plan_psb.entity';
 import { Registro } from '../../registro/entities/registro.entity';
 
 export enum TipoPrograma {
@@ -32,11 +33,11 @@ export enum FrecuenciaPrograma {
 @Entity('programa')
 export class Programa {
 
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @Column({ name: 'plan_psb_id' })
-  planPsbId!: number;
+  @Column({ name: 'plan_psb_id', type: 'uuid' })
+  planPsbId!: string;
 
   @Column({ type: 'enum', enum: TipoPrograma })
   tipo!: TipoPrograma;
@@ -61,7 +62,7 @@ export class Programa {
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
-  @ManyToOne(() => PlanPsb, (plan) => plan.programas)
+  @OneToOne(() => PlanPsb, (plan) => plan.programa)
   @JoinColumn({ name: 'plan_psb_id' })
   planPsb!: PlanPsb;
 
