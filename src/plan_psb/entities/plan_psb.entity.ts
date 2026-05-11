@@ -33,6 +33,7 @@ export class PlanPsb {
   //@ManyToOne(() => TipoAlimento, (empresa) => empresa.planesPsb, {
    // nullable: false,
     //onDelete: 'CASCADE',
+    
   //})
   //@JoinColumn({ name: 'tipo_alimento_id' })
   //tipoAlimento: TipoAlimento;
