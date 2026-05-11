@@ -17,7 +17,6 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
-import { PlanPsbModule } from './plan_psb/plan_psb.module';
 
 @Module({
   imports: [

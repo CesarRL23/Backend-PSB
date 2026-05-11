@@ -9,26 +9,26 @@ import {
 } from 'typeorm';
 
 import { Programa } from '../../programa/entities/programa.entity';
-import { Usuario } from '../../usuario/entities/usuario.entity';
-import { Notificacion } from '../../notificacion/entities/notificacion.entity';
+import { User } from '../../users/entities/user.entity';
+import { Notification } from '../../notifications/entities/notification.entity';
 
 export enum EstadoRegistro {
-  PENDIENTE   = 'pendiente',
-  EN_PROCESO  = 'en_proceso',
-  COMPLETADO  = 'completado',
-  RECHAZADO   = 'rechazado',
+  PENDIENTE  = 'pendiente',
+  EN_PROCESO = 'en_proceso',
+  COMPLETADO = 'completado',
+  RECHAZADO  = 'rechazado',
 }
 
 @Entity('registro')
 export class Registro {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ name: 'programa_id' })
+  @Column({ name: 'programa_id', type: 'uuid' })
   programaId!: string;
 
-  @Column({ name: 'usuario_id' })
+  @Column({ name: 'usuario_id', type: 'uuid' })
   usuarioId!: string;
 
   @Column({ type: 'date' })
@@ -42,7 +42,7 @@ export class Registro {
 
   @Column({ type: 'text', nullable: true })
   observaciones!: string;
-1
+
   @Column({ name: 'evidencia_foto', length: 500, nullable: true })
   evidenciaFoto!: string;
 
@@ -62,10 +62,10 @@ export class Registro {
   @JoinColumn({ name: 'programa_id' })
   programa!: Programa;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.registros)
+  @ManyToOne(() => User, () => User)
   @JoinColumn({ name: 'usuario_id' })
-  usuario!: Usuario;
+  usuario!: User;
 
-  @OneToMany(() => Notificacion, (notificacion) => notificacion.registro)
-  notificaciones!: Notificacion[];
+  @OneToMany(() => Notification, () => Notification)
+  notificaciones!: Notification[];  
 }
