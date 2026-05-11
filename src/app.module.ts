@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { EmpresaModule } from './empresa/empresa.module';
 import { TipoAlimentoModule } from './tipo-alimento/tipo-alimento.module';
+import { PlanPsbModule } from './plan_psb/plan_psb.module';
 import { ProgramaModule } from './programa/programa.module';
 import { OperarioModule } from './operario/operario.module';
 import { VersionPlanModule } from './version-plan/version-plan.module';

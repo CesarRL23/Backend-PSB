@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TipoAlimentoController } from './tipo-alimento.controller';
 import { TipoAlimentoService } from './tipo-alimento.service';
+import { TipoAlimentoController } from './tipo-alimento.controller';
 
 @Module({
   controllers: [TipoAlimentoController],
-  providers: [TipoAlimentoService]
+  providers: [TipoAlimentoService],
 })
 export class TipoAlimentoModule {}
