@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { PlanPsb } from '../../plan-psb/entities/plan-psb.entity';
+import { PlanPsb } from '../../plan_psb/entities/plan_psb.entity';
 import { Registro } from '../../registro/entities/registro.entity';
 
 export enum TipoPrograma {
