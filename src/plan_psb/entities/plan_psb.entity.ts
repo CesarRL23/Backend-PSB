@@ -32,6 +32,9 @@ export class PlanPsb {
   @JoinColumn({ name: 'tipo_alimento_id' })
   tipoAlimento?: TipoAlimento;
 
+  @OneToOne(()=> Programa,(programa)=> programa.planPsb)
+  programa?: Programa;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
