@@ -9,6 +9,7 @@ import {
 
 import { Programa } from '../../programa/entities/programa.entity';
 import { FuenteAgua } from '../../fuente-agua/entities/fuente-agua.entity';
+import { RegistroAgua } from 'src/registro-agua/entities/registro-agua.entity';
 
 @Entity('programa_agua')
 export class ProgramaAgua {
@@ -33,7 +34,10 @@ export class ProgramaAgua {
   @OneToOne(() => Programa)
   @JoinColumn({ name: 'programa_id' })
   programa!: Programa;
-    fuentesAgua: any;
 
-  
+  @OneToMany(() => FuenteAgua, (fuenteAgua) => fuenteAgua.programaAgua)
+  fuentesAgua!: FuenteAgua[];
+
+  @OneToMany(() => RegistroAgua, (registroAgua) => registroAgua.programaAgua)
+  registrosAgua!: RegistroAgua[];
 }

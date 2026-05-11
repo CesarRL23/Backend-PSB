@@ -2,11 +2,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { Registro } from '../../registro/entities/registro.entity';
+import { ProgramaAgua } from 'src/programa-agua/entities/programa-agua.entity';
 
 export enum TipoActividadAgua {
   CONTROL_POTABILIDAD = 'control_potabilidad',
@@ -53,4 +55,8 @@ export class RegistroAgua {
   @OneToOne(() => Registro)
   @JoinColumn({ name: 'registro_id' })
   registro!: Registro;
+
+  @ManyToOne(() => ProgramaAgua, () => ProgramaAgua)
+  @JoinColumn({ name: 'programa_agua_id' })
+  programaAgua!: ProgramaAgua;
 }

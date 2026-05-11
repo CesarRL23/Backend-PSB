@@ -11,6 +11,10 @@ import {
 import { Programa } from '../../programa/entities/programa.entity';
 import { User } from '../../users/entities/user.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
+import { RegistroResiduos } from './registro-residuos.entity';
+import { RegistroPlagas } from './registro-plagas.entity';
+import { RegistroLimpieza } from './registro-limpieza.entity';
+import { RegistroAgua } from '../../registro-agua/entities/registro-agua.entity';
 
 export enum EstadoRegistro {
   PENDIENTE = 'pendiente',
@@ -67,4 +71,16 @@ export class Registro {
 
   @OneToMany(() => Notification, () => Notification)
   notificaciones!: Notification[];
+
+  @OneToMany(() => RegistroResiduos, () => RegistroResiduos)
+  residuos!: RegistroResiduos[];
+
+  @OneToMany(() => RegistroAgua, () => RegistroAgua)
+  agua!: RegistroAgua[];
+
+  @OneToMany(() => RegistroPlagas, () => RegistroPlagas)
+  plagas!: RegistroPlagas[];
+
+  @OneToMany(() => RegistroLimpieza, () => RegistroLimpieza)
+  limpieza!: RegistroLimpieza[];
 }
