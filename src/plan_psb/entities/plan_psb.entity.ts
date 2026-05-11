@@ -1,15 +1,8 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-  JoinColumn
-
-} from 'typeorm';
+import {Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateDateColumn,ManyToOne,JoinColumn, OneToOne} from 'typeorm';
 import { Empresa } from '../../empresa/entities/empresa.entity';
 import { TipoAlimento } from 'src/tipo-alimento/entities/tipo-alimento.entity';
+import { Programa } from '../../programa/entities/programa.entity';
+
 @Entity('plan_psb')
 export class PlanPsb {
   @PrimaryGeneratedColumn()
@@ -37,11 +30,14 @@ export class PlanPsb {
     
   })
   @JoinColumn({ name: 'tipo_alimento_id' })
-  tipoAlimento: TipoAlimento;
+  tipoAlimento?: TipoAlimento;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt?: Date;
+
+
+  
 }
