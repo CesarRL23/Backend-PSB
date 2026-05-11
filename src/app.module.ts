@@ -17,6 +17,7 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
+import { ProgramaLimpiezaModule } from './programa-limpieza/programa-limpieza.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion
     RegistroModule,
     ChecklistLimpiezaModule,
     VerificacionLimpiezaModule,
+    ProgramaLimpiezaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
