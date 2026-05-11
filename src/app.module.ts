@@ -17,6 +17,16 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
+import { ProgramaResiduosModule } from './programa-residuos/programa-residuos.module';
+import { TipoResiduoModule } from './tipo-residuo/tipo-residuo.module';
+import { AreaGenereacionModule } from './area-genereacion/area-genereacion.module';
+import { ContenedeorModule } from './contenedeor/contenedeor.module';
+import { ResiduoModule } from './residuo/residuo.module';
+import { RegistroResiduosModule } from './registro-residuos/registro-residuos.module';
+import { RecoleccionModule } from './recoleccion/recoleccion.module';
+import { ChecklistResiduosModule } from './checklist-residuos/checklist-residuos.module';
+import { DisposicionFinalModule } from './disposicion-final/disposicion-final.module';
+import { EvidenciaResiduosModule } from './evidencia-residuos/evidencia-residuos.module';
 
 @Module({
   imports: [
@@ -49,6 +59,16 @@ import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion
     RegistroModule,
     ChecklistLimpiezaModule,
     VerificacionLimpiezaModule,
+    ProgramaResiduosModule,
+    TipoResiduoModule,
+    AreaGenereacionModule,
+    ContenedeorModule,
+    ResiduoModule,
+    RegistroResiduosModule,
+    RecoleccionModule,
+    ChecklistResiduosModule,
+    DisposicionFinalModule,
+    EvidenciaResiduosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
