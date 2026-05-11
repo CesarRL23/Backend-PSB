@@ -31,7 +31,7 @@ export class Registro {
   usuarioId!: string;
 
   @Column({ type: 'date' })
-  fecha!: string;
+  fecha!: Date;
 
   @Column({ name: 'hora_inicio', type: 'time', nullable: true })
   horaInicio!: string;

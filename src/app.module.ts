@@ -17,6 +17,15 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
+import { ProgramaAguaModule } from './programa-agua/programa-agua.module';
+import { FuenteAguaModule } from './fuente-agua/fuente-agua.module';
+import { TanqueAlmacenamientoModule } from './tanque-almacenamiento/tanque-almacenamiento.module';
+import { ControlDiarioPotabilidadModule } from './control-diario-potabilidad/control-diario-potabilidad.module';
+import { AnalisisLaboratorioModule } from './analisis-laboratorio/analisis-laboratorio.module';
+import { MantenimientoLavadoModule } from './mantenimiento-lavado/mantenimiento-lavado.module';
+import { InsumoQuimicoModule } from './insumo-quimico/insumo-quimico.module';
+import { RegistroAguaModule } from './registro-agua/registro-agua.module';
+import { AccionCorrectivaAguaModule } from './accion-correctiva-agua/accion-correctiva-agua.module';
 
 @Module({
   imports: [
@@ -49,6 +58,15 @@ import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion
     RegistroModule,
     ChecklistLimpiezaModule,
     VerificacionLimpiezaModule,
+    ProgramaAguaModule,
+    FuenteAguaModule,
+    TanqueAlmacenamientoModule,
+    ControlDiarioPotabilidadModule,
+    AnalisisLaboratorioModule,
+    MantenimientoLavadoModule,
+    InsumoQuimicoModule,
+    RegistroAguaModule,
+    AccionCorrectivaAguaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
