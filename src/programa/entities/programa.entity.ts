@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -61,7 +62,7 @@ export class Programa {
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
-  @ManyToOne(() => PlanPsb, (plan) => plan.programas)
+  @OneToOne(() => PlanPsb, (plan) => plan.programa)
   @JoinColumn({ name: 'plan_psb_id' })
   planPsb!: PlanPsb;
 
