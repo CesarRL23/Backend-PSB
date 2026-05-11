@@ -19,10 +19,9 @@ export class ProgramaResiduo {
     @Column()
     procedimiento_general!: string;
 
-    /*
     @OneToOne(() => Programa, programa => programa.programaResiduo)
     programa!: Programa;
-    */
+    
 
     @OneToMany (() => TipoResiduo, tipoResiduo => tipoResiduo.programaResiduo)
     tipoResiduos!: TipoResiduo[];
