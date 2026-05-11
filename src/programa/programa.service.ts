@@ -46,7 +46,7 @@ export class ProgramaService {
 
   // ─── Buscar uno ──────────────────────────────────────────────────────────────
 
-  async findOne(id: number): Promise<Programa> {
+  async findOne(id: string): Promise<Programa> {
     const programa = await this.programaRepository.findOne({
       where: { id },
       relations: ['planPsb', 'registros'],
@@ -61,7 +61,7 @@ export class ProgramaService {
 
   // ─── Actualizar ──────────────────────────────────────────────────────────────
 
-  async update(id: number, dto: UpdateProgramaDto): Promise<Programa> {
+  async update(id: string, dto: UpdateProgramaDto): Promise<Programa> {
     const programa = await this.findOne(id);
     Object.assign(programa, dto);
     return this.programaRepository.save(programa);
@@ -69,7 +69,7 @@ export class ProgramaService {
 
   // ─── Eliminar ────────────────────────────────────────────────────────────────
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const programa = await this.programaRepository.findOne({
       where: { id },
       relations: ['registros'],

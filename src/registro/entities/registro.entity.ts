@@ -11,17 +11,20 @@ import {
 import { Programa } from '../../programa/entities/programa.entity';
 import { User } from '../../users/entities/user.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
+import { RegistroResiduos } from './registro-residuos.entity';
+import { RegistroPlagas } from './registro-plagas.entity';
+import { RegistroLimpieza } from './registro-limpieza.entity';
+import { RegistroAgua } from '../../registro-agua/entities/registro-agua.entity';
 
 export enum EstadoRegistro {
-  PENDIENTE  = 'pendiente',
+  PENDIENTE = 'pendiente',
   EN_PROCESO = 'en_proceso',
   COMPLETADO = 'completado',
-  RECHAZADO  = 'rechazado',
+  RECHAZADO = 'rechazado',
 }
 
 @Entity('registro')
 export class Registro {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -32,7 +35,7 @@ export class Registro {
   usuarioId!: string;
 
   @Column({ type: 'date' })
-  fecha!: string;
+  fecha!: Date;
 
   @Column({ name: 'hora_inicio', type: 'time', nullable: true })
   horaInicio!: string;
@@ -67,5 +70,17 @@ export class Registro {
   usuario!: User;
 
   @OneToMany(() => Notification, () => Notification)
-  notificaciones!: Notification[];  
+  notificaciones!: Notification[];
+
+  @OneToMany(() => RegistroResiduos, () => RegistroResiduos)
+  residuos!: RegistroResiduos[];
+
+  @OneToMany(() => RegistroAgua, () => RegistroAgua)
+  agua!: RegistroAgua[];
+
+  @OneToMany(() => RegistroPlagas, () => RegistroPlagas)
+  plagas!: RegistroPlagas[];
+
+  @OneToMany(() => RegistroLimpieza, () => RegistroLimpieza)
+  limpieza!: RegistroLimpieza[];
 }
