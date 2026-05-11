@@ -17,6 +17,9 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
+import { ProgramaLimpiezaModule } from './programa-limpieza/programa-limpieza.module';
+import { PasoLimpiezaPqModule } from './paso-limpieza-pq/paso-limpieza-pq.module';
+import { RegistroLimpiezaModule } from './registro-limpieza/registro-limpieza.module';
 import { ProgramaAguaModule } from './programa-agua/programa-agua.module';
 import { FuenteAguaModule } from './fuente-agua/fuente-agua.module';
 import { TanqueAlmacenamientoModule } from './tanque-almacenamiento/tanque-almacenamiento.module';
@@ -67,6 +70,9 @@ import { AccionCorrectivaAguaModule } from './accion-correctiva-agua/accion-corr
     InsumoQuimicoModule,
     RegistroAguaModule,
     AccionCorrectivaAguaModule,
+    ProgramaLimpiezaModule,
+    PasoLimpiezaPqModule,
+    RegistroLimpiezaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

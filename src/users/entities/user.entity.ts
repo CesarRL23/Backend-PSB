@@ -1,33 +1,42 @@
-import { Column, Entity, ManyToOne, JoinColumn, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
-//import { Empresa } from '../../empresa/entities/empresa.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
+
+import { Notification } from '../../notifications/entities/notification.entity';
 
 @Entity('usuario')
 export class User {
-  @PrimaryGeneratedColumn()
+
+  // El UUID lo asigna Supabase Auth; no debe ser autogenerado por TypeORM
+  @PrimaryColumn({ type: 'uuid' })
   id!: string;
 
-  @Column()
-  empresa_id!: string;
+  @Column({ name: 'empresa_id', type: 'uuid' })
+  empresaId!: string;
 
-  @Column()
+  @Column({ length: 200 })
   nombre!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 200 })
   email!: string;
 
-  @Column()
+  @Column({ length: 50 })
   rol!: string;
 
-  @Column({ default: 'activo' })
+  @Column({ length: 50, default: 'activo' })
   estado!: string;
 
-  @Column({ nullable: true })
+  @Column({ length: 100, nullable: true })
   cargo!: string;
 
-  @Column({ nullable: true })
-  firma_digitalizada!: string;
+  @Column({ name: 'firma_digitalizada', length: 500, nullable: true })
+  firmaDigitalizada!: string;
 
-  // @ManyToOne(() => Empresa)
-  // @JoinColumn({ name: 'empresa_id' })
-  // empresa!: Empresa;
+  // ─── Relaciones ──────────────────────────────────────────────────────────────
+
+  @OneToMany(() => Notification, (n) => n.usuario)
+  notificaciones!: Notification[];
 }

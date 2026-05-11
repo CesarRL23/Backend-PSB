@@ -21,8 +21,8 @@ export class NotificationsService {
     return await this.notificationRepo.find();
   }
 
-  async findByUsuario(usuario_id: string) {
-    return await this.notificationRepo.find({ where: { usuario_id } });
+  async findByUsuario(usuarioId: string) {
+    return await this.notificationRepo.find({ where: { usuarioId } });
   }
 
   async findOne(id: string) {
