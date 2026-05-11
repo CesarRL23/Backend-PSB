@@ -33,11 +33,11 @@ export enum FrecuenciaPrograma {
 @Entity('programa')
 export class Programa {
 
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @Column({ name: 'plan_psb_id' })
-  planPsbId!: number;
+  @Column({ name: 'plan_psb_id', type: 'uuid' })
+  planPsbId!: string;
 
   @Column({ type: 'enum', enum: TipoPrograma })
   tipo!: TipoPrograma;

@@ -16,13 +16,13 @@ const HORA_MSG   = 'El formato debe ser HH:MM o HH:MM:SS';
 
 export class CreateRegistroDto {
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  programaId!: number;
+  programaId!: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  usuarioId!: number;
+  usuarioId!: string;
 
   @IsDateString()
   @IsNotEmpty()
