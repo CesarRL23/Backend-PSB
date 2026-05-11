@@ -8,7 +8,6 @@ import { UsersModule } from './users/users.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { EmpresaModule } from './empresa/empresa.module';
 import { TipoAlimentoModule } from './tipo-alimento/tipo-alimento.module';
-import { PlanPsbModule } from './plan-psb/plan-psb.module';
 import { ProgramaModule } from './programa/programa.module';
 import { OperarioModule } from './operario/operario.module';
 import { VersionPlanModule } from './version-plan/version-plan.module';
@@ -17,6 +16,7 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
+import { PlanPsbModule } from './plan_psb/plan_psb.module';
 
 @Module({
   imports: [

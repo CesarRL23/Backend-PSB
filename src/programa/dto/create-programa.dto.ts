@@ -11,9 +11,9 @@ import { TipoPrograma, FrecuenciaPrograma } from '../entities/programa.entity';
 
 export class CreateProgramaDto {
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  planPsbId!: number;
+  planPsbId!: string;
 
   @IsEnum(TipoPrograma)
   @IsNotEmpty()

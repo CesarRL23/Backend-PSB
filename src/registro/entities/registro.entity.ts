@@ -23,13 +23,13 @@ export enum EstadoRegistro {
 export class Registro {
 
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: string;
 
   @Column({ name: 'programa_id' })
-  programaId!: number;
+  programaId!: string;
 
   @Column({ name: 'usuario_id' })
-  usuarioId!: number;
+  usuarioId!: string;
 
   @Column({ type: 'date' })
   fecha!: string;

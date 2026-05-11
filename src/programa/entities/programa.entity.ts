@@ -33,10 +33,10 @@ export enum FrecuenciaPrograma {
 export class Programa {
 
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: string;
 
   @Column({ name: 'plan_psb_id' })
-  planPsbId!: number;
+  planPsbId!: string;
 
   @Column({ type: 'enum', enum: TipoPrograma })
   tipo!: TipoPrograma;
