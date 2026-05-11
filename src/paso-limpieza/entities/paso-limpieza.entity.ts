@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { ProgramaLimpieza } from '../../programa-limpieza/entities/programa-limpieza.entity';
+import { PasoLimpiezaPq } from '../../paso-limpieza-pq/entities/paso-limpieza-pq.entity';
 
 @Entity('paso_limpieza')
 export class PasoLimpieza {
@@ -56,5 +57,6 @@ export class PasoLimpieza {
   @JoinColumn({ name: 'programa_limpieza_id' })
   programaLimpieza!: ProgramaLimpieza;
 
-  // pasosProductos se agregará cuando se implemente PasoLimpiezaPq
+  @OneToMany(() => PasoLimpiezaPq, (pq) => pq.pasoLimpieza)
+  pasosProductos!: PasoLimpiezaPq[];
 }

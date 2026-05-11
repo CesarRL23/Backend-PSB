@@ -1,37 +1,57 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+
+import { User } from '../../users/entities/user.entity';
 
 @Entity('notificacion')
 export class Notification {
-  @PrimaryGeneratedColumn()
+
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
-  usuario_id!: string;
+  @Column({ name: 'usuario_id', type: 'uuid' })
+  usuarioId!: string;
 
-  @Column({ nullable: true })
-  programa_id!: string;
+  @Column({ name: 'programa_id', type: 'uuid', nullable: true })
+  programaId!: string;
 
-  @Column({ nullable: true })
-  registro_id!: string;
+  @Column({ name: 'registro_id', type: 'uuid', nullable: true })
+  registroId!: string;
 
-  @Column()
+  @Column({ length: 50 })
   tipo!: string;
 
-  @Column()
+  @Column({ length: 200 })
   titulo!: string;
 
-  @Column('text')
+  @Column({ type: 'text' })
   mensaje!: string;
 
-  @Column({ type: 'timestamp' })
-  fecha_envio!: Date;
+  @Column({ name: 'fecha_envio', type: 'timestamp' })
+  fechaEnvio!: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
-  fecha_limite!: Date;
+  @Column({ name: 'fecha_limite', type: 'timestamp', nullable: true })
+  fechaLimite!: Date;
 
   @Column({ default: false })
   leida!: boolean;
 
-  @Column({ default: 'pendiente' })
+  @Column({ length: 50, default: 'pendiente' })
   estado!: string;
+
+  // ─── Relaciones ──────────────────────────────────────────────────────────────
+
+  @ManyToOne(() => User, (u) => u.notificaciones, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'usuario_id' })
+  usuario!: User;
+
+  // programa y registro se relacionan desde sus propios módulos (otro compañero)
 }
