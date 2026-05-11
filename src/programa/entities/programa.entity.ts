@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -12,27 +11,30 @@ import {
 
 import { PlanPsb } from '../../plan_psb/entities/plan_psb.entity';
 import { Registro } from '../../registro/entities/registro.entity';
+import { ProgramaAgua } from 'src/programa-agua/entities/programa-agua.entity';
+import { ProgramaLimpieza } from 'src/programa-limpieza/entities/programa-limpieza.entity';
+import { ProgramaPlagas } from 'src/programa-plagas/entities/programa-plagas.entity';
+import { ProgramaResiduos } from 'src/programa-residuos/entities/programa-residuos.entity';
 
 export enum TipoPrograma {
   LIMPIEZA = 'limpieza',
-  PLAGAS   = 'plagas',
-  AGUA     = 'agua',
+  PLAGAS = 'plagas',
+  AGUA = 'agua',
   RESIDUOS = 'residuos',
 }
 
 export enum FrecuenciaPrograma {
-  DIARIO     = 'diario',
-  SEMANAL    = 'semanal',
-  QUINCENAL  = 'quincenal',
-  MENSUAL    = 'mensual',
+  DIARIO = 'diario',
+  SEMANAL = 'semanal',
+  QUINCENAL = 'quincenal',
+  MENSUAL = 'mensual',
   TRIMESTRAL = 'trimestral',
-  SEMESTRAL  = 'semestral',
-  ANUAL      = 'anual',
+  SEMESTRAL = 'semestral',
+  ANUAL = 'anual',
 }
 
 @Entity('programa')
 export class Programa {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -63,9 +65,20 @@ export class Programa {
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @OneToOne(() => PlanPsb, (plan) => plan.programa)
-  @JoinColumn({ name: 'plan_psb_id' })
   planPsb!: PlanPsb;
 
   @OneToMany(() => Registro, (registro) => registro.programa)
   registros!: Registro[];
+
+  @OneToOne(() => ProgramaAgua, (programaAgua) => programaAgua.programa)
+  programaAgua!: ProgramaAgua;
+
+  @OneToOne(() => ProgramaLimpieza, (programaLimpieza) => programaLimpieza.programa)
+  programaLimpieza!: ProgramaLimpieza;
+
+  @OneToOne(() => ProgramaPlagas, (programaPlagas) => programaPlagas.programa)
+  programaPlagas!: ProgramaPlagas;
+
+  @OneToOne(() => ProgramaResiduos, (programaResiduos) => programaResiduos.programa)
+  programaResiduos!: ProgramaResiduos;
 }

@@ -26,7 +26,7 @@ export class CreateRegistroDto {
 
   @IsDateString()
   @IsNotEmpty()
-  fecha!: string;
+  fecha!: Date;
 
   @IsString()
   @IsOptional()
