@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 
 import { PlanPsb } from '../../plan_psb/entities/plan_psb.entity';
+import { TipoAlimento } from '../../tipo-alimento/entities/tipo-alimento.entity';
+
 @Entity('empresa')
 export class Empresa {
   @PrimaryGeneratedColumn()
@@ -30,6 +32,9 @@ export class Empresa {
 
   @OneToMany(() => PlanPsb, (planPsb) => planPsb.empresa)
   planesPsb: PlanPsb[];
+
+  @OneToMany(() => TipoAlimento, (tipoAlimento) => tipoAlimento.empresa)
+  tiposAlimento: TipoAlimento[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

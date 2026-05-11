@@ -9,6 +9,7 @@ import {
 
 } from 'typeorm';
 import { Empresa } from '../../empresa/entities/empresa.entity';
+import { TipoAlimento } from 'src/tipo-alimento/entities/tipo-alimento.entity';
 @Entity('plan_psb')
 export class PlanPsb {
   @PrimaryGeneratedColumn()
@@ -30,13 +31,13 @@ export class PlanPsb {
   @JoinColumn({ name: 'empresa_id' })
   empresa: Empresa;
 
-  //@ManyToOne(() => TipoAlimento, (empresa) => empresa.planesPsb, {
-   // nullable: false,
-    //onDelete: 'CASCADE',
+  @ManyToOne(() => TipoAlimento, (empresa) => empresa.planesPsb, {
+    nullable: false,
+    onDelete: 'CASCADE',
     
-  //})
-  //@JoinColumn({ name: 'tipo_alimento_id' })
-  //tipoAlimento: TipoAlimento;
+  })
+  @JoinColumn({ name: 'tipo_alimento_id' })
+  tipoAlimento: TipoAlimento;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -1,4 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { PlanPsb } from '../../plan_psb/entities/plan_psb.entity';
+import { Empresa } from '../../empresa/entities/empresa.entity';
+
 @Entity('tipo_alimento')
 export class TipoAlimento {
     @PrimaryGeneratedColumn()
@@ -13,4 +16,13 @@ export class TipoAlimento {
     @Column()
     nivel_riesgo?: string;
 
+    @ManyToOne(() => Empresa, (empresa) => empresa.tiposAlimento, {
+        nullable: false,
+        onDelete: 'CASCADE',
+    })
+    @JoinColumn({ name: 'empresa_id' })
+    empresa?: Empresa;
+
+    @OneToMany(() => PlanPsb, (planPsb) => planPsb.tipoAlimento)
+    planesPsb?: PlanPsb[];
 }
