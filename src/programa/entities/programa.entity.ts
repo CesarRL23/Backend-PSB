@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -15,24 +14,23 @@ import { Registro } from '../../registro/entities/registro.entity';
 
 export enum TipoPrograma {
   LIMPIEZA = 'limpieza',
-  PLAGAS   = 'plagas',
-  AGUA     = 'agua',
+  PLAGAS = 'plagas',
+  AGUA = 'agua',
   RESIDUOS = 'residuos',
 }
 
 export enum FrecuenciaPrograma {
-  DIARIO     = 'diario',
-  SEMANAL    = 'semanal',
-  QUINCENAL  = 'quincenal',
-  MENSUAL    = 'mensual',
+  DIARIO = 'diario',
+  SEMANAL = 'semanal',
+  QUINCENAL = 'quincenal',
+  MENSUAL = 'mensual',
   TRIMESTRAL = 'trimestral',
-  SEMESTRAL  = 'semestral',
-  ANUAL      = 'anual',
+  SEMESTRAL = 'semestral',
+  ANUAL = 'anual',
 }
 
 @Entity('programa')
 export class Programa {
-
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
