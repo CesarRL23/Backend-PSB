@@ -42,7 +42,7 @@ export class RegistroService {
 
   // ─── Buscar uno ──────────────────────────────────────────────────────────────
 
-  async findOne(id: number): Promise<Registro> {
+  async findOne(id: string): Promise<Registro> {
     const registro = await this.registroRepository.findOne({
       where: { id },
       relations: ['programa', 'usuario', 'notificaciones'],
@@ -57,7 +57,7 @@ export class RegistroService {
 
   // ─── Actualizar ──────────────────────────────────────────────────────────────
 
-  async update(id: number, dto: UpdateRegistroDto): Promise<Registro> {
+  async update(id: string, dto: UpdateRegistroDto): Promise<Registro> {
     const registro = await this.findOne(id);
 
     if (dto.estado) {
@@ -74,7 +74,7 @@ export class RegistroService {
 
   // ─── Completar (shortcut) ────────────────────────────────────────────────────
 
-  async completar(id: number, observaciones?: string): Promise<Registro> {
+  async completar(id: string, observaciones?: string): Promise<Registro> {
     return this.update(id, {
       estado:       EstadoRegistro.COMPLETADO,
       horaFin:      new Date().toTimeString().slice(0, 8),
@@ -84,7 +84,7 @@ export class RegistroService {
 
   // ─── Rechazar (shortcut) ─────────────────────────────────────────────────────
 
-  async rechazar(id: number, motivo: string): Promise<Registro> {
+  async rechazar(id: string, motivo: string): Promise<Registro> {
     if (!motivo?.trim()) {
       throw new BadRequestException('Debe indicar el motivo del rechazo');
     }
@@ -97,7 +97,7 @@ export class RegistroService {
 
   // ─── Eliminar ────────────────────────────────────────────────────────────────
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const registro = await this.findOne(id);
 
     if (registro.estado === EstadoRegistro.COMPLETADO) {

@@ -1,4 +1,53 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
-@Controller('producto-quimico')
-export class ProductoQuimicoController {}
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ProductoQuimicoService } from './producto-quimico.service';
+import { CreateProductoQuimicoDto } from './dto/create-producto-quimico.dto';
+import { UpdateProductoQuimicoDto } from './dto/update-producto-quimico.dto';
+
+@Controller('productos-quimicos')
+@UseGuards(JwtAuthGuard)
+export class ProductoQuimicoController {
+
+  constructor(
+    private readonly productoQuimicoService: ProductoQuimicoService,
+  ) {}
+
+  @Post()
+  create(@Body() dto: CreateProductoQuimicoDto) {
+    return this.productoQuimicoService.create(dto);
+  }
+
+  @Get()
+  findAll() {
+    return this.productoQuimicoService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productoQuimicoService.findOne(id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateProductoQuimicoDto,
+  ) {
+    return this.productoQuimicoService.update(id, dto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productoQuimicoService.remove(id);
+  }
+}

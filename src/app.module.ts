@@ -29,6 +29,28 @@ import { HallazgoPlagasModule } from './hallazgo-plagas/hallazgo-plagas.module';
 import { TipoPlagaModule } from './tipo-plaga/tipo-plaga.module';
 import { PlaguicidaModule } from './plaguicida/plaguicida.module';
 import { AccionCorrectivaPlagasModule } from './accion-correctiva-plagas/accion-correctiva-plagas.module';
+import { ProgramaLimpiezaModule } from './programa-limpieza/programa-limpieza.module';
+import { PasoLimpiezaPqModule } from './paso-limpieza-pq/paso-limpieza-pq.module';
+import { RegistroLimpiezaModule } from './registro-limpieza/registro-limpieza.module';
+import { ProgramaAguaModule } from './programa-agua/programa-agua.module';
+import { FuenteAguaModule } from './fuente-agua/fuente-agua.module';
+import { TanqueAlmacenamientoModule } from './tanque-almacenamiento/tanque-almacenamiento.module';
+import { ControlDiarioPotabilidadModule } from './control-diario-potabilidad/control-diario-potabilidad.module';
+import { AnalisisLaboratorioModule } from './analisis-laboratorio/analisis-laboratorio.module';
+import { MantenimientoLavadoModule } from './mantenimiento-lavado/mantenimiento-lavado.module';
+import { InsumoQuimicoModule } from './insumo-quimico/insumo-quimico.module';
+import { RegistroAguaModule } from './registro-agua/registro-agua.module';
+import { AccionCorrectivaAguaModule } from './accion-correctiva-agua/accion-correctiva-agua.module';
+import { ProgramaResiduosModule } from './programa-residuos/programa-residuos.module';
+import { TipoResiduoModule } from './tipo-residuo/tipo-residuo.module';
+import { AreaGenereacionModule } from './area-genereacion/area-genereacion.module';
+import { ContenedeorModule } from './contenedeor/contenedeor.module';
+import { ResiduoModule } from './residuo/residuo.module';
+import { RegistroResiduosModule } from './registro-residuos/registro-residuos.module';
+import { RecoleccionModule } from './recoleccion/recoleccion.module';
+import { ChecklistResiduosModule } from './checklist-residuos/checklist-residuos.module';
+import { DisposicionFinalModule } from './disposicion-final/disposicion-final.module';
+import { EvidenciaResiduosModule } from './evidencia-residuos/evidencia-residuos.module';
 
 @Module({
   imports: [
@@ -73,6 +95,28 @@ import { AccionCorrectivaPlagasModule } from './accion-correctiva-plagas/accion-
     TipoPlagaModule,
     PlaguicidaModule,
     AccionCorrectivaPlagasModule,
+    ProgramaAguaModule,
+    FuenteAguaModule,
+    TanqueAlmacenamientoModule,
+    ControlDiarioPotabilidadModule,
+    AnalisisLaboratorioModule,
+    MantenimientoLavadoModule,
+    InsumoQuimicoModule,
+    RegistroAguaModule,
+    AccionCorrectivaAguaModule,
+    ProgramaLimpiezaModule,
+    PasoLimpiezaPqModule,
+    RegistroLimpiezaModule,
+    ProgramaResiduosModule,
+    TipoResiduoModule,
+    AreaGenereacionModule,
+    ContenedeorModule,
+    ResiduoModule,
+    RegistroResiduosModule,
+    RecoleccionModule,
+    ChecklistResiduosModule,
+    DisposicionFinalModule,
+    EvidenciaResiduosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
