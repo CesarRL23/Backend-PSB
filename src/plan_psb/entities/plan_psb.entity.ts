@@ -6,37 +6,32 @@ import { Programa } from '../../programa/entities/programa.entity';
 @Entity('plan_psb')
 export class PlanPsb {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
   @Column({ length: 300 })
-  version?: string;
+  version: string;
 
   @Column({ name: 'estado', length: 100 })
-  estado?: string;
+  estado: string;
 
   @Column({ length: 100 })
-  nivel_riesgo?: string;
+  nivel_riesgo: string;
 
-  @ManyToOne(() => Empresa, (empresa) => empresa.planesPsb, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'empresa_id' })
+  @ManyToOne(() => Empresa, (empresa) => empresa.planesPsb)
   empresa?: Empresa;
 
-  @ManyToOne(() => TipoAlimento, (tipoAlimento) => tipoAlimento.planesPsb, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'tipo_alimento_id' })
+  @ManyToOne(() => TipoAlimento, (tipoAlimento) => tipoAlimento.planesPsb)
   tipoAlimento?: TipoAlimento;
 
-  @OneToOne(() => Programa, (programa) => programa.planPsb)
+  @OneToOne(()=> Programa,(programa)=> programa.planPsb)
   programa?: Programa;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt?: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt?: Date;
+
+
+  
 }
