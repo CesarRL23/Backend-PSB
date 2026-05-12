@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,11 @@ export class AuthService {
     if (!url || !key)
       throw new Error('Faltan variables de entorno de Supabase');
 
-    this.supabase = createClient(url, key);
+    this.supabase = createClient(url, key, {
+      realtime: {
+        transport: ws,
+      },
+    });
   }
 
   async getUser(token: string) {
@@ -21,7 +26,10 @@ export class AuthService {
       data: { user },
       error,
     } = await this.supabase.auth.getUser(token);
-    if (error || !user) throw new UnauthorizedException('Token inválido');
+
+    if (error || !user)
+      throw new UnauthorizedException('Token inválido');
+
     return user;
   }
 }
