@@ -46,7 +46,7 @@ export class RegistroController {
 
   @Patch(':id/completar')
   completar(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body('observaciones') observaciones: string,
     @CurrentUser() user,
   ) {
@@ -55,7 +55,7 @@ export class RegistroController {
 
   @Patch(':id/rechazar')
   rechazar(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body('motivo') motivo: string,
     @CurrentUser() user,
   ) {
@@ -64,7 +64,7 @@ export class RegistroController {
 
   @Get(':id')
   findOne(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @CurrentUser() user,
   ) {
     return this.registroService.findOne(id);
@@ -72,7 +72,7 @@ export class RegistroController {
 
   @Patch(':id')
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @Body() updateRegistroDto: UpdateRegistroDto,
     @CurrentUser() user,
   ) {
@@ -81,7 +81,7 @@ export class RegistroController {
 
   @Delete(':id')
   remove(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: string,
     @CurrentUser() user,
   ) {
     return this.registroService.remove(id);
