@@ -1,6 +1,6 @@
 import { ProgramaResiduo } from "src/programa-residuos/entities/programa-residuo.entity";
 import { Residuo } from "src/residuo/entities/residuo.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm/browser";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('tipo_residuo')
 export class TipoResiduo {
