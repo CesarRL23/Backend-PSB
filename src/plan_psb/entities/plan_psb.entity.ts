@@ -17,19 +17,10 @@ export class PlanPsb {
   @Column({ length: 100 })
   nivel_riesgo: string;
 
-  @ManyToOne(() => Empresa, (empresa) => empresa.planesPsb, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'empresa_id' })
-  empresa: Empresa;
+  @ManyToOne(() => Empresa, (empresa) => empresa.planesPsb)
+  empresa?: Empresa;
 
-  @ManyToOne(() => TipoAlimento, (empresa) => empresa.planesPsb, {
-    nullable: false,
-    onDelete: 'CASCADE',
-    
-  })
-  @JoinColumn({ name: 'tipo_alimento_id' })
+  @ManyToOne(() => TipoAlimento, (tipoAlimento) => tipoAlimento.planesPsb)
   tipoAlimento?: TipoAlimento;
 
   @OneToOne(()=> Programa,(programa)=> programa.planPsb)

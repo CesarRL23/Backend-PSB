@@ -17,6 +17,18 @@ import { ProductoQuimicoModule } from './producto-quimico/producto-quimico.modul
 import { RegistroModule } from './registro/registro.module';
 import { ChecklistLimpiezaModule } from './checklist-limpieza/checklist-limpieza.module';
 import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion-limpieza.module';
+import { ProgramaPlagasModule } from './programa-plagas/programa-plagas.module';
+import { TrampaModule } from './trampa/trampa.module';
+import { RegistroPlagasModule } from './registro-plagas/registro-plagas.module';
+import { DiagnosticoPlagasModule } from './diagnostico-plagas/diagnostico-plagas.module';
+import { EmpresaFumigadoraModule } from './empresa-fumigadora/empresa-fumigadora.module';
+import { CronogramaPlagasModule } from './cronograma-plagas/cronograma-plagas.module';
+import { AreaPlagasModule } from './area-plagas/area-plagas.module';
+import { EvidenciaPlagasModule } from './evidencia-plagas/evidencia-plagas.module';
+import { HallazgoPlagasModule } from './hallazgo-plagas/hallazgo-plagas.module';
+import { TipoPlagaModule } from './tipo-plaga/tipo-plaga.module';
+import { PlaguicidaModule } from './plaguicida/plaguicida.module';
+import { AccionCorrectivaPlagasModule } from './accion-correctiva-plagas/accion-correctiva-plagas.module';
 
 @Module({
   imports: [
@@ -49,6 +61,18 @@ import { VerificacionLimpiezaModule } from './verificacion-limpieza/verificacion
     RegistroModule,
     ChecklistLimpiezaModule,
     VerificacionLimpiezaModule,
+    ProgramaPlagasModule,
+    TrampaModule,
+    RegistroPlagasModule,
+    DiagnosticoPlagasModule,
+    EmpresaFumigadoraModule,
+    CronogramaPlagasModule,
+    AreaPlagasModule,
+    EvidenciaPlagasModule,
+    HallazgoPlagasModule,
+    TipoPlagaModule,
+    PlaguicidaModule,
+    AccionCorrectivaPlagasModule,
   ],
   controllers: [AppController],
   providers: [AppService],
