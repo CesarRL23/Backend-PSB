@@ -83,4 +83,7 @@ export class Registro {
 
   @OneToMany(() => RegistroLimpieza, () => RegistroLimpieza)
   limpieza!: RegistroLimpieza[];
+
+  @OneToMany(() => RegistroPlagas, (registroPlagas) => registroPlagas.registro)
+  registroPlagas!: RegistroPlagas[];
 }
