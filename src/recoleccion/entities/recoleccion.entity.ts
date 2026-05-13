@@ -19,8 +19,8 @@ export class Recoleccion {
     @Column()
     observaciones!: string;
 
-    @ManyToOne (() => RegistroResiduo => RegistroResiduo.recolecciones)
+    @ManyToOne(() => RegistroResiduo, registroResiduo => registroResiduo.recolecciones)
     registroResiduo!: RegistroResiduo;
     @OneToOne(() => DisposicionFinal, disposicionFinal => disposicionFinal.recoleccion)
     disposicionFinal!: DisposicionFinal;
-}
+} 

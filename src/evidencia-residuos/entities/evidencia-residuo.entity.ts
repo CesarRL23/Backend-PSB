@@ -18,6 +18,6 @@ export class EvidenciaResiduo {
     @Column()
     fecha!: Date;
 
-    @ManyToOne(() => RegistroResiduo => RegistroResiduo.evidencias)
+    @ManyToOne(() => RegistroResiduo, registroResiduo => registroResiduo.evidencias)
     registroResiduo!: RegistroResiduo;
-}
+} 

@@ -1,6 +1,7 @@
 import { ChecklistResiduo } from "src/checklist-residuos/entities/checklist-residuo.entity";
 import { EvidenciaResiduo } from "src/evidencia-residuos/entities/evidencia-residuo.entity";
 import { ProgramaResiduo } from "src/programa-residuos/entities/programa-residuo.entity";
+import { Registro } from "src/registro/entities/registro.entity";
 import { Recoleccion } from "src/recoleccion/entities/recoleccion.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -18,8 +19,8 @@ export class RegistroResiduo {
     programaResiduo!: ProgramaResiduo;
 
     
-    @ManyToOne(()=> Registro => Registro.residuos)
-    registro!: RegistroResiduo;
+    @ManyToOne(() => Registro, registro => registro.residuos)
+    registro!: Registro;
     
  
     @OneToMany(() => Recoleccion, recoleccion => recoleccion.registroResiduo)

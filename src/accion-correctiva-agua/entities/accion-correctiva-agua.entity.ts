@@ -51,4 +51,6 @@ export class AccionCorrectivaAgua {
   @ManyToOne(() => RegistroAgua, () => RegistroAgua)
   @JoinColumn({ name: 'registro_agua_id' })
   registroAgua!: RegistroAgua;
+  
+
 }
