@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsOptional, IsUUID, Min } from 'class-validator';
+import { ConcentracionUnidad } from '../entities/paso-limpieza-pq.entity';
 
 export class UpdatePasoLimpiezaPqDto {
 
@@ -6,13 +7,17 @@ export class UpdatePasoLimpiezaPqDto {
   @IsOptional()
   productoQuimicoId?: string;
 
-  @IsString()
+  @IsNumber()
+  @Min(0)
   @IsOptional()
-  @MaxLength(100)
-  concentracion?: string;
+  concentracionValor?: number;
 
-  @IsString()
+  @IsEnum(ConcentracionUnidad)
   @IsOptional()
-  @MaxLength(100)
-  tiempoContacto?: string;
+  concentracionUnidad?: ConcentracionUnidad;
+
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  tiempoContactoMin?: number;
 }

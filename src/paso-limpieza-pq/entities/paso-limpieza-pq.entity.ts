@@ -9,6 +9,12 @@ import {
 import { PasoLimpieza } from '../../paso-limpieza/entities/paso-limpieza.entity';
 import { ProductoQuimico } from '../../producto-quimico/entities/producto-quimico.entity';
 
+export enum ConcentracionUnidad {
+  PPM    = 'ppm',
+  PORCENTAJE = '%',
+  ML_L   = 'mL/L',
+}
+
 @Entity('paso_limpieza_pq')
 export class PasoLimpiezaPq {
 
@@ -21,11 +27,18 @@ export class PasoLimpiezaPq {
   @Column({ name: 'producto_quimico_id', type: 'uuid' })
   productoQuimicoId!: string;
 
-  @Column({ length: 100, nullable: true })
-  concentracion!: string;
+  @Column({ name: 'concentracion_valor', type: 'float' })
+  concentracionValor!: number;
 
-  @Column({ name: 'tiempo_contacto', length: 100, nullable: true })
-  tiempoContacto!: string;
+  @Column({
+    name: 'concentracion_unidad',
+    type: 'enum',
+    enum: ConcentracionUnidad,
+  })
+  concentracionUnidad!: ConcentracionUnidad;
+
+  @Column({ name: 'tiempo_contacto_min', type: 'int' })
+  tiempoContactoMin!: number;
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 

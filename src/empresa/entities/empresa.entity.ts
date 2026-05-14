@@ -30,6 +30,12 @@ export class Empresa {
   @Column({ length: 100 })
   representante!: string;
 
+  @Column({ name: 'registro_sanitario_funcionamiento', length: 100, nullable: true })
+  registroSanitarioFuncionamiento!: string;
+
+  @Column({ name: 'resolucion_invima', length: 100, nullable: true })
+  resolucionInvima!: string;
+
   @OneToMany(() => PlanPsb, (planPsb) => planPsb.empresa)
   planesPsb!: PlanPsb[];
 

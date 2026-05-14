@@ -42,6 +42,12 @@ export class PasoLimpieza {
   @Column({ type: 'text', nullable: true })
   observaciones!: string;
 
+  @Column({ name: 'temperatura_agua_minima', type: 'double precision', nullable: true })
+  temperaturaAguaMinima!: number;
+
+  @Column({ name: 'temperatura_agua_maxima', type: 'double precision', nullable: true })
+  temperaturaAguaMaxima!: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 

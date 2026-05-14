@@ -44,4 +44,13 @@ export class CreateVerificacionLimpiezaDto {
   @IsDateString()
   @IsNotEmpty()
   fechaPrueba!: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  loteReactivo?: string;
+
+  @IsDateString()
+  @IsOptional()
+  fechaVencimientoReactivo?: string;
 }

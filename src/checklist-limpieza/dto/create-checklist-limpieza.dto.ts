@@ -1,10 +1,12 @@
 import {
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
+  Min,
 } from 'class-validator';
 
 export class CreateChecklistLimpiezaDto {
@@ -41,4 +43,25 @@ export class CreateChecklistLimpiezaDto {
   @IsString()
   @IsOptional()
   observacion?: string;
+
+  // ─── Trazabilidad del producto realmente usado ────────────────────────────────
+
+  @IsUUID()
+  @IsOptional()
+  productoQuimicoId?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  loteUsado?: string;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  concentracionReal?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  volumenPreparadoLitros?: number;
 }

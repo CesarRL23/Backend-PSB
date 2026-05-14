@@ -32,6 +32,7 @@ import { AccionCorrectivaPlagasModule } from './accion-correctiva-plagas/accion-
 import { ProgramaLimpiezaModule } from './programa-limpieza/programa-limpieza.module';
 import { PasoLimpiezaPqModule } from './paso-limpieza-pq/paso-limpieza-pq.module';
 import { RegistroLimpiezaModule } from './registro-limpieza/registro-limpieza.module';
+import { MedicionPasoModule } from './medicion-paso/medicion-paso.module';
 import { ProgramaAguaModule } from './programa-agua/programa-agua.module';
 import { FuenteAguaModule } from './fuente-agua/fuente-agua.module';
 import { TanqueAlmacenamientoModule } from './tanque-almacenamiento/tanque-almacenamiento.module';
@@ -107,6 +108,7 @@ import { EvidenciaResiduosModule } from './evidencia-residuos/evidencia-residuos
     ProgramaLimpiezaModule,
     PasoLimpiezaPqModule,
     RegistroLimpiezaModule,
+    MedicionPasoModule,
     ProgramaResiduosModule,
     TipoResiduoModule,
     AreaGenereacionModule,

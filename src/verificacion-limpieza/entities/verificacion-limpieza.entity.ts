@@ -40,6 +40,12 @@ export class VerificacionLimpieza {
   @Column({ name: 'fecha_prueba', type: 'date' })
   fechaPrueba!: string;
 
+  @Column({ name: 'lote_reactivo', length: 100, nullable: true })
+  loteReactivo!: string;
+
+  @Column({ name: 'fecha_vencimiento_reactivo', type: 'date', nullable: true })
+  fechaVencimientoReactivo!: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 

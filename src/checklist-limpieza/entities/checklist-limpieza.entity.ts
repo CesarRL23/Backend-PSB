@@ -4,11 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { RegistroLimpieza } from '../../registro-limpieza/entities/registro-limpieza.entity';
 import { PasoLimpieza } from '../../paso-limpieza/entities/paso-limpieza.entity';
+import { ProductoQuimico } from '../../producto-quimico/entities/producto-quimico.entity';
+import { MedicionPaso } from '../../medicion-paso/entities/medicion-paso.entity';
 
 @Entity('checklist_limpieza')
 export class ChecklistLimpieza {
@@ -40,6 +43,20 @@ export class ChecklistLimpieza {
   @Column({ type: 'text', nullable: true })
   observacion!: string;
 
+  // ─── Trazabilidad del producto realmente usado ────────────────────────────────
+
+  @Column({ name: 'producto_quimico_id', type: 'uuid', nullable: true })
+  productoQuimicoId!: string;
+
+  @Column({ name: 'lote_usado', length: 100, nullable: true })
+  loteUsado!: string;
+
+  @Column({ name: 'concentracion_real', type: 'float', nullable: true })
+  concentracionReal!: number;
+
+  @Column({ name: 'volumen_preparado_litros', type: 'float', nullable: true })
+  volumenPreparadoLitros!: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
 
@@ -58,4 +75,11 @@ export class ChecklistLimpieza {
   })
   @JoinColumn({ name: 'paso_limpieza_id' })
   pasoLimpieza!: PasoLimpieza;
+
+  @ManyToOne(() => ProductoQuimico, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'producto_quimico_id' })
+  productoQuimico!: ProductoQuimico;
+
+  @OneToMany(() => MedicionPaso, (m) => m.checklistLimpieza)
+  mediciones!: MedicionPaso[];
 }

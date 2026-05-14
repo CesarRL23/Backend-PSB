@@ -1,6 +1,7 @@
 import {
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -45,4 +46,12 @@ export class CreatePasoLimpiezaDto {
   @IsString()
   @IsOptional()
   observaciones?: string;
+
+  @IsNumber()
+  @IsOptional()
+  temperaturaAguaMinima?: number;
+
+  @IsNumber()
+  @IsOptional()
+  temperaturaAguaMaxima?: number;
 }

@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsUUID,
+  Min,
+} from 'class-validator';
+
+import { ConcentracionUnidad } from '../entities/paso-limpieza-pq.entity';
 
 export class CreatePasoLimpiezaPqDto {
 
@@ -10,13 +19,15 @@ export class CreatePasoLimpiezaPqDto {
   @IsNotEmpty()
   productoQuimicoId!: string;
 
-  @IsString()
-  @IsOptional()
-  @MaxLength(100)
-  concentracion?: string;
+  @IsNumber()
+  @Min(0)
+  concentracionValor!: number;
 
-  @IsString()
-  @IsOptional()
-  @MaxLength(100)
-  tiempoContacto?: string;
+  @IsEnum(ConcentracionUnidad)
+  @IsNotEmpty()
+  concentracionUnidad!: ConcentracionUnidad;
+
+  @IsInt()
+  @Min(1)
+  tiempoContactoMin!: number;
 }
