@@ -1,54 +1,44 @@
-# Database Schema - PSB
-
-## Notas importantes
-
-- Todos los `id` de relaciones (foreign keys) son `string` (UUID), no `int`
-- El diagrama usa `int` por limitaciones de sintaxis Mermaid, pero en la implementación real son UUID
-
-## Diagrama ERD
-
 ```mermaid
 ---
 config:
   layout: elk
 ---
-
 erDiagram
-
-    %% ─── GENERAL ───
-
+    %% ─── GENERAL, IDENTIDAD Y USUARIOS ───
     EMPRESA {
-        int id
+        string id PK "UUID"
         string nombre
-        string nit
+        string nit "UNIQUE"
         string tipo_negocio
         string direccion
         string representante
+        string registro_sanitario_funcionamiento "NUEVO"
+        string resolucion_invima "NUEVO"
     }
 
     TIPO_ALIMENTO {
-        int id
-        int empresa_id
+        string id PK "UUID"
+        string empresa_id FK "UUID"
         string nombre
         string nivel_riesgo
         string descripcion
     }
 
     PLAN_PSB {
-        int id
-        int empresa_id
-        int tipo_alimento_id
+        string id PK "UUID"
+        string empresa_id FK "UUID"
+        string tipo_alimento_id FK "UUID"
         string version
-        string estado
+        string estado "ENUM: BORRADOR, ACTIVO, OBSOLETO"
         string nivel_riesgo
         date fecha_creacion
         date fecha_actualizacion
     }
 
     PROGRAMA {
-        int id
-        int plan_psb_id
-        string tipo
+        string id PK "UUID"
+        string plan_psb_id FK "UUID"
+        string tipo "ENUM: LIMPIEZA, PLAGAS, AGUA, RESIDUOS"
         string nombre
         string responsable
         string frecuencia
@@ -56,30 +46,31 @@ erDiagram
     }
 
     USUARIO {
-        int id
-        int empresa_id
+        string id PK "UUID"
+        string empresa_id FK "UUID"
         string nombre
-        string email
-        string rol
-        string estado
+        string email "UNIQUE"
+        string rol "ENUM: ADMIN, CALIDAD, OPERARIO"
+        string estado "ENUM: ACTIVO, INACTIVO"
         string cargo
-        string firma_digitalizada
+        string pin_firma_hash "Código 4 dígitos"
+        string firma_digitalizada "Base64 o URL"
     }
 
     VERSION_PLAN {
-        int id
-        int plan_psb_id
-        int usuario_id
+        string id PK "UUID"
+        string plan_psb_id FK "UUID"
+        string usuario_id FK "UUID"
         int nro_version
         text cambios
         date fecha
     }
 
     NOTIFICACION {
-        int id
-        int usuario_id
-        int programa_id
-        int registro_id
+        string id PK "UUID"
+        string usuario_id FK "UUID"
+        string programa_id FK "UUID"
+        string registro_id FK "UUID"
         string tipo
         string titulo
         text mensaje
@@ -89,12 +80,11 @@ erDiagram
         string estado
     }
 
-    %% ─── REGISTRO BASE ───
-
+    %% ─── REGISTRO BASE (MAESTRO DIARIO) ───
     REGISTRO {
-        int id
-        int programa_id
-        int usuario_id
+        string id PK "UUID"
+        string programa_id FK "UUID"
+        string usuario_id FK "UUID"
         date fecha
         time hora_inicio
         time hora_fin
@@ -102,102 +92,124 @@ erDiagram
         string evidencia_foto
     }
 
-    %% ─── MÓDULO LIMPIEZA ───
+    %% ─── MÓDULO LIMPIEZA E INFRAESTRUCTURA ───
+    EQUIPO_AREA {
+        string id PK "UUID"
+        string empresa_id FK "UUID"
+        string nombre "Ej. Pasteurizador"
+        string tipo "ENUM: AREA, EQUIPO, UTENSILIO"
+        string estado "ENUM: ACTIVO, INACTIVO"
+    }
 
     PROGRAMA_LIMPIEZA {
-        int id
-        int programa_id
+        string id PK "UUID"
+        string programa_id FK "UUID"
+        string equipo_area_id FK "UUID"
         string objetivo
         string alcance
         text procedimiento_general
     }
 
     REGISTRO_LIMPIEZA {
-        int id
-        int registro_id
-        int programa_limpieza_id
-        string superficie_limpiada
-        string resultado_inspeccion
+        string id PK "UUID"
+        string registro_id FK "UUID"
+        string programa_limpieza_id FK "UUID"
+        string equipo_area_id FK "UUID"
+        string estado_final "ENUM: PENDIENTE, CONFORME, NO_CONFORME"
     }
 
     PASO_LIMPIEZA {
-        int id
-        int programa_limpieza_id
+        string id PK "UUID"
+        string programa_limpieza_id FK "UUID"
         int orden
         text descripcion
-        string tipo_accion
-        string concentracion
-        string tiempo_contacto
+        string tipo_accion "ENUM: SECA, HUMEDA, CIP, COP"
         string frecuencia
-        string observaciones
+        boolean requiere_medicion
+        double temperatura_agua_minima "NUEVO"
+        double temperatura_agua_maxima "NUEVO"
     }
 
     PRODUCTO_QUIMICO {
-        int id
+        string id PK "UUID"
+        string empresa_id FK "UUID"
         string codigo
         string nombre
         string fabricante
-        string tipo
+        string registro_sanitario_invima "OBLIGATORIO"
         boolean grado_alimenticio
-        string ph
-        string concentracion_recomendada
-        string tiempo_contacto_min
-        text ficha_tecnica_url
+        double ph_puro
+        string dosificacion_sugerida
+        string ficha_tecnica_url
     }
 
     PASO_LIMPIEZA_PQ {
-        int id
-        int paso_limpieza_id
-        int producto_quimico_id
-        string concentracion
-        string tiempo_contacto
+        string id PK "UUID"
+        string paso_limpieza_id FK "UUID"
+        string producto_quimico_id FK "UUID"
+        float concentracion_valor "ANTES: concentracion_teorica string"
+        string concentracion_unidad "ENUM: ppm, %, mL/L"
+        int tiempo_contacto_min "ANTES: tiempo_contacto_teorico string"
     }
 
     CHECKLIST_LIMPIEZA {
-        int id
-        int registro_limpieza_id
-        int paso_limpieza_id
-        boolean producto_correcto
-        boolean concentracion_correcta
-        boolean superficie_cubierta
-        boolean tiempo_cumplido
-        string estado
+        string id PK "UUID"
+        string registro_limpieza_id FK "UUID"
+        string paso_limpieza_id FK "UUID"
+        boolean completado
+        string estado_paso "ENUM: APROBADO, RECHAZADO"
         text observacion
+        string producto_quimico_id FK "NUEVO - UUID"
+        string lote_usado "NUEVO"
+        float concentracion_real "NUEVO"
+        float volumen_preparado_litros "NUEVO"
+    }
+
+    MEDICION_PASO {
+        string id PK "UUID - TABLA NUEVA"
+        string checklist_limpieza_id FK "UUID"
+        string tipo_parametro "ENUM: TEMPERATURA, PH, CLORO, ATP"
+        double valor
+        string unidad
+        double valor_minimo_esperado
+        double valor_maximo_esperado
+        boolean cumple
     }
 
     VERIFICACION_LIMPIEZA {
-        int id
-        int registro_limpieza_id
-        string tipo
-        string resultado
-        string unidad
-        string limite_aceptable
-        text metodo_validacion
-        int responsable_id
-        date fecha_prueba
+        string id PK "UUID"
+        string registro_limpieza_id FK "UUID"
+        string supervisor_id FK "UUID"
+        datetime fecha_hora_prueba
+        string metodo_validacion "ENUM: VISUAL, ATP, PH, ALERGENOS"
+        string resultado "ENUM: APROBADO, RECHAZADO"
+        string valor_medido
+        text accion_correctora_tomada "REQUISITO LEGAL"
+        string estado_reverificacion "ENUM: PENDIENTE, RE_LAVADO_APROBADO, NO_APLICA"
+        string lote_reactivo "NUEVO"
+        date fecha_vencimiento_reactivo "NUEVO"
     }
 
     %% ─── MÓDULO PLAGAS ───
-
     PROGRAMA_PLAGAS {
-        int id
-        int programa_id
+        string id PK "UUID"
+        string programa_id FK "UUID"
         string objetivo
         string alcance
         text procedimiento_general
     }
 
     REGISTRO_PLAGAS {
-        int id
-        int registro_id
-        int programa_plagas_id
+        string id PK "UUID"
+        string registro_id FK "UUID"
+        string programme_plagas_id FK "UUID"
         string tipo_actividad
         string resultado_general
     }
 
     DIAGNOSTICO_PLAGAS {
-        int id
-        int programa_plagas_id
+        string id PK "UUID"
+        string programa_plagas_id FK "UUID"
         date fecha
         text areas_evaluadas
         text plagas_identificadas
@@ -206,8 +218,8 @@ erDiagram
     }
 
     EMPRESA_FUMIGADORA {
-        int id
-        int programa_plagas_id
+        string id PK "UUID"
+        string programa_plagas_id FK "UUID"
         string nit
         string nombre_empresa
         string num_cert_sanitario
@@ -217,8 +229,8 @@ erDiagram
     }
 
     CRONOGRAMA_PLAGAS {
-        int id
-        int programa_plagas_id
+        string id PK "UUID"
+        string programa_plagas_id FK "UUID"
         int anio_vigencia
         string frecuencia_control
         string metodo_control
@@ -226,16 +238,16 @@ erDiagram
     }
 
     AREA_PLAGAS {
-        int id
-        int programa_plagas_id
+        string id PK "UUID"
+        string programa_plagas_id FK "UUID"
         string nombre
         string descripcion
         string nivel_riesgo
     }
 
     TRAMPA {
-        int id
-        int area_plagas_id
+        string id PK "UUID"
+        string area_plagas_id FK "UUID"
         string codigo
         string tipo
         string ubicacion
@@ -245,16 +257,16 @@ erDiagram
     }
 
     TIPO_PLAGA {
-        int id
+        string id PK "UUID"
         string nombre
         string categoria
         string riesgo_sanitario
     }
 
     HALLAZGO_PLAGAS {
-        int id
-        int registro_plagas_id
-        int tipo_plaga_id
+        string id PK "UUID"
+        string registro_plagas_id FK "UUID"
+        string tipo_plaga_id FK "UUID"
         string descripcion
         string severidad
         date fecha
@@ -262,8 +274,8 @@ erDiagram
     }
 
     PLAGUICIDA {
-        int id
-        int programa_plagas_id
+        string id PK "UUID"
+        string programa_plagas_id FK "UUID"
         string codigo_registro
         string nombre_comercial
         string ingrediente_activo
@@ -274,9 +286,9 @@ erDiagram
     }
 
     ACCION_CORRECTIVA_PLAGAS {
-        int id
-        int hallazgo_id
-        int plaguicida_id
+        string id PK "UUID"
+        string hallazgo_id FK "UUID"
+        string plaguicida_id FK "UUID"
         string descripcion
         date fecha
         string responsable
@@ -285,8 +297,8 @@ erDiagram
     }
 
     EVIDENCIA_PLAGAS {
-        int id
-        int registro_plagas_id
+        string id PK "UUID"
+        string registro_plagas_id FK "UUID"
         string tipo_archivo
         string url_archivo
         string descripcion
@@ -294,26 +306,25 @@ erDiagram
     }
 
     %% ─── MÓDULO AGUA ───
-
     PROGRAMA_AGUA {
-        int id
-        int programa_id
+        string id PK "UUID"
+        string programa_id FK "UUID"
         string objetivo
         string alcance
         text procedimiento_general
     }
 
     REGISTRO_AGUA {
-        int id
-        int registro_id
-        int programa_agua_id
+        string id PK "UUID"
+        string registro_id FK "UUID"
+        string programa_agua_id FK "UUID"
         string tipo_actividad
         string resultado_general
     }
 
     FUENTE_AGUA {
-        int id
-        int programa_agua_id
+        string id PK "UUID"
+        string programa_agua_id FK "UUID"
         string nombre
         string tipo
         string proveedor
@@ -323,8 +334,8 @@ erDiagram
     }
 
     TANQUE_ALMACENAMIENTO {
-        int id
-        int fuente_agua_id
+        string id PK "UUID"
+        string fuente_agua_id FK "UUID"
         double capacidad_litros
         string material_grado_alimenticio
         date fecha_ultimo_lavado
@@ -332,9 +343,9 @@ erDiagram
     }
 
     CONTROL_DIARIO_POTABILIDAD {
-        int id
-        int fuente_agua_id
-        int registro_agua_id
+        string id PK "UUID"
+        string fuente_agua_id FK "UUID"
+        string registro_agua_id FK "UUID"
         datetime fecha_hora
         double cloro_residual
         double ph
@@ -343,9 +354,9 @@ erDiagram
     }
 
     ANALISIS_LABORATORIO {
-        int id
-        int fuente_agua_id
-        int registro_agua_id
+        string id PK "UUID"
+        string fuente_agua_id FK "UUID"
+        string registro_agua_id FK "UUID"
         string numero_certificado
         date fecha_muestreo
         boolean coliformes_totales
@@ -355,12 +366,14 @@ erDiagram
         string nivel_riesgo
         string resultado
         string link_documento_pdf
+        string laboratorio_acreditado "NUEVO"
+        string codigo_acreditacion_ideam "NUEVO"
     }
 
     MANTENIMIENTO_LAVADO {
-        int id
-        int fuente_agua_id
-        int registro_agua_id
+        string id PK "UUID"
+        string fuente_agua_id FK "UUID"
+        string registro_agua_id FK "UUID"
         date fecha_programada
         date fecha_ejecucion
         string metodo_limpieza
@@ -369,8 +382,8 @@ erDiagram
     }
 
     INSUMO_QUIMICO {
-        int id
-        int mantenimiento_id
+        string id PK "UUID"
+        string mantenimiento_id FK "UUID"
         string nombre
         string registro_sanitario_invima
         string lote
@@ -379,8 +392,8 @@ erDiagram
     }
 
     ACCION_CORRECTIVA_AGUA {
-        int id
-        int registro_agua_id
+        string id PK "UUID"
+        string registro_agua_id FK "UUID"
         string descripcion_desviacion
         string medida_tomada
         string resultado_verificacion
@@ -390,26 +403,25 @@ erDiagram
     }
 
     %% ─── MÓDULO RESIDUOS ───
-
     PROGRAMA_RESIDUOS {
-        int id
-        int programa_id
+        string id PK "UUID"
+        string programa_id FK "UUID"
         string objetivo
         string alcance
         text procedimiento_general
     }
 
     REGISTRO_RESIDUOS {
-        int id
-        int registro_id
-        int programa_residuos_id
+        string id PK "UUID"
+        string registro_id FK "UUID"
+        string programa_residuos_id FK "UUID"
         string tipo_actividad
         string resultado_general
     }
 
     TIPO_RESIDUO {
-        int id
-        int programa_residuos_id
+        string id PK "UUID"
+        string programa_residuos_id FK "UUID"
         string nombre
         string color_contenedor
         string descripcion
@@ -417,8 +429,8 @@ erDiagram
     }
 
     CONTENEDOR {
-        int id
-        int programa_residuos_id
+        string id PK "UUID"
+        string programa_residuos_id FK "UUID"
         string color
         string capacidad
         string ubicacion
@@ -426,18 +438,18 @@ erDiagram
     }
 
     AREA_GENERACION {
-        int id
-        int programa_residuos_id
+        string id PK "UUID"
+        string programme_residuos_id FK "UUID"
         string nombre
         string descripcion
     }
 
     RESIDUO {
-        int id
-        int programa_residuos_id
-        int tipo_residuo_id
-        int contenedor_id
-        int area_generacion_id
+        string id PK "UUID"
+        string programa_residuos_id FK "UUID"
+        string tipo_residuo_id FK "UUID"
+        string contenedor_id FK "UUID"
+        string area_generacion_id FK "UUID"
         string nombre
         string descripcion
         date fecha_registro
@@ -445,8 +457,8 @@ erDiagram
     }
 
     RECOLECCION {
-        int id
-        int registro_residuos_id
+        string id PK "UUID"
+        string registro_residuos_id FK "UUID"
         date fecha
         string responsable
         float cantidad_recolectada
@@ -454,24 +466,24 @@ erDiagram
     }
 
     DISPOSICION_FINAL {
-        int id
-        int recoleccion_id
+        string id PK "UUID"
+        string recoleccion_id FK "UUID"
         string metodo
         string empresa_encargada
         date fecha_disposicion
     }
 
     CHECKLIST_RESIDUOS {
-        int id
-        int registro_residuos_id
+        string id PK "UUID"
+        string registro_residuos_id FK "UUID"
         string titulo
         string descripcion
         float porcentaje_cumplimiento
     }
 
     EVIDENCIA_RESIDUOS {
-        int id
-        int registro_residuos_id
+        string id PK "UUID"
+        string registro_residuos_id FK "UUID"
         string tipo_archivo
         string url_archivo
         string descripcion
@@ -479,39 +491,37 @@ erDiagram
     }
 
     %% ─── RELACIONES GENERALES ───
-
     EMPRESA ||--o{ TIPO_ALIMENTO : "fabrica"
     EMPRESA ||--o{ PLAN_PSB : "tiene"
     EMPRESA ||--o{ USUARIO : "tiene"
-
+    EMPRESA ||--o{ EQUIPO_AREA : "posee"
+    EMPRESA ||--o{ PRODUCTO_QUIMICO : "autoriza"
     TIPO_ALIMENTO ||--o{ PLAN_PSB : "origen_riesgo"
-
     PLAN_PSB ||--|{ PROGRAMA : "contiene"
     PLAN_PSB ||--o{ VERSION_PLAN : "historial"
-
     VERSION_PLAN }o--|| USUARIO : "modificado_por"
-
     PROGRAMA ||--o{ REGISTRO : "ejecuta"
     PROGRAMA ||--o{ NOTIFICACION : "genera"
-
     USUARIO ||--o{ REGISTRO : "genera"
     USUARIO ||--o{ NOTIFICACION : "recibe"
-
     REGISTRO ||--o{ NOTIFICACION : "resultado"
 
     %% ─── RELACIONES LIMPIEZA ───
-
     PROGRAMA ||--|| PROGRAMA_LIMPIEZA : "detalle"
+    EQUIPO_AREA ||--o{ PROGRAMA_LIMPIEZA : "es_objeto_de"
+    EQUIPO_AREA ||--o{ REGISTRO_LIMPIEZA : "recibe_lavado"
     PROGRAMA_LIMPIEZA ||--o{ PASO_LIMPIEZA : "define_pasos"
     PASO_LIMPIEZA ||--o{ PASO_LIMPIEZA_PQ : "usa_producto"
     PASO_LIMPIEZA_PQ }o--|| PRODUCTO_QUIMICO : "producto"
     REGISTRO ||--o{ REGISTRO_LIMPIEZA : "especializa"
     REGISTRO_LIMPIEZA ||--o{ CHECKLIST_LIMPIEZA : "verifica"
+    PASO_LIMPIEZA ||--o{ CHECKLIST_LIMPIEZA : "se_evalua_en"
+    CHECKLIST_LIMPIEZA }o--|| PRODUCTO_QUIMICO : "producto_usado_real"
+    CHECKLIST_LIMPIEZA ||--o{ MEDICION_PASO : "registra_mediciones"
     REGISTRO_LIMPIEZA ||--o{ VERIFICACION_LIMPIEZA : "valida"
     VERIFICACION_LIMPIEZA }o--|| USUARIO : "responsable"
 
     %% ─── RELACIONES PLAGAS ───
-
     PROGRAMA ||--|| PROGRAMA_PLAGAS : "detalle"
     PROGRAMA_PLAGAS ||--o{ DIAGNOSTICO_PLAGAS : "diagnostica"
     PROGRAMA_PLAGAS ||--o{ EMPRESA_FUMIGADORA : "contrata"
@@ -527,7 +537,6 @@ erDiagram
     ACCION_CORRECTIVA_PLAGAS }o--|| PLAGUICIDA : "usa"
 
     %% ─── RELACIONES AGUA ───
-
     PROGRAMA ||--|| PROGRAMA_AGUA : "detalle"
     PROGRAMA_AGUA ||--o{ FUENTE_AGUA : "abastece"
     FUENTE_AGUA ||--o| TANQUE_ALMACENAMIENTO : "almacena"
@@ -542,7 +551,6 @@ erDiagram
     REGISTRO_AGUA ||--o{ ACCION_CORRECTIVA_AGUA : "genera"
 
     %% ─── RELACIONES RESIDUOS ───
-
     PROGRAMA ||--|| PROGRAMA_RESIDUOS : "detalle"
     PROGRAMA_RESIDUOS ||--o{ TIPO_RESIDUO : "clasifica"
     PROGRAMA_RESIDUOS ||--o{ CONTENEDOR : "gestiona"
@@ -556,3 +564,4 @@ erDiagram
     REGISTRO_RESIDUOS ||--o{ CHECKLIST_RESIDUOS : "verifica"
     REGISTRO_RESIDUOS ||--o{ EVIDENCIA_RESIDUOS : "adjunta"
     RECOLECCION ||--o| DISPOSICION_FINAL : "termina_en"
+```
