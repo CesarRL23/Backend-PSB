@@ -6,6 +6,10 @@ export class CreateProgramaLimpiezaDto {
   @IsNotEmpty()
   programaId!: string;
 
+  @IsUUID()
+  @IsOptional()
+  equipoAreaId?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(300)
