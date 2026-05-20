@@ -9,15 +9,12 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { EquipoAreaService } from './equipo-area.service';
 import { CreateEquipoAreaDto } from './dto/create-equipo-area.dto';
 import { UpdateEquipoAreaDto } from './dto/update-equipo-area.dto';
 
-@UseGuards(JwtAuthGuard)
 @Controller('equipos-area')
 export class EquipoAreaController {
 

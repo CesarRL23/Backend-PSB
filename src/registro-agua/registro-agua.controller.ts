@@ -8,17 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RegistroAguaService } from './registro-agua.service';
 import { CreateRegistroAguaDto } from './dto/create-registro-agua.dto';
 import { UpdateRegistroAguaDto } from './dto/update-registro-agua.dto';
 
 @Controller('registro-agua')
-@UseGuards(JwtAuthGuard)
 export class RegistroAguaController {
 
   constructor(

@@ -1,11 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ContenedeorService } from './contenedeor.service';
 import { CreateContenedeorDto } from './dto/create-contenedeor.dto';
 import { UpdateContenedeorDto } from './dto/update-contenedeor.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('contenedeor')
 export class ContenedeorController {
   constructor(private readonly contenedeorService: ContenedeorService) {}

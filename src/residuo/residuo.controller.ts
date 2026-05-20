@@ -1,11 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ResiduoService } from './residuo.service';
 import { CreateResiduoDto } from './dto/create-residuo.dto';
 import { UpdateResiduoDto } from './dto/update-residuo.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('residuo')
 export class ResiduoController {
   constructor(private readonly residuoService: ResiduoService) {}

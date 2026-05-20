@@ -7,16 +7,13 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProductoQuimicoService } from './producto-quimico.service';
 import { CreateProductoQuimicoDto } from './dto/create-producto-quimico.dto';
 import { UpdateProductoQuimicoDto } from './dto/update-producto-quimico.dto';
 
 @Controller('productos-quimicos')
-@UseGuards(JwtAuthGuard)
 export class ProductoQuimicoController {
 
   constructor(

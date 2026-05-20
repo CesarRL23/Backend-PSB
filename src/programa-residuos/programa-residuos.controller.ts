@@ -1,11 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ProgramaResiduosService } from './programa-residuos.service';
 import { CreateProgramaResiduoDto } from './dto/create-programa-residuo.dto';
 import { UpdateProgramaResiduoDto } from './dto/update-programa-residuo.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('programa-residuos')
 export class ProgramaResiduosController {
   constructor(private readonly programaResiduosService: ProgramaResiduosService) {}

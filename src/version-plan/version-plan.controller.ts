@@ -1,12 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { VersionPlanService } from './version-plan.service';
 import { CreateVersionPlanDto } from './dto/create-version-plan.dto';
 import { UpdateVersionPlanDto } from './dto/update-version-plan.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('version-plan')
-@UseGuards(JwtAuthGuard)
 export class VersionPlanController {
   constructor(private readonly versionPlanService: VersionPlanService) {}
 

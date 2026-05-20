@@ -8,17 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ControlDiarioPotabilidadService } from './control-diario-potabilidad.service';
 import { CreateControlDiarioPotabilidadDto } from './dto/create-control-diario-potabilidad.dto';
 import { UpdateControlDiarioPotabilidadDto } from './dto/update-control-diario-potabilidad.dto';
 
 @Controller('control-diario-potabilidad')
-@UseGuards(JwtAuthGuard)
 export class ControlDiarioPotabilidadController {
 
   constructor(
