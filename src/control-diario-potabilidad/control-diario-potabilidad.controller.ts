@@ -35,7 +35,7 @@ export class ControlDiarioPotabilidadController {
     @Body() createDto: CreateControlDiarioPotabilidadDto,
     @CurrentUser() user,
   ) {
-    return this.controlService.create(createDto);
+    return this.controlService.create(createDto, user.id);
   }
 
   @Get()

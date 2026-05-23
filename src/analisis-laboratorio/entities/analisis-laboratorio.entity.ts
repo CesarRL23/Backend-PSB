@@ -24,17 +24,50 @@ export class AnalisisLaboratorio {
   @Column({ name: 'numero_certificado', length: 200 })
   numeroCertificado!: string;
 
+  @Column({ name: 'laboratorio_certificado', length: 200 })
+  laboratorioCertificado!: string;
+
   @Column({ name: 'fecha_muestreo', type: 'date' })
   fechaMuestreo!: string;
 
-  @Column({ name: 'coliformes_totales', default: false })
-  coliformesTotales!: boolean;
+  @Column({ name: 'fecha_entrega_resultado', type: 'date', nullable: true })
+  fechaEntregaResultado?: string;
 
-  @Column({ name: 'e_coli', default: false })
-  eColi!: boolean;
+  @Column({ name: 'responsable_muestra', length: 200 })
+  responsableMuestra!: string;
 
-  @Column({ type: 'double precision', nullable: true })
+  @Column({ name: 'punto_muestreo', length: 150 })
+  puntoMuestreo!: string;
+
+  @Column({ name: 'cloro_residual', type: 'double precision' })
+  cloroResidual!: number;
+
+  @Column({ type: 'double precision' })
+  ph!: number;
+
+  @Column({ type: 'double precision' })
+  turbiedad!: number;
+
+  @Column({ name: 'color_aparente', type: 'double precision' })
+  colorAparente!: number;
+
+  @Column({ name: 'coliformes_totales_presentes', default: false })
+  coliformesTotalesPresentes!: boolean;
+
+  @Column({ name: 'e_coli_presente', default: false })
+  eColiPresente!: boolean;
+
+  @Column({ type: 'double precision', default: 0 })
   mesofilos!: number;
+
+  @Column({ name: 'cumple_norma_fisicoquimica', default: false })
+  cumpleNormaFisicoquimica!: boolean;
+
+  @Column({ name: 'cumple_norma_microbiologica', default: false })
+  cumpleNormaMicrobiologica!: boolean;
+
+  @Column({ name: 'cumple_norma_general', default: false })
+  cumpleNormaGeneral!: boolean;
 
   @Column({ type: 'double precision', nullable: true })
   irca!: number;
@@ -46,7 +79,10 @@ export class AnalisisLaboratorio {
   resultado!: string;
 
   @Column({ name: 'link_documento_pdf', length: 500, nullable: true })
-  linkDocumentoPdf!: string;
+  linkDocumentoPdf?: string;
+
+  @Column({ name: 'foto_evidencia', length: 500, nullable: true })
+  fotoEvidencia?: string;
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 

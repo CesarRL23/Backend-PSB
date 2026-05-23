@@ -35,7 +35,7 @@ export class MantenimientoLavadoController {
     @Body() createDto: CreateMantenimientoLavadoDto,
     @CurrentUser() user,
   ) {
-    return this.mantenimientoService.create(createDto);
+    return this.mantenimientoService.create(createDto, user.id);
   }
 
   @Get()

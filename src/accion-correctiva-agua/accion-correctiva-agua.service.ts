@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +9,10 @@ import { Repository } from 'typeorm';
 import { AccionCorrectivaAgua, EstadoAccionCorrectiva } from './entities/accion-correctiva-agua.entity';
 import { CreateAccionCorrectivaAguaDto } from './dto/create-accion-correctiva-agua.dto';
 import { UpdateAccionCorrectivaAguaDto } from './dto/update-accion-correctiva-agua.dto';
+import { FuenteAgua } from '../fuente-agua/entities/fuente-agua.entity';
+import { RegistroService } from '../registro/registro.service';
+import { RegistroAguaService } from '../registro-agua/registro-agua.service';
+import { TipoActividadAgua, ResultadoGeneralAgua } from '../registro-agua/entities/registro-agua.entity';
 
 @Injectable()
 export class AccionCorrectivaAguaService {
@@ -16,12 +20,55 @@ export class AccionCorrectivaAguaService {
   constructor(
     @InjectRepository(AccionCorrectivaAgua)
     private readonly accionRepository: Repository<AccionCorrectivaAgua>,
+    @InjectRepository(FuenteAgua)
+    private readonly fuenteAguaRepository: Repository<FuenteAgua>,
+    private readonly registroService: RegistroService,
+    private readonly registroAguaService: RegistroAguaService,
   ) {}
 
   // ─── Crear ───────────────────────────────────────────────────────────────────
 
-  async create(dto: CreateAccionCorrectivaAguaDto): Promise<AccionCorrectivaAgua> {
-    const accion = this.accionRepository.create(dto);
+  async create(
+    dto: CreateAccionCorrectivaAguaDto,
+    usuarioId: string,
+  ): Promise<AccionCorrectivaAgua> {
+    const fuenteAgua = await this.fuenteAguaRepository.findOne({
+      where: { id: dto.fuenteAguaId },
+      relations: {
+        programaAgua: {
+          programa: true,
+        },
+      },
+    });
+
+    if (!fuenteAgua)
+      throw new NotFoundException('Fuente de agua no encontrada');
+
+    const programaAgua = fuenteAgua.programaAgua;
+    if (!programaAgua)
+      throw new NotFoundException('No se encontró un programa de agua asociado a la fuente');
+
+    const programaId = programaAgua.programa.id;
+    const programaAguaId = programaAgua.id;
+
+    const registro = await this.registroService.create({
+      programaId,
+      usuarioId,
+      fecha: new Date(dto.fecha),
+    });
+
+    const registroAgua = await this.registroAguaService.create({
+      registroId: registro.id,
+      programaAguaId,
+      tipoActividad: TipoActividadAgua.ACCION_CORRECTIVA,
+      resultadoGeneral: ResultadoGeneralAgua.EN_PROCESO,
+    });
+
+    const accion = this.accionRepository.create({
+      ...dto,
+      registroAguaId: registroAgua.id,
+    });
+
     return this.accionRepository.save(accion);
   }
 
@@ -61,9 +108,8 @@ export class AccionCorrectivaAguaService {
       relations: ['registroAgua'],
     });
 
-    if (!accion) {
+    if (!accion)
       throw new NotFoundException(`AccionCorrectivaAgua #${id} no encontrada`);
-    }
 
     return accion;
   }

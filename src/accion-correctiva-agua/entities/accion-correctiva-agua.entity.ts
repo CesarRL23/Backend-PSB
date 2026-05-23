@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { FuenteAgua } from '../../fuente-agua/entities/fuente-agua.entity';
 import { RegistroAgua } from '../../registro-agua/entities/registro-agua.entity';
 
 export enum EstadoAccionCorrectiva {
@@ -20,6 +21,9 @@ export class AccionCorrectivaAgua {
 
   @PrimaryGeneratedColumn('uuid')
   id!: string;
+
+  @Column({ name: 'fuente_agua_id', type: 'uuid' })
+  fuenteAguaId!: string;
 
   @Column({ name: 'registro_agua_id', type: 'uuid' })
   registroAguaId!: string;
@@ -46,11 +50,16 @@ export class AccionCorrectivaAgua {
   })
   estado!: EstadoAccionCorrectiva;
 
+  @Column({ name: 'evidencia_foto', length: 500, nullable: true })
+  evidenciaFoto?: string;
+
   // ─── Relaciones ──────────────────────────────────────────────────────────────
+
+  @ManyToOne(() => FuenteAgua, () => FuenteAgua)
+  @JoinColumn({ name: 'fuente_agua_id' })
+  fuenteAgua!: FuenteAgua;
 
   @ManyToOne(() => RegistroAgua, () => RegistroAgua)
   @JoinColumn({ name: 'registro_agua_id' })
   registroAgua!: RegistroAgua;
-  
-
 }

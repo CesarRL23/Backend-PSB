@@ -49,6 +49,9 @@ export class MantenimientoLavado {
   })
   estado!: EstadoMantenimiento;
 
+  @Column({ name: 'evidencia_foto', length: 500, nullable: true })
+  evidenciaFoto?: string;
+
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @ManyToOne(() => FuenteAgua, (fuente) => fuente.mantenimientos)

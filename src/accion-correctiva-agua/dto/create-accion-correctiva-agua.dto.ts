@@ -14,7 +14,11 @@ export class CreateAccionCorrectivaAguaDto {
 
   @IsUUID()
   @IsNotEmpty()
-  registroAguaId!: string;
+  fuenteAguaId!: string;
+
+  @IsUUID()
+  @IsOptional()
+  registroAguaId?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -40,4 +44,9 @@ export class CreateAccionCorrectivaAguaDto {
   @IsEnum(EstadoAccionCorrectiva)
   @IsOptional()
   estado?: EstadoAccionCorrectiva;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  evidenciaFoto?: string;
 }

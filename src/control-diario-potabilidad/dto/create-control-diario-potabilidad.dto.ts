@@ -1,10 +1,12 @@
 import {
-  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
+  Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 
@@ -37,7 +39,32 @@ export class CreateControlDiarioPotabilidadDto {
   @Min(0)
   turbiedad!: number;
 
-  @IsBoolean()
+  @IsNumber()
+  @IsNotEmpty()
+  @Min(0)
+  @Max(500)
+  colorAparente!: number;
+
+  @IsNumber()
   @IsOptional()
-  cumpleNorma?: boolean;
+  @Min(-10)
+  @Max(100)
+  temperatura?: number;
+
+  @IsString()
+  @IsNotEmpty()
+  puntoCaptacion!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  responsableMuestra!: string;
+
+  @IsString()
+  @IsOptional()
+  observaciones?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  evidenciaFoto?: string;
 }

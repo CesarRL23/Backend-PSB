@@ -4,74 +4,73 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AccionCorrectivaAguaService } from './accion-correctiva-agua.service';
 import { CreateAccionCorrectivaAguaDto } from './dto/create-accion-correctiva-agua.dto';
 import { UpdateAccionCorrectivaAguaDto } from './dto/update-accion-correctiva-agua.dto';
 
 @Controller('acciones-correctivas-agua')
+@UseGuards(JwtAuthGuard)
 export class AccionCorrectivaAguaController {
   constructor(
     private readonly accionCorrectivaAguaService: AccionCorrectivaAguaService,
   ) {}
 
-  // ─── Crear ─────────────────────────────────────────────────────
-
-  @Post()
-  create(@Body() dto: CreateAccionCorrectivaAguaDto) {
-    return this.accionCorrectivaAguaService.create(dto);
+  @Get('me')
+  getMe(@CurrentUser() user) {
+    return user;
   }
 
-  // ─── Listar todas ──────────────────────────────────────────────
+  @Post()
+  create(
+    @Body() dto: CreateAccionCorrectivaAguaDto,
+    @CurrentUser() user,
+  ) {
+    return this.accionCorrectivaAguaService.create(dto, user.id);
+  }
 
   @Get()
   findAll() {
     return this.accionCorrectivaAguaService.findAll();
   }
 
-  // ─── Listar pendientes ─────────────────────────────────────────
-
   @Get('pendientes')
   findPendientes() {
     return this.accionCorrectivaAguaService.findPendientes();
   }
 
-  // ─── Listar por registro agua ─────────────────────────────────
-
   @Get('registro/:registroAguaId')
   findByRegistroAgua(
-    @Param('registroAguaId') registroAguaId: string,
+    @Param('registroAguaId', ParseUUIDPipe) registroAguaId: string,
   ) {
     return this.accionCorrectivaAguaService.findByRegistroAgua(
       registroAguaId,
     );
   }
 
-  // ─── Buscar una ────────────────────────────────────────────────
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.accionCorrectivaAguaService.findOne(id);
   }
 
-  // ─── Actualizar ────────────────────────────────────────────────
-
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAccionCorrectivaAguaDto,
   ) {
     return this.accionCorrectivaAguaService.update(id, dto);
   }
 
-  // ─── Completar acción ──────────────────────────────────────────
-
   @Patch(':id/completar')
   completar(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body('resultadoVerificacion') resultadoVerificacion: string,
   ) {
     return this.accionCorrectivaAguaService.completar(
@@ -80,10 +79,8 @@ export class AccionCorrectivaAguaController {
     );
   }
 
-  // ─── Eliminar ──────────────────────────────────────────────────
-
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.accionCorrectivaAguaService.remove(id);
   }
 }

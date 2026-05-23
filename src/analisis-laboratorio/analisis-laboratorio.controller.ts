@@ -35,25 +35,20 @@ export class AnalisisLaboratorioController {
     @Body() createDto: CreateAnalisisLaboratorioDto,
     @CurrentUser() user,
   ) {
-    return this.analisisService.create(createDto);
+    return this.analisisService.create(createDto, user.id);
   }
 
   @Get()
   findAll(
     @Query('fuenteAguaId') fuenteAguaId: string,
-    @CurrentUser() user,
   ) {
-    if (fuenteAguaId) {
+    if (fuenteAguaId)
       return this.analisisService.findByFuente(fuenteAguaId);
-    }
     return this.analisisService.findAll();
   }
 
   @Get(':id')
-  findOne(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user,
-  ) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.analisisService.findOne(id);
   }
 
@@ -61,16 +56,12 @@ export class AnalisisLaboratorioController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDto: UpdateAnalisisLaboratorioDto,
-    @CurrentUser() user,
   ) {
     return this.analisisService.update(id, updateDto);
   }
 
   @Delete(':id')
-  remove(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user,
-  ) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.analisisService.remove(id);
   }
 }

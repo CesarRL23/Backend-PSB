@@ -9,6 +9,10 @@ import { Repository } from 'typeorm';
 import { MantenimientoLavado, EstadoMantenimiento } from './entities/mantenimiento-lavado.entity';
 import { CreateMantenimientoLavadoDto } from './dto/create-mantenimiento-lavado.dto';
 import { UpdateMantenimientoLavadoDto } from './dto/update-mantenimiento-lavado.dto';
+import { FuenteAgua } from '../fuente-agua/entities/fuente-agua.entity';
+import { RegistroService } from '../registro/registro.service';
+import { RegistroAguaService } from '../registro-agua/registro-agua.service';
+import { TipoActividadAgua, ResultadoGeneralAgua } from '../registro-agua/entities/registro-agua.entity';
 
 @Injectable()
 export class MantenimientoLavadoService {
@@ -16,12 +20,55 @@ export class MantenimientoLavadoService {
   constructor(
     @InjectRepository(MantenimientoLavado)
     private readonly mantenimientoRepository: Repository<MantenimientoLavado>,
+    @InjectRepository(FuenteAgua)
+    private readonly fuenteAguaRepository: Repository<FuenteAgua>,
+    private readonly registroService: RegistroService,
+    private readonly registroAguaService: RegistroAguaService,
   ) {}
 
   // ─── Crear ───────────────────────────────────────────────────────────────────
 
-  async create(dto: CreateMantenimientoLavadoDto): Promise<MantenimientoLavado> {
-    const mantenimiento = this.mantenimientoRepository.create(dto);
+  async create(
+    dto: CreateMantenimientoLavadoDto,
+    usuarioId: string,
+  ): Promise<MantenimientoLavado> {
+    const fuenteAgua = await this.fuenteAguaRepository.findOne({
+      where: { id: dto.fuenteAguaId },
+      relations: {
+        programaAgua: {
+          programa: true,
+        },
+      },
+    });
+
+    if (!fuenteAgua)
+      throw new NotFoundException('Fuente de agua no encontrada');
+
+    const programaAgua = fuenteAgua.programaAgua;
+    if (!programaAgua)
+      throw new NotFoundException('No se encontró un programa de agua asociado a la fuente');
+
+    const programaId = programaAgua.programa.id;
+    const programaAguaId = programaAgua.id;
+
+    const registro = await this.registroService.create({
+      programaId,
+      usuarioId,
+      fecha: new Date(dto.fechaProgramada),
+    });
+
+    const registroAgua = await this.registroAguaService.create({
+      registroId: registro.id,
+      programaAguaId,
+      tipoActividad: TipoActividadAgua.MANTENIMIENTO_LAVADO,
+      resultadoGeneral: ResultadoGeneralAgua.EN_PROCESO,
+    });
+
+    const mantenimiento = this.mantenimientoRepository.create({
+      ...dto,
+      registroAguaId: registroAgua.id,
+    });
+
     return this.mantenimientoRepository.save(mantenimiento);
   }
 

@@ -40,4 +40,9 @@ export class CreateMantenimientoLavadoDto {
   @IsEnum(EstadoMantenimiento)
   @IsOptional()
   estado?: EstadoMantenimiento;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  evidenciaFoto?: string;
 }

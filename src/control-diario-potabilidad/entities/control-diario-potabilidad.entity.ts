@@ -33,8 +33,32 @@ export class ControlDiarioPotabilidad {
   @Column({ type: 'double precision' })
   turbiedad!: number;
 
+  @Column({ name: 'color_aparente', type: 'double precision' })
+  colorAparente!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  temperatura!: number;
+
+  @Column({ name: 'punto_captacion', length: 300 })
+  puntoCaptacion!: string;
+
+  @Column({ name: 'responsable_muestra', length: 200 })
+  responsableMuestra!: string;
+
+  @Column({ type: 'text', nullable: true })
+  observaciones!: string;
+
   @Column({ name: 'cumple_norma', default: false })
   cumpleNorma!: boolean;
+
+  @Column({ name: 'requiere_analisis_laboratorio', default: false })
+  requiereAnalisisLaboratorio!: boolean;
+
+  @Column({ name: 'parametro_fuera_rango', length: 500, nullable: true })
+  parametroFueraRango!: string | null;
+
+  @Column({ name: 'evidencia_foto', length: 500, nullable: true })
+  evidenciaFoto?: string;
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
