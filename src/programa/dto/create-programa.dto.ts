@@ -1,37 +1,32 @@
 import {
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
 } from 'class-validator';
 
-import { TipoPrograma, FrecuenciaPrograma } from '../entities/programa.entity';
+import { FrecuenciaPrograma } from '../entities/programa.entity';
 
 export class CreateProgramaDto {
-
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   planPsbId!: string;
 
-  @IsEnum(TipoPrograma)
-  @IsNotEmpty()
-  tipo!: TipoPrograma;
-
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @MaxLength(200)
-  nombre!: string;
+  nombre?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @MaxLength(150)
-  responsable!: string;
+  responsable?: string;
 
   @IsEnum(FrecuenciaPrograma)
-  @IsNotEmpty()
-  frecuencia!: FrecuenciaPrograma;
+  @IsOptional()
+  frecuencia?: FrecuenciaPrograma;
 
   @IsString()
   @IsOptional()

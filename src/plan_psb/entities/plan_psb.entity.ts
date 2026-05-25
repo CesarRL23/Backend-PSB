@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne } from 'typeorm';
 import { Empresa } from '../../empresa/entities/empresa.entity';
 import { TipoAlimento } from 'src/tipo-alimento/entities/tipo-alimento.entity';
+import { Programa } from '../../programa/entities/programa.entity';
 
 @Entity('plan_psb')
 export class PlanPsb {
@@ -27,4 +28,7 @@ export class PlanPsb {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt?: Date;
+
+  @OneToOne(() => Programa, (programa) => programa.planPsb)
+  programa?: Programa;
 }

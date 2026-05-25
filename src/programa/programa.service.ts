@@ -22,13 +22,11 @@ export class ProgramaService {
 
   async create(dto: CreateProgramaDto): Promise<Programa> {
     const existente = await this.programaRepository.findOne({
-      where: { planPsbId: dto.planPsbId, tipo: dto.tipo },
+      where: { planPsbId: dto.planPsbId },
     });
 
     if (existente) {
-      throw new ConflictException(
-        `Ya existe un programa de tipo "${dto.tipo}" para este plan PSB`,
-      );
+      throw new ConflictException('Ya existe un programa para este plan PSB');
     }
 
     const programa = this.programaRepository.create(dto);

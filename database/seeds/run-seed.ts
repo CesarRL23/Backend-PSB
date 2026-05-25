@@ -9,11 +9,7 @@ import { AppModule } from '../../src/app.module';
 import { Empresa } from '../../src/empresa/entities/empresa.entity';
 import { TipoAlimento } from '../../src/tipo-alimento/entities/tipo-alimento.entity';
 import { PlanPsb } from '../../src/plan_psb/entities/plan_psb.entity';
-import {
-  FrecuenciaPrograma,
-  Programa,
-  TipoPrograma,
-} from '../../src/programa/entities/programa.entity';
+import { Programa } from '../../src/programa/entities/programa.entity';
 import { User } from '../../src/users/entities/user.entity';
 import {
   EstadoRegistro,
@@ -185,36 +181,15 @@ async function seed() {
       }),
     ]);
 
-    const planList = await planRepo.save([
+    const plan = await planRepo.save(
       planRepo.create({
-        version: 'v2026.1-limpieza',
+        version: 'v2026.1',
         estado: 'vigente',
         nivel_riesgo: 'alto',
         empresa,
         tipoAlimento: tipoAlimentoList[0],
       }),
-      planRepo.create({
-        version: 'v2026.1-agua',
-        estado: 'vigente',
-        nivel_riesgo: 'alto',
-        empresa,
-        tipoAlimento: tipoAlimentoList[0],
-      }),
-      planRepo.create({
-        version: 'v2026.1-plagas',
-        estado: 'vigente',
-        nivel_riesgo: 'alto',
-        empresa,
-        tipoAlimento: tipoAlimentoList[0],
-      }),
-      planRepo.create({
-        version: 'v2026.1-residuos',
-        estado: 'vigente',
-        nivel_riesgo: 'medio',
-        empresa,
-        tipoAlimento: tipoAlimentoList[1],
-      }),
-    ]);
+    );
 
     const users = await userRepo.save([
       userRepo.create({
@@ -248,54 +223,18 @@ async function seed() {
       }),
     ]);
 
-    // Usar insert() evita el cascade/update tracking de TypeORM que generaba UpdateValuesMissingError
-    await programaRepo.insert([
-      {
-        planPsbId: planList[0].id,
-        tipo: TipoPrograma.LIMPIEZA,
-        nombre: 'Programa de limpieza y desinfeccion',
+    const programa = await programaRepo.save(
+      programaRepo.create({
+        planPsbId: plan.id,
+        nombre: 'Plan de Saneamiento Basico',
         responsable: users[1].nombre,
-        frecuencia: FrecuenciaPrograma.DIARIO,
-        descripcion: 'Rutinas preoperacionales y posoperacionales en superficies de contacto.',
-      },
-      {
-        planPsbId: planList[1].id,
-        tipo: TipoPrograma.AGUA,
-        nombre: 'Programa de control de agua potable',
-        responsable: users[0].nombre,
-        frecuencia: FrecuenciaPrograma.DIARIO,
-        descripcion: 'Seguimiento de potabilidad, lavado de tanque y analisis periodico.',
-      },
-      {
-        planPsbId: planList[2].id,
-        tipo: TipoPrograma.PLAGAS,
-        nombre: 'Programa de manejo integrado de plagas',
-        responsable: users[1].nombre,
-        frecuencia: FrecuenciaPrograma.SEMANAL,
-        descripcion: 'Control preventivo, revision de trampas y atencion de hallazgos.',
-      },
-      {
-        planPsbId: planList[3].id,
-        tipo: TipoPrograma.RESIDUOS,
-        nombre: 'Programa de gestion integral de residuos',
-        responsable: users[0].nombre,
-        frecuencia: FrecuenciaPrograma.DIARIO,
-        descripcion: 'Segregacion, almacenamiento temporal y disposicion final.',
-      },
-    ]);
-    const programas = await programaRepo.find({
-      where: [
-        { planPsbId: planList[0].id },
-        { planPsbId: planList[1].id },
-        { planPsbId: planList[2].id },
-        { planPsbId: planList[3].id },
-      ],
-      order: { createdAt: 'ASC' },
-    });
+        descripcion: 'Programa general que integra los cuatro modulos del PSB.',
+      }),
+    );
 
     const registros = await registroRepo.save([
       registroRepo.create({
-        programaId: programas[0].id,
+        programaId: programa.id,
         usuarioId: users[2].id,
         fecha: new Date('2026-05-12'),
         horaInicio: '06:00:00',
@@ -305,7 +244,7 @@ async function seed() {
         estado: EstadoRegistro.COMPLETADO,
       }),
       registroRepo.create({
-        programaId: programas[1].id,
+        programaId: programa.id,
         usuarioId: users[1].id,
         fecha: new Date('2026-05-12'),
         horaInicio: '07:00:00',
@@ -315,7 +254,7 @@ async function seed() {
         estado: EstadoRegistro.COMPLETADO,
       }),
       registroRepo.create({
-        programaId: programas[2].id,
+        programaId: programa.id,
         usuarioId: users[1].id,
         fecha: new Date('2026-05-13'),
         horaInicio: '08:00:00',
@@ -325,7 +264,7 @@ async function seed() {
         estado: EstadoRegistro.EN_PROCESO,
       }),
       registroRepo.create({
-        programaId: programas[3].id,
+        programaId: programa.id,
         usuarioId: users[2].id,
         fecha: new Date('2026-05-13'),
         horaInicio: '15:00:00',
@@ -352,7 +291,7 @@ async function seed() {
     await notificationRepo.save([
       notificationRepo.create({
         usuarioId: users[1].id,
-        programaId: programas[2].id,
+        programaId: programa.id,
         registroId: registros[2].id,
         tipo: 'alerta',
         titulo: 'Hallazgo de plagas pendiente',
@@ -364,7 +303,7 @@ async function seed() {
       }),
       notificationRepo.create({
         usuarioId: users[0].id,
-        programaId: programas[1].id,
+        programaId: programa.id,
         registroId: registros[1].id,
         tipo: 'recordatorio',
         titulo: 'Analisis de laboratorio cargado',
@@ -387,7 +326,7 @@ async function seed() {
 
     const programaLimpieza = await programaLimpiezaRepo.save(
       programaLimpiezaRepo.create({
-        programaId: programas[0].id,
+        programaId: programa.id,
         equipoAreaId: equipoArea.id,
         objetivo:
           'Garantizar superficies higienizadas antes, durante y despues de la operacion.',
@@ -545,7 +484,7 @@ async function seed() {
 
     const programaAgua = await programaAguaRepo.save(
       programaAguaRepo.create({
-        programaId: programas[1].id,
+        programaId: programa.id,
         objetivo: 'Asegurar que el agua utilizada sea apta para uso alimentario.',
         alcance:
           'Red interna, punto de proceso, tanque elevado y lavamanos operativos.',
@@ -660,7 +599,7 @@ async function seed() {
 
     const programaPlagas = await programaPlagasRepo.save(
       programaPlagasRepo.create({
-        programaId: programas[2].id,
+        programaId: programa.id,
         objetivo:
           'Prevenir, detectar y controlar oportunamente la presencia de plagas.',
         alcance: 'Bodega, cuarto frio, despacho y perimetro externo.',
@@ -784,7 +723,7 @@ async function seed() {
     // Usar insert() para evitar UpdateValuesMissingError con programaResiduo/@OneToOne@JoinColumn
     const programaResiduo = await programaResiduoRepo.save(
       programaResiduoRepo.create({
-        programaId: programas[3].id,
+        programaId: programa.id,
         objetivo: 'Segregar y disponer adecuadamente residuos ordinarios, reciclables y peligrosos.',
         alcance: 'Todas las areas productivas, administrativas y de despacho.',
         procedimiento_general: 'Clasificacion en fuente, acopio temporal, pesaje y entrega a gestor.',
@@ -860,9 +799,9 @@ async function seed() {
       [
         `Empresa: 1`,
         `Tipos de alimento: ${tipoAlimentoList.length}`,
-        `Planes PSB: ${planList.length}`,
+        `Planes PSB: 1`,
         `Usuarios: ${users.length}`,
-        `Programas: ${programas.length}`,
+        `Programas: 1 (+ 4 sub-programas)`,
         `Registros base: ${registros.length}`,
       ].join('\n'),
     );
