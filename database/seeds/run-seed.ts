@@ -1,5 +1,6 @@
 import 'reflect-metadata';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 import { randomUUID } from 'node:crypto';
 
 import { NestFactory } from '@nestjs/core';
