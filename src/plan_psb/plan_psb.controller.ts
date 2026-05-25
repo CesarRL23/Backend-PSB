@@ -19,16 +19,16 @@ export class PlanPsbController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.planPsbService.findOne(+id);
+    return this.planPsbService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePlanPsbDto: UpdatePlanPsbDto) {
-    return this.planPsbService.update(+id, updatePlanPsbDto);
+    return this.planPsbService.update(id, updatePlanPsbDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.planPsbService.remove(+id);
+    return this.planPsbService.remove(id);
   }
 }

@@ -12,6 +12,7 @@ import { Registro } from '../../registro/entities/registro.entity';
 import { ProgramaLimpieza } from '../../programa-limpieza/entities/programa-limpieza.entity';
 import { ChecklistLimpieza } from '../../checklist-limpieza/entities/checklist-limpieza.entity';
 import { VerificacionLimpieza } from '../../verificacion-limpieza/entities/verificacion-limpieza.entity';
+import { EquipoArea } from '../../equipo-area/entities/equipo-area.entity';
 
 @Entity('registro_limpieza')
 export class RegistroLimpieza {
@@ -24,6 +25,9 @@ export class RegistroLimpieza {
 
   @Column({ name: 'programa_limpieza_id', type: 'uuid' })
   programaLimpiezaId!: string;
+
+  @Column({ name: 'equipo_area_id', type: 'uuid', nullable: true })
+  equipoAreaId!: string;
 
   @Column({ name: 'superficie_limpiada', length: 300 })
   superficieLimpiada!: string;
@@ -43,6 +47,10 @@ export class RegistroLimpieza {
   @ManyToOne(() => ProgramaLimpieza, { nullable: false, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'programa_limpieza_id' })
   programaLimpieza!: ProgramaLimpieza;
+
+  @ManyToOne(() => EquipoArea, (ea) => ea.registrosLimpieza, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'equipo_area_id' })
+  equipoArea!: EquipoArea;
 
   @OneToMany(() => ChecklistLimpieza, (c) => c.registroLimpieza)
   checklistItems!: ChecklistLimpieza[];

@@ -8,17 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { InsumoQuimicoService } from './insumo-quimico.service';
 import { CreateInsumoQuimicoDto } from './dto/create-insumo-quimico.dto';
 import { UpdateInsumoQuimicoDto } from './dto/update-insumo-quimico.dto';
 
 @Controller('insumo-quimico')
-@UseGuards(JwtAuthGuard)
 export class InsumoQuimicoController {
 
   constructor(

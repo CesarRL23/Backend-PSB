@@ -29,6 +29,7 @@ import { HallazgoPlagasModule } from './hallazgo-plagas/hallazgo-plagas.module';
 import { TipoPlagaModule } from './tipo-plaga/tipo-plaga.module';
 import { PlaguicidaModule } from './plaguicida/plaguicida.module';
 import { AccionCorrectivaPlagasModule } from './accion-correctiva-plagas/accion-correctiva-plagas.module';
+import { EquipoAreaModule } from './equipo-area/equipo-area.module';
 import { ProgramaLimpiezaModule } from './programa-limpieza/programa-limpieza.module';
 import { PasoLimpiezaPqModule } from './paso-limpieza-pq/paso-limpieza-pq.module';
 import { RegistroLimpiezaModule } from './registro-limpieza/registro-limpieza.module';
@@ -106,6 +107,7 @@ import { UploadsModule } from './uploads/uploads.module';
     InsumoQuimicoModule,
     RegistroAguaModule,
     AccionCorrectivaAguaModule,
+    EquipoAreaModule,
     ProgramaLimpiezaModule,
     PasoLimpiezaPqModule,
     RegistroLimpiezaModule,

@@ -28,7 +28,7 @@ export class EmpresaService {
     });
   }
 
-  async findOne(id: number): Promise<Empresa> {
+  async findOne(id: string): Promise<Empresa> {
     const empresa = await this.empresaRepository.findOne({ where: { id } });
     if (!empresa) {
       throw new NotFoundException(`Empresa con id ${id} no encontrada`);
@@ -44,13 +44,13 @@ export class EmpresaService {
     return empresa;
   }
 
-  async update(id: number, updateEmpresaDto: UpdateEmpresaDto): Promise<Empresa> {
+  async update(id: string, updateEmpresaDto: UpdateEmpresaDto): Promise<Empresa> {
     const empresa = await this.findOne(id);
     Object.assign(empresa, updateEmpresaDto);
     return this.empresaRepository.save(empresa);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     // Soft delete: desactiva en lugar de borrar físicamente
     const empresa = await this.findOne(id);
     await this.empresaRepository.save(empresa);

@@ -1,8 +1,9 @@
 import {
   IsBoolean,
   IsNotEmpty,
-  IsNumber,
+  IsOptional,
   IsString,
+  IsUUID,
 } from 'class-validator';
 
 export class CreatePlanPsbDto {
@@ -18,14 +19,14 @@ export class CreatePlanPsbDto {
 
   @IsString()
   version: string;
-@IsString()
+
+  @IsString()
   estado: string;
 
-
-
   @IsBoolean()
-  activo: boolean;
+  @IsOptional()
+  activo?: boolean;
 
-  @IsNumber()
-  empresaId: number;
+  @IsUUID()
+  empresaId: string;
 }

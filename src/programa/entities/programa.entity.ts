@@ -16,13 +16,6 @@ import { ProgramaLimpieza } from 'src/programa-limpieza/entities/programa-limpie
 import { ProgramaPlagas } from 'src/programa-plagas/entities/programa-plagas.entity';
 import { ProgramaResiduo } from '../../programa-residuos/entities/programa-residuo.entity';
 
-export enum TipoPrograma {
-  LIMPIEZA = 'limpieza',
-  PLAGAS = 'plagas',
-  AGUA = 'agua',
-  RESIDUOS = 'residuos',
-}
-
 export enum FrecuenciaPrograma {
   DIARIO = 'diario',
   SEMANAL = 'semanal',
@@ -38,23 +31,20 @@ export class Programa {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ name: 'plan_psb_id', type: 'uuid' })
+  @Column({ name: 'plan_psb_id', type: 'uuid', unique: true })
   planPsbId!: string;
 
-  @Column({ type: 'enum', enum: TipoPrograma })
-  tipo!: TipoPrograma;
+  @Column({ length: 200, nullable: true })
+  nombre?: string;
 
-  @Column({ length: 200 })
-  nombre!: string;
+  @Column({ length: 150, nullable: true })
+  responsable?: string;
 
-  @Column({ length: 150 })
-  responsable!: string;
-
-  @Column({ type: 'enum', enum: FrecuenciaPrograma })
-  frecuencia!: FrecuenciaPrograma;
+  @Column({ type: 'enum', enum: FrecuenciaPrograma, nullable: true })
+  frecuencia?: FrecuenciaPrograma;
 
   @Column({ type: 'text', nullable: true })
-  descripcion!: string;
+  descripcion?: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
@@ -65,6 +55,7 @@ export class Programa {
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @OneToOne(() => PlanPsb, (plan) => plan.programa)
+  @JoinColumn({ name: 'plan_psb_id' })
   planPsb!: PlanPsb;
 
   @OneToMany(() => Registro, (registro) => registro.programa)

@@ -7,16 +7,13 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProgramaLimpiezaService } from './programa-limpieza.service';
 import { CreateProgramaLimpiezaDto } from './dto/create-programa-limpieza.dto';
 import { UpdateProgramaLimpiezaDto } from './dto/update-programa-limpieza.dto';
 
 @Controller('programas-limpieza')
-@UseGuards(JwtAuthGuard)
 export class ProgramaLimpiezaController {
 
   constructor(

@@ -10,6 +10,10 @@ export class CreateRegistroLimpiezaDto {
   @IsNotEmpty()
   programaLimpiezaId!: string;
 
+  @IsUUID()
+  @IsOptional()
+  equipoAreaId?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(300)

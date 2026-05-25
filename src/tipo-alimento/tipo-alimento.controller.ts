@@ -1,11 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TipoAlimentoService } from './tipo-alimento.service';
 import { CreateTipoAlimentoDto } from './dto/create-tipo-alimento.dto';
 import { UpdateTipoAlimentoDto } from './dto/update-tipo-alimento.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('tipo-alimento')
 export class TipoAlimentoController {
   constructor(private readonly tipoAlimentoService: TipoAlimentoService) {}

@@ -8,17 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { MantenimientoLavadoService } from './mantenimiento-lavado.service';
 import { CreateMantenimientoLavadoDto } from './dto/create-mantenimiento-lavado.dto';
 import { UpdateMantenimientoLavadoDto } from './dto/update-mantenimiento-lavado.dto';
 
 @Controller('mantenimiento-lavado')
-@UseGuards(JwtAuthGuard)
 export class MantenimientoLavadoController {
 
   constructor(

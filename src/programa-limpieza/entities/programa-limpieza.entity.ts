@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import {
 
 import { Programa } from '../../programa/entities/programa.entity';
 import { PasoLimpieza } from '../../paso-limpieza/entities/paso-limpieza.entity';
+import { EquipoArea } from '../../equipo-area/entities/equipo-area.entity';
 
 @Entity('programa_limpieza')
 export class ProgramaLimpieza {
@@ -20,6 +22,9 @@ export class ProgramaLimpieza {
 
   @Column({ name: 'programa_id', type: 'uuid' })
   programaId!: string;
+
+  @Column({ name: 'equipo_area_id', type: 'uuid', nullable: true })
+  equipoAreaId!: string;
 
   @Column({ length: 300 })
   objetivo!: string;
@@ -41,6 +46,10 @@ export class ProgramaLimpieza {
   @OneToOne(() => Programa)
   @JoinColumn({ name: 'programa_id' })
   programa!: Programa;
+
+  @ManyToOne(() => EquipoArea, (ea) => ea.programasLimpieza, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'equipo_area_id' })
+  equipoArea!: EquipoArea;
 
   @OneToMany(() => PasoLimpieza, (paso) => paso.programaLimpieza)
   pasosLimpieza!: PasoLimpieza[];

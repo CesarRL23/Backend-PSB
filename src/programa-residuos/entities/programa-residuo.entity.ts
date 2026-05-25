@@ -4,7 +4,7 @@ import { Programa } from "src/programa/entities/programa.entity";
 import { RegistroResiduo } from "src/registro-residuos/entities/registro-residuo.entity";
 import { Residuo } from "src/residuo/entities/residuo.entity";
 import { TipoResiduo } from "src/tipo-residuo/entities/tipo-residuo.entity";
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('programa_residuo')
 export class ProgramaResiduo {
@@ -20,8 +20,11 @@ export class ProgramaResiduo {
     @Column()
     procedimiento_general!: string;
 
-    
+    @Column({ name: 'programa_id', type: 'uuid', nullable: true })
+    programaId?: string;
+
     @OneToOne(() => Programa, programa => programa.programaResiduo)
+    @JoinColumn({ name: 'programa_id' })
     programa!: Programa;
     
 

@@ -1,11 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { DisposicionFinalService } from './disposicion-final.service';
 import { CreateDisposicionFinalDto } from './dto/create-disposicion-final.dto';
 import { UpdateDisposicionFinalDto } from './dto/update-disposicion-final.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('disposicion-final')
 export class DisposicionFinalController {
   constructor(private readonly disposicionFinalService: DisposicionFinalService) {}
