@@ -2,11 +2,13 @@ import 'reflect-metadata';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { randomUUID } from 'node:crypto';
+import * as path from 'node:path';
 
-import { NestFactory } from '@nestjs/core';
+import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
-import { AppModule } from '../../src/app.module';
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
 import { Empresa } from '../../src/empresa/entities/empresa.entity';
 import { TipoAlimento } from '../../src/tipo-alimento/entities/tipo-alimento.entity';
 import { PlanPsb } from '../../src/plan_psb/entities/plan_psb.entity';
@@ -90,14 +92,70 @@ async function truncateDatabase(dataSource: DataSource) {
 }
 
 async function seed() {
-  const app = await NestFactory.createApplicationContext(AppModule, {
-    logger: ['error', 'warn'],
+  const dataSource = new DataSource({
+    type: 'postgres',
+    host: process.env.DB_HOST ?? 'localhost',
+    port: Number(process.env.DB_PORT ?? 5432),
+    username: process.env.DB_USER ?? 'postgres',
+    password: process.env.DB_PASS ?? '',
+    database: process.env.DB_NAME ?? 'psb',
+    entities: [
+      Empresa,
+      TipoAlimento,
+      PlanPsb,
+      Programa,
+      User,
+      Registro,
+      Notification,
+      VersionPlan,
+      EquipoArea,
+      ProgramaLimpieza,
+      PasoLimpieza,
+      ProductoQuimico,
+      PasoLimpiezaPq,
+      RegistroLimpieza,
+      ChecklistLimpieza,
+      MedicionPaso,
+      VerificacionLimpieza,
+      ProgramaAgua,
+      FuenteAgua,
+      TanqueAlmacenamiento,
+      RegistroAgua,
+      ControlDiarioPotabilidad,
+      AnalisisLaboratorio,
+      MantenimientoLavado,
+      InsumoQuimico,
+      AccionCorrectivaAgua,
+      ProgramaPlagas,
+      EmpresaFumigadora,
+      DiagnosticoPlagas,
+      CronogramaPlagas,
+      AreaPlagas,
+      Trampa,
+      TipoPlaga,
+      Plaguicida,
+      RegistroPlagas,
+      HallazgoPlagas,
+      AccionCorrectivaPlagas,
+      EvidenciaPlagas,
+      ProgramaResiduo,
+      TipoResiduo,
+      AreaGenereacion,
+      Contenedeor,
+      Residuo,
+      RegistroResiduo,
+      Recoleccion,
+      DisposicionFinal,
+      ChecklistResiduo,
+      EvidenciaResiduo,
+    ],
+    synchronize: true,
+    dropSchema: true,
+    logging: false,
   });
 
+  await dataSource.initialize();
   try {
-    const dataSource = app.get(DataSource);
-    await truncateDatabase(dataSource);
-
     const empresaRepo = dataSource.getRepository(Empresa);
     const tipoAlimentoRepo = dataSource.getRepository(TipoAlimento);
     const planRepo = dataSource.getRepository(PlanPsb);
@@ -816,7 +874,7 @@ async function seed() {
       ].join('\n'),
     );
   } finally {
-    await app.close();
+    await dataSource.destroy();
   }
 }
 
