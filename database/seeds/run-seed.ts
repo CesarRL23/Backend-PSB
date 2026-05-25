@@ -35,6 +35,11 @@ import {
   TipoParametro,
 } from '../../src/medicion-paso/entities/medicion-paso.entity';
 import { VerificacionLimpieza } from '../../src/verificacion-limpieza/entities/verificacion-limpieza.entity';
+import {
+  EquipoArea,
+  TipoEquipoArea,
+  EstadoEquipoArea,
+} from '../../src/equipo-area/entities/equipo-area.entity';
 import { ProgramaAgua } from '../../src/programa-agua/entities/programa-agua.entity';
 import { FuenteAgua } from '../../src/fuente-agua/entities/fuente-agua.entity';
 import { TanqueAlmacenamiento } from '../../src/tanque-almacenamiento/entities/tanque-almacenamiento.entity';
@@ -105,6 +110,7 @@ async function seed() {
     const notificationRepo = dataSource.getRepository(Notification);
     const versionPlanRepo = dataSource.getRepository(VersionPlan);
 
+    const equipoAreaRepo = dataSource.getRepository(EquipoArea);
     const programaLimpiezaRepo = dataSource.getRepository(ProgramaLimpieza);
     const pasoLimpiezaRepo = dataSource.getRepository(PasoLimpieza);
     const productoQuimicoRepo = dataSource.getRepository(ProductoQuimico);
@@ -213,7 +219,7 @@ async function seed() {
     const users = await userRepo.save([
       userRepo.create({
         id: '9a6d4b65-08a7-4b0a-bcf6-3c2f4d8b4b11',
-        empresaId: randomUUID(),
+        empresaId: empresa.id,
         nombre: 'Camila Rojas',
         email: 'camila.rojas@psb.local',
         rol: 'admin',
@@ -223,7 +229,7 @@ async function seed() {
       }),
       userRepo.create({
         id: '24c81ba7-df86-4388-bf42-392fc4d69922',
-        empresaId: randomUUID(),
+        empresaId: empresa.id,
         nombre: 'Andres Vega',
         email: 'andres.vega@psb.local',
         rol: 'supervisor',
@@ -233,7 +239,7 @@ async function seed() {
       }),
       userRepo.create({
         id: '5446b271-30e7-4d2f-98f8-6f7d15743933',
-        empresaId: randomUUID(),
+        empresaId: empresa.id,
         nombre: 'Maria Pardo',
         email: 'maria.pardo@psb.local',
         rol: 'operario',
@@ -242,44 +248,50 @@ async function seed() {
       }),
     ]);
 
-    const programas = await programaRepo.save([
-      programaRepo.create({
-        planPsbId: randomUUID(),
+    // Usar insert() evita el cascade/update tracking de TypeORM que generaba UpdateValuesMissingError
+    await programaRepo.insert([
+      {
+        planPsbId: planList[0].id,
         tipo: TipoPrograma.LIMPIEZA,
         nombre: 'Programa de limpieza y desinfeccion',
         responsable: users[1].nombre,
         frecuencia: FrecuenciaPrograma.DIARIO,
-        descripcion:
-          'Rutinas preoperacionales y posoperacionales en superficies de contacto.',
-      }),
-      programaRepo.create({
-        planPsbId: randomUUID(),
+        descripcion: 'Rutinas preoperacionales y posoperacionales en superficies de contacto.',
+      },
+      {
+        planPsbId: planList[1].id,
         tipo: TipoPrograma.AGUA,
         nombre: 'Programa de control de agua potable',
         responsable: users[0].nombre,
         frecuencia: FrecuenciaPrograma.DIARIO,
-        descripcion:
-          'Seguimiento de potabilidad, lavado de tanque y analisis periodico.',
-      }),
-      programaRepo.create({
-        planPsbId: randomUUID(),
+        descripcion: 'Seguimiento de potabilidad, lavado de tanque y analisis periodico.',
+      },
+      {
+        planPsbId: planList[2].id,
         tipo: TipoPrograma.PLAGAS,
         nombre: 'Programa de manejo integrado de plagas',
         responsable: users[1].nombre,
         frecuencia: FrecuenciaPrograma.SEMANAL,
-        descripcion:
-          'Control preventivo, revision de trampas y atencion de hallazgos.',
-      }),
-      programaRepo.create({
-        planPsbId: randomUUID(),
+        descripcion: 'Control preventivo, revision de trampas y atencion de hallazgos.',
+      },
+      {
+        planPsbId: planList[3].id,
         tipo: TipoPrograma.RESIDUOS,
         nombre: 'Programa de gestion integral de residuos',
         responsable: users[0].nombre,
         frecuencia: FrecuenciaPrograma.DIARIO,
-        descripcion:
-          'Segregacion, almacenamiento temporal y disposicion final.',
-      }),
+        descripcion: 'Segregacion, almacenamiento temporal y disposicion final.',
+      },
     ]);
+    const programas = await programaRepo.find({
+      where: [
+        { planPsbId: planList[0].id },
+        { planPsbId: planList[1].id },
+        { planPsbId: planList[2].id },
+        { planPsbId: planList[3].id },
+      ],
+      order: { createdAt: 'ASC' },
+    });
 
     const registros = await registroRepo.save([
       registroRepo.create({
@@ -364,9 +376,19 @@ async function seed() {
       }),
     ]);
 
+    const equipoArea = await equipoAreaRepo.save(
+      equipoAreaRepo.create({
+        empresaId: empresa.id,
+        nombre: 'Mesa de preparacion inox',
+        tipo: TipoEquipoArea.EQUIPO,
+        estado: EstadoEquipoArea.ACTIVO,
+      }),
+    );
+
     const programaLimpieza = await programaLimpiezaRepo.save(
       programaLimpiezaRepo.create({
         programaId: programas[0].id,
+        equipoAreaId: equipoArea.id,
         objetivo:
           'Garantizar superficies higienizadas antes, durante y despues de la operacion.',
         alcance: 'Mesas inox, utensilios, banda transportadora y cuarto frio.',
@@ -448,6 +470,7 @@ async function seed() {
       registroLimpiezaRepo.create({
         registroId: registros[0].id,
         programaLimpiezaId: programaLimpieza.id,
+        equipoAreaId: equipoArea.id,
         superficieLimpiada: 'Mesa de preparacion y banda de empaque',
         resultadoInspeccion: 'conforme',
       }),
@@ -637,6 +660,7 @@ async function seed() {
 
     const programaPlagas = await programaPlagasRepo.save(
       programaPlagasRepo.create({
+        programaId: programas[2].id,
         objetivo:
           'Prevenir, detectar y controlar oportunamente la presencia de plagas.',
         alcance: 'Bodega, cuarto frio, despacho y perimetro externo.',
@@ -647,261 +671,189 @@ async function seed() {
       }),
     );
 
-    await empresaFumigadoraRepo.save(
-      empresaFumigadoraRepo.create({
-        nit: '901555999-1',
-        nombre_empresa: 'Control Integral Ambiental SAS',
-        numCerSanitario: 'CSA-4411',
-        registroSds: 'SDS-CIA-2026',
-        telefonoContacto: '3105554433',
-        fechaVencCer: new Date('2026-10-01T00:00:00'),
-        programaPlagas,
-      }),
-    );
+    // Usar insert() para evitar UpdateValuesMissingError con programaPlagas/@OneToOne@JoinColumn
+    await empresaFumigadoraRepo.insert({
+      nit: '901555999-1',
+      nombre_empresa: 'Control Integral Ambiental SAS',
+      numCerSanitario: 'CSA-4411',
+      registroSds: 'SDS-CIA-2026',
+      telefonoContacto: '3105554433',
+      fechaVencCer: new Date('2026-10-01T00:00:00'),
+      programaPlagas: { id: programaPlagas.id },
+    });
 
-    await diagnosticoPlagasRepo.save(
-      diagnosticoPlagasRepo.create({
-        nivelRiesgo: 'medio',
-        areasEvaluadas:
-          'Muelles, zona de residuos, bodega de secos y perimetro occidental.',
-        plagasIdentificadas: 'Actividad eventual de roedores en zona externa.',
-        observaciones: 'Se recomienda reforzar sellado en puerta de despacho.',
-        fecha: new Date('2026-05-03T08:30:00'),
-        programaPlagas,
-      }),
-    );
+    await diagnosticoPlagasRepo.insert({
+      nivelRiesgo: 'medio',
+      areasEvaluadas: 'Muelles, zona de residuos, bodega de secos y perimetro occidental.',
+      plagasIdentificadas: 'Actividad eventual de roedores en zona externa.',
+      observaciones: 'Se recomienda reforzar sellado en puerta de despacho.',
+      fecha: new Date('2026-05-03T08:30:00'),
+      programaPlagas: { id: programaPlagas.id },
+    });
 
-    await cronogramaPlagasRepo.save(
-      cronogramaPlagasRepo.create({
-        frecuenciaControl: 'semanal',
-        metodoControl: 'Monitoreo con trampas y barreras fisicas',
-        responsable: users[1].nombre,
-        anioVigencia: 2026,
-        programaPlagas,
-      }),
-    );
+    await cronogramaPlagasRepo.insert({
+      frecuenciaControl: 'semanal',
+      metodoControl: 'Monitoreo con trampas y barreras fisicas',
+      responsable: users[1].nombre,
+      anioVigencia: 2026,
+      programaPlagas: { id: programaPlagas.id },
+    });
 
-    const areaPlagas = await areaPlagasRepo.save(
-      areaPlagasRepo.create({
-        nombre: 'Bodega de empaques',
-        descripcion: 'Zona de almacenamiento de material secundario.',
-        nivelRiesgo: 'medio',
-        programaPlagas,
-      }),
-    );
+    const areaPlagasResult = await areaPlagasRepo.insert({
+      nombre: 'Bodega de empaques',
+      descripcion: 'Zona de almacenamiento de material secundario.',
+      nivelRiesgo: 'medio',
+      programaPlagas: { id: programaPlagas.id },
+    });
+    const areaPlagasId = areaPlagasResult.identifiers[0].id;
 
-    await trampaRepo.save([
-      trampaRepo.create({
+    await trampaRepo.insert([
+      {
         codigo: 'TR-EMP-01',
         tipo: 'pegajosa',
         ubicacion: 'Ingreso bodega',
         estado: 'activa',
         fecha_instalacion: new Date('2026-02-01T09:00:00'),
         fecha_revision: new Date('2026-05-13T08:10:00'),
-        areaPlagas,
-      }),
-      trampaRepo.create({
+        areaPlagas: { id: areaPlagasId },
+      },
+      {
         codigo: 'TR-EXT-02',
         tipo: 'cebadera',
         ubicacion: 'Perimetro despacho',
         estado: 'activa',
         fecha_instalacion: new Date('2026-02-01T09:10:00'),
         fecha_revision: new Date('2026-05-13T08:15:00'),
-        areaPlagas,
-      }),
+        areaPlagas: { id: areaPlagasId },
+      },
     ]);
 
     const tiposPlaga = await tipoPlagaRepo.save([
-      tipoPlagaRepo.create({
-        nombre: 'Roedor',
-        categoria: 'vertebrado',
-        riesgoSanitario: 'alto',
-      }),
-      tipoPlagaRepo.create({
-        nombre: 'Mosca',
-        categoria: 'insecto',
-        riesgoSanitario: 'medio',
-      }),
+      tipoPlagaRepo.create({ nombre: 'Roedor', categoria: 'vertebrado', riesgoSanitario: 'alto' }),
+      tipoPlagaRepo.create({ nombre: 'Mosca', categoria: 'insecto', riesgoSanitario: 'medio' }),
     ]);
 
-    const plaguicida = await plaguicidaRepo.save(
-      plaguicidaRepo.create({
-        codigoRegistro: 'PLG-ICA-001',
-        nombreComercial: 'Rodex Block',
-        ingredienteActivo: 'Bromadiolona',
-        categoriaOms: 'II',
-        dosisAplicacion: '1 bloque por punto',
-        registroIca: 'ICA-88701',
-        fichaTecnicaUrl: 'https://example.com/plaguicidas/rodex-block.pdf',
-        programaPlagas,
-      }),
-    );
+    const plaguicidaResult = await plaguicidaRepo.insert({
+      codigoRegistro: 'PLG-ICA-001',
+      nombreComercial: 'Rodex Block',
+      ingredienteActivo: 'Bromadiolona',
+      categoriaOms: 'II',
+      dosisAplicacion: '1 bloque por punto',
+      registroIca: 'ICA-88701',
+      fichaTecnicaUrl: 'https://example.com/plaguicidas/rodex-block.pdf',
+      programaPlagas: { id: programaPlagas.id },
+    });
+    const plaguicidaId = plaguicidaResult.identifiers[0].id;
 
-    const registroPlagas = await registroPlagasRepo.save(
-      registroPlagasRepo.create({
-        TipoActividad: 'inspeccion',
-        resultadoGeneral: 'hallazgo_controlado',
-        registro: registros[2],
-        programaPlagas,
-      }),
-    );
+    const registroPlagasResult = await registroPlagasRepo.insert({
+      TipoActividad: 'inspeccion',
+      resultadoGeneral: 'hallazgo_controlado',
+      registro: { id: registros[2].id },
+      programaPlagas: { id: programaPlagas.id },
+    });
+    const registroPlagasId = registroPlagasResult.identifiers[0].id;
 
-    const hallazgo = await hallazgoPlagasRepo.save(
-      hallazgoPlagasRepo.create({
-        descripcion: 'Se encontro evidencia de roedura en estiba de carton.',
-        severidad: 'media',
-        estado: 'abierto',
-        fecha: new Date('2026-05-13T08:20:00'),
-        registroPlagas,
-        tipoPlaga: tiposPlaga[0],
-      }),
-    );
+    const hallazgoResult = await hallazgoPlagasRepo.insert({
+      descripcion: 'Se encontro evidencia de roedura en estiba de carton.',
+      severidad: 'media',
+      estado: 'abierto',
+      fecha: new Date('2026-05-13T08:20:00'),
+      registroPlagas: { id: registroPlagasId },
+      tipoPlaga: { id: tiposPlaga[0].id },
+    });
+    const hallazgoId = hallazgoResult.identifiers[0].id;
 
-    await accionPlagasRepo.save(
-      accionPlagasRepo.create({
-        descripcion: 'Reposicion de cebo y sellado de punto de ingreso cercano.',
-        responsable: users[1].nombre,
-        estado: 'en seguimiento',
-        prioridad: 'alta',
-        fecha: new Date('2026-05-13T09:00:00'),
-        hallazgoPlagas: hallazgo,
-        plaguicida,
-      }),
-    );
+    await accionPlagasRepo.insert({
+      descripcion: 'Reposicion de cebo y sellado de punto de ingreso cercano.',
+      responsable: users[1].nombre,
+      estado: 'en seguimiento',
+      prioridad: 'alta',
+      fecha: new Date('2026-05-13T09:00:00'),
+      hallazgoPlagas: { id: hallazgoId },
+      plaguicida: { id: plaguicidaId },
+    });
 
-    await evidenciaPlagasRepo.save(
-      evidenciaPlagasRepo.create({
-        tipoArchivo: 'imagen',
-        urlArchivo: 'https://example.com/plagas/hallazgo-roedura.jpg',
-        descripcion: 'Fotografia del material afectado en bodega.',
-        fecha_carga: new Date('2026-05-13T08:25:00'),
-        registroPlagas,
-      }),
-    );
+    await evidenciaPlagasRepo.insert({
+      tipoArchivo: 'imagen',
+      urlArchivo: 'https://example.com/plagas/hallazgo-roedura.jpg',
+      descripcion: 'Fotografia del material afectado en bodega.',
+      fecha_carga: new Date('2026-05-13T08:25:00'),
+      registroPlagas: { id: registroPlagasId },
+    });
 
+    // Usar insert() para evitar UpdateValuesMissingError con programaResiduo/@OneToOne@JoinColumn
     const programaResiduo = await programaResiduoRepo.save(
       programaResiduoRepo.create({
-        objetivo:
-          'Segregar y disponer adecuadamente residuos ordinarios, reciclables y peligrosos.',
+        programaId: programas[3].id,
+        objetivo: 'Segregar y disponer adecuadamente residuos ordinarios, reciclables y peligrosos.',
         alcance: 'Todas las areas productivas, administrativas y de despacho.',
-        procedimiento_general:
-          'Clasificacion en fuente, acopio temporal, pesaje y entrega a gestor.',
+        procedimiento_general: 'Clasificacion en fuente, acopio temporal, pesaje y entrega a gestor.',
       }),
     );
 
-    const tiposResiduo = await tipoResiduoRepo.save([
-      tipoResiduoRepo.create({
-        nombre: 'Organico aprovechable',
-        color_contenedor: 'verde',
-        descripcion: 'Restos de materia prima vegetal.',
-        es_peligroso: false,
-        programaResiduo,
-      }),
-      tipoResiduoRepo.create({
-        nombre: 'Envase contaminado',
-        color_contenedor: 'rojo',
-        descripcion: 'Envases con remanentes de sustancias quimicas.',
-        es_peligroso: true,
-        programaResiduo,
-      }),
+    const tipoResiduoResults = await tipoResiduoRepo.insert([
+      { nombre: 'Organico aprovechable', color_contenedor: 'verde', descripcion: 'Restos de materia prima vegetal.', es_peligroso: false, programaResiduo: { id: programaResiduo.id } },
+      { nombre: 'Envase contaminado', color_contenedor: 'rojo', descripcion: 'Envases con remanentes de sustancias quimicas.', es_peligroso: true, programaResiduo: { id: programaResiduo.id } },
+    ]);
+    const [tipoRes0Id, tipoRes1Id] = tipoResiduoResults.identifiers.map((r: any) => r.id);
+
+    const areaGenResults = await areaGenRepo.insert([
+      { nombre: 'Preparacion', descripcion: 'Zona de pesaje y alistamiento de materia prima.', programaResiduo: { id: programaResiduo.id } },
+      { nombre: 'Lavado', descripcion: 'Zona de lavado de utensilios y equipos menores.', programaResiduo: { id: programaResiduo.id } },
+    ]);
+    const [areaGen0Id, areaGen1Id] = areaGenResults.identifiers.map((r: any) => r.id);
+
+    const contenedorResults = await contenedorRepo.insert([
+      { color: 'verde', capacidad: '120 L', ubicacion: 'Area de preparacion', estado: 'operativo', programaResiduo: { id: programaResiduo.id } },
+      { color: 'rojo', capacidad: '60 L', ubicacion: 'Cuarto de quimicos', estado: 'operativo', programaResiduo: { id: programaResiduo.id } },
+    ]);
+    const [cont0Id, cont1Id] = contenedorResults.identifiers.map((r: any) => r.id);
+
+    await residuoRepo.insert([
+      { nombre: 'Cascaras y recortes vegetales', descripcion: 'Subproducto del alistamiento diario.', estado: 'almacenado', programaResiduo: { id: programaResiduo.id }, contenedeor: { id: cont0Id }, tipoResiduo: { id: tipoRes0Id }, areaGenereacion: { id: areaGen0Id } },
+      { nombre: 'Envase de desinfectante vacio', descripcion: 'Bidon con triple lavado pendiente de entrega.', estado: 'almacenado', programaResiduo: { id: programaResiduo.id }, contenedeor: { id: cont1Id }, tipoResiduo: { id: tipoRes1Id }, areaGenereacion: { id: areaGen1Id } },
     ]);
 
-    const areaGeneracion = await areaGenRepo.save([
-      areaGenRepo.create({
-        nombre: 'Preparacion',
-        descripcion: 'Zona de pesaje y alistamiento de materia prima.',
-        programaResiduo,
-      }),
-      areaGenRepo.create({
-        nombre: 'Lavado',
-        descripcion: 'Zona de lavado de utensilios y equipos menores.',
-        programaResiduo,
-      }),
-    ]);
+    const registroResiduoResult = await registroResiduoRepo.insert({
+      tipo_actividad: 'recoleccion_interna',
+      resultado_general: 'conforme',
+      programaResiduo: { id: programaResiduo.id },
+      registro: { id: registros[3].id },
+    });
+    const registroResiduoId = registroResiduoResult.identifiers[0].id;
 
-    const contenedores = await contenedorRepo.save([
-      contenedorRepo.create({
-        color: 'verde',
-        capacidad: '120 L',
-        ubicacion: 'Area de preparacion',
-        estado: 'operativo',
-        programaResiduo,
-      }),
-      contenedorRepo.create({
-        color: 'rojo',
-        capacidad: '60 L',
-        ubicacion: 'Cuarto de quimicos',
-        estado: 'operativo',
-        programaResiduo,
-      }),
-    ]);
+    const recoleccionResult = await recoleccionRepo.insert({
+      fecha: new Date('2026-05-13'),
+      responsable: users[2].nombre,
+      cantidad_recolectada: 18,
+      observaciones: 'Pesaje consolidado del turno tarde.',
+      registroResiduo: { id: registroResiduoId },
+    });
+    const recoleccionId = recoleccionResult.identifiers[0].id;
 
-    await residuoRepo.save([
-      residuoRepo.create({
-        nombre: 'Cascaras y recortes vegetales',
-        descripcion: 'Subproducto del alistamiento diario.',
-        estado: 'almacenado',
-        programaResiduo,
-        contenedeor: contenedores[0],
-        tipoResiduo: tiposResiduo[0],
-        areaGenereacion: areaGeneracion[0],
-      }),
-      residuoRepo.create({
-        nombre: 'Envase de desinfectante vacio',
-        descripcion: 'Bidon con triple lavado pendiente de entrega.',
-        estado: 'almacenado',
-        programaResiduo,
-        contenedeor: contenedores[1],
-        tipoResiduo: tiposResiduo[1],
-        areaGenereacion: areaGeneracion[1],
-      }),
-    ]);
-
-    const registroResiduo = await registroResiduoRepo.save(
-      registroResiduoRepo.create({
-        tipo_actividad: 'recoleccion_interna',
-        resultado_general: 'conforme',
-        programaResiduo,
-        registro: registros[3],
-      }),
-    );
-
-    const recoleccion = await recoleccionRepo.save(
-      recoleccionRepo.create({
-        fecha: new Date('2026-05-13'),
-        responsable: users[2].nombre,
-        cantidad_recolectada: 18,
-        observaciones: 'Pesaje consolidado del turno tarde.',
-        registroResiduo,
-      }),
-    );
-
-    await disposicionFinalRepo.save(
-      disposicionFinalRepo.create({
-        metodo: 'Aprovechamiento externo y gestor autorizado',
-        empresa_encargada: 'EcoGestores SAS',
-        fecha_disposicion: new Date('2026-05-13'),
-      }),
-    );
+    await disposicionFinalRepo.insert({
+      metodo: 'Aprovechamiento externo y gestor autorizado',
+      empresa_encargada: 'EcoGestores SAS',
+      fecha_disposicion: new Date('2026-05-13'),
+      recoleccion: { id: recoleccionId },
+    });
 
     await checklistResiduoRepo.save(
       checklistResiduoRepo.create({
-        id: 'RES-CHECK-001',
+        id: randomUUID(),
         titulo: 'Verificacion de segregacion',
         descripcion: 'Comprobacion visual del uso correcto de contenedores.',
         porcentaje_cumplimiento: 95,
       }),
     );
 
-    await evidenciaResiduoRepo.save(
-      evidenciaResiduoRepo.create({
-        tipo_archivo: 'imagen',
-        url: 'https://example.com/residuos/contenedor-verde.jpg',
-        descripcion: 'Registro fotografico del area de acopio temporal.',
-        fecha: new Date('2026-05-13'),
-        registroResiduo,
-      }),
-    );
+    await evidenciaResiduoRepo.insert({
+      tipo_archivo: 'imagen',
+      url: 'https://example.com/residuos/contenedor-verde.jpg',
+      descripcion: 'Registro fotografico del area de acopio temporal.',
+      fecha: new Date('2026-05-13'),
+      registroResiduo: { id: registroResiduoId },
+    });
 
     console.log('Seed completado correctamente.');
     console.log(

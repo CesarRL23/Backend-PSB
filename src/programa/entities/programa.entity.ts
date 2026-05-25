@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -64,7 +65,8 @@ export class Programa {
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
-  @OneToOne(() => PlanPsb, (plan) => plan.programa)
+  @ManyToOne(() => PlanPsb)
+  @JoinColumn({ name: 'plan_psb_id' })
   planPsb!: PlanPsb;
 
   @OneToMany(() => Registro, (registro) => registro.programa)

@@ -42,7 +42,7 @@ export class PlanPsbService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const plan = await this.planPsbRepository.findOne({
       where: { id },
       relations: ['empresa'],
@@ -55,7 +55,7 @@ export class PlanPsbService {
     return plan;
   }
 
-  async update(id: number, updatePlanPsbDto: UpdatePlanPsbDto) {
+  async update(id: string, updatePlanPsbDto: UpdatePlanPsbDto) {
     const plan = await this.findOne(id);
 
     if (updatePlanPsbDto.empresaId) {
@@ -75,7 +75,7 @@ export class PlanPsbService {
     return await this.planPsbRepository.save(plan);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const plan = await this.findOne(id);
 
     return await this.planPsbRepository.remove(plan);

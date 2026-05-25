@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { EmpresaFumigadora } from '../../empresa-fumigadora/entities/empresa-fumigadora.entity';
 import { DiagnosticoPlagas } from '../../diagnostico-plagas/entities/diagnostico-plagas.entity';
 import { CronogramaPlagas } from '../../cronograma-plagas/entities/cronograma-plagas.entity';
@@ -26,6 +26,9 @@ export class ProgramaPlagas {
       @Column({ type: 'timestamp', nullable: true })
       fecha_limite!: Date;
 
+      @Column({ name: 'programa_id', type: 'uuid', nullable: true })
+      programaId?: string;
+
       @OneToMany(() => EmpresaFumigadora, (empresaFumigadora) => empresaFumigadora.programaPlagas)
       empresasFumigadoras!: EmpresaFumigadora[];
       
@@ -45,6 +48,7 @@ export class ProgramaPlagas {
       registrosPlagas!: RegistroPlagas[];
 
       @OneToOne(()=> Programa,(programa)=> programa.programaPlagas)
+      @JoinColumn({ name: 'programa_id' })
       programa?: Programa;
     
 }
