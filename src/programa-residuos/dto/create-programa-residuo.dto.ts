@@ -1,6 +1,26 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, IsUUID, IsOptional, IsEnum } from "class-validator";
+import { FrecuenciaPrograma } from "../../programa/entities/programa.entity";
 
 export class CreateProgramaResiduoDto {
+    @IsUUID()
+    @IsOptional()
+    programaId?: string;
+
+    @IsString()
+    @IsNotEmpty()
+    nombre!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    descripcion!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    responsable!: string;
+
+    @IsEnum(FrecuenciaPrograma)
+    @IsNotEmpty()
+    frecuencia!: FrecuenciaPrograma;
 
     @IsString()
     @IsNotEmpty()
@@ -13,5 +33,4 @@ export class CreateProgramaResiduoDto {
     @IsString()
     @IsNotEmpty()
     procedimiento_general!: string;
-
 }

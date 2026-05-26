@@ -24,16 +24,16 @@ export class RegistroResiduosController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.registroResiduosService.findOne(+id);
+    return this.registroResiduosService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRegistroResiduoDto: UpdateRegistroResiduoDto) {
-    return this.registroResiduosService.update(+id, updateRegistroResiduoDto);
+    return this.registroResiduosService.update(id, updateRegistroResiduoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.registroResiduosService.remove(+id);
+    return this.registroResiduosService.remove(id);
   }
 }

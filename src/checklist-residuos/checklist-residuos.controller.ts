@@ -24,16 +24,16 @@ export class ChecklistResiduosController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.checklistResiduosService.findOne(+id);
+    return this.checklistResiduosService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateChecklistResiduoDto: UpdateChecklistResiduoDto) {
-    return this.checklistResiduosService.update(+id, updateChecklistResiduoDto);
+    return this.checklistResiduosService.update(id, updateChecklistResiduoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.checklistResiduosService.remove(+id);
+    return this.checklistResiduosService.remove(id);
   }
 }

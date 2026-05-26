@@ -1,8 +1,9 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
+import { RegistroResiduo } from "../../registro-residuos/entities/registro-residuo.entity";
 
 @Entity('checklist_residuo')
 export class ChecklistResiduo {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn('uuid')
     id!: string;
 
     @Column()
@@ -14,7 +15,10 @@ export class ChecklistResiduo {
     @Column()
     porcentaje_cumplimiento!: number;
 
-    @ManyToOne(() => ChecklistResiduo, (checklistResiduo) => checklistResiduo.id)
-    checklistResiduo!: ChecklistResiduo;
+    @Column({ name: 'registro_residuo_id', nullable: true })
+    registroResiduoId?: string;
 
+    @ManyToOne(() => RegistroResiduo, (registroResiduo) => registroResiduo.checklistResiduo, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'registro_residuo_id' })
+    registroResiduo!: RegistroResiduo;
 }

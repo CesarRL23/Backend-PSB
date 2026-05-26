@@ -1,6 +1,10 @@
-import { IsNotEmpty,IsNumber,IsString,Max,MaxLength,Min} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, IsOptional } from 'class-validator';
 
 export class CreateChecklistResiduoDto {
+  @IsString()
+  @IsOptional()
+  id?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(200)
@@ -16,4 +20,8 @@ export class CreateChecklistResiduoDto {
   @Min(0)
   @Max(100)
   porcentaje_cumplimiento!: number;
+
+  @IsString()
+  @IsNotEmpty()
+  registroResiduoId!: string;
 }
