@@ -75,14 +75,14 @@ export class PlanPsbService {
 
   async findAll() {
     return await this.planPsbRepository.find({
-      relations: ['empresa'],
+      relations: ['empresa', 'tipoAlimento', 'programa'],
     });
   }
 
   async findOne(id: string) {
     const plan = await this.planPsbRepository.findOne({
       where: { id },
-      relations: ['empresa'],
+      relations: ['empresa', 'tipoAlimento', 'programa'],
     });
 
     if (!plan) {
