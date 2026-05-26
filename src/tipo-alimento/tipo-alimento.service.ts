@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TipoAlimento } from './entities/tipo-alimento.entity';
@@ -12,23 +12,31 @@ export class TipoAlimentoService {
     private readonly tipoAlimentoRepository: Repository<TipoAlimento>,
   ) {}
 
-  create(createTipoAlimentoDto: CreateTipoAlimentoDto) {
-    return 'This action adds a new tipoAlimento';
+  create(dto: CreateTipoAlimentoDto): Promise<TipoAlimento> {
+    const tipoAlimento = this.tipoAlimentoRepository.create(dto);
+    return this.tipoAlimentoRepository.save(tipoAlimento);
   }
 
-  findAll() {
+  findAll(): Promise<TipoAlimento[]> {
     return this.tipoAlimentoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tipoAlimento`;
+  async findOne(id: number): Promise<TipoAlimento> {
+    const tipoAlimento = await this.tipoAlimentoRepository.findOne({ where: { id: String(id) } });
+    if (!tipoAlimento) {
+      throw new NotFoundException(`TipoAlimento #${id} no encontrado`);
+    }
+    return tipoAlimento;
   }
 
-  update(id: number, updateTipoAlimentoDto: UpdateTipoAlimentoDto) {
-    return `This action updates a #${id} tipoAlimento`;
+  async update(id: number, dto: UpdateTipoAlimentoDto): Promise<TipoAlimento> {
+    const tipoAlimento = await this.findOne(id);
+    Object.assign(tipoAlimento, dto);
+    return this.tipoAlimentoRepository.save(tipoAlimento);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tipoAlimento`;
+  async remove(id: number): Promise<void> {
+    const tipoAlimento = await this.findOne(id);
+    await this.tipoAlimentoRepository.remove(tipoAlimento);
   }
 }
