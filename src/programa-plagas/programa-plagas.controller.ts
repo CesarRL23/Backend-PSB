@@ -5,7 +5,7 @@ import { UpdateProgramaPlagasDto } from './dto/update-programa-plagas.dto';
 
 @Controller('programa-plagas')
 export class ProgramaPlagasController {
-  constructor(private readonly service: ProgramaPlagasService) {}
+  constructor(private readonly service: ProgramaPlagasService) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -16,6 +16,11 @@ export class ProgramaPlagasController {
   @Get()
   findAll() {
     return this.service.findAll();
+  }
+  
+  @Get(':id/estadisticas')
+  estadisticas(@Param('id', ParseIntPipe) id: number) {
+    return this.service.obtenerEstadisticas(id);
   }
 
   @Get(':id')

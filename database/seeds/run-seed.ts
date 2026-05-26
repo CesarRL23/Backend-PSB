@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-
+dotenv.config();
 import { randomUUID } from 'node:crypto';
 import * as path from 'node:path';
 
