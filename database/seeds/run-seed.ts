@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-dotenv.config();
 import { randomUUID } from 'node:crypto';
 import * as path from 'node:path';
 
@@ -241,6 +240,7 @@ async function seed() {
 
     const plan = await planRepo.save(
       planRepo.create({
+        nombre: 'Plan de Saneamiento Basico 2026',
         version: 'v2026.1',
         estado: 'vigente',
         nivel_riesgo: 'alto',
