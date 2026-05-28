@@ -38,4 +38,33 @@ export class CreateInsumoQuimicoDto {
   @IsOptional()
   @Min(0)
   concentracion?: number;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  fabricante?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  uso?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  stock?: number;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  unidad?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  fichaTecnica?: string;
+
+  @IsString()
+  @IsOptional()
+  condicionesAlmacenamiento?: string;
 }

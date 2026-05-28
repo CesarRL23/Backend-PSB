@@ -1,7 +1,9 @@
 import {
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
@@ -14,7 +16,11 @@ export class CreateAccionCorrectivaAguaDto {
 
   @IsUUID()
   @IsNotEmpty()
-  registroAguaId!: string;
+  fuenteAguaId!: string;
+
+  @IsUUID()
+  @IsOptional()
+  registroAguaId?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -40,4 +46,51 @@ export class CreateAccionCorrectivaAguaDto {
   @IsEnum(EstadoAccionCorrectiva)
   @IsOptional()
   estado?: EstadoAccionCorrectiva;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  evidenciaFoto?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  parametroIncumplido?: string;
+
+  @IsNumber()
+  @IsOptional()
+  valorMedido?: number;
+
+  @IsNumber()
+  @IsOptional()
+  valorEsperado?: number;
+
+  @IsString()
+  @IsOptional()
+  causaRaiz?: string;
+
+  @IsString()
+  @IsOptional()
+  accionInmediata?: string;
+
+  @IsString()
+  @IsOptional()
+  accionCorrectiva?: string;
+
+  @IsDateString()
+  @IsOptional()
+  fechaLimite?: string;
+
+  @IsString()
+  @IsOptional()
+  verificacionEficacia?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  eficaz?: boolean;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  origen?: string;
 }

@@ -9,7 +9,7 @@ import {
 
 import { Programa } from '../../programa/entities/programa.entity';
 import { FuenteAgua } from '../../fuente-agua/entities/fuente-agua.entity';
-import { RegistroAgua } from 'src/registro-agua/entities/registro-agua.entity';
+import { RegistroAgua } from '../../registro-agua/entities/registro-agua.entity';
 
 @Entity('programa_agua')
 export class ProgramaAgua {

@@ -46,6 +46,14 @@ export class FuenteAguaController {
     return this.fuenteAguaService.findAll();
   }
 
+  @Get(':id/resumen')
+  findResumen(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user,
+  ) {
+    return this.fuenteAguaService.getResumen(id);
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseUUIDPipe) id: string,

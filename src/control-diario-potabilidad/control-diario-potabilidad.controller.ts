@@ -32,7 +32,7 @@ export class ControlDiarioPotabilidadController {
     @Body() createDto: CreateControlDiarioPotabilidadDto,
     @CurrentUser() user,
   ) {
-    return this.controlService.create(createDto);
+    return this.controlService.create(createDto, user.id);
   }
 
   @Get()
@@ -44,6 +44,14 @@ export class ControlDiarioPotabilidadController {
       return this.controlService.findByFuente(fuenteAguaId);
     }
     return this.controlService.findAll();
+  }
+
+  @Get('registro/:registroAguaId')
+  findByRegistroAgua(
+    @Param('registroAguaId', ParseUUIDPipe) registroAguaId: string,
+    @CurrentUser() user,
+  ) {
+    return this.controlService.findByRegistroAgua(registroAguaId);
   }
 
   @Get(':id')
