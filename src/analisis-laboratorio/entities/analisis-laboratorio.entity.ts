@@ -84,6 +84,56 @@ export class AnalisisLaboratorio {
   @Column({ name: 'foto_evidencia', length: 500, nullable: true })
   fotoEvidencia?: string;
 
+  // ─── Campos normativos (Res. 2115/2007) ──────────────────────────────────────
+
+  @Column({ type: 'text', nullable: true })
+  concepto!: string;
+
+  @Column({ name: 'coliformes_totales_ufc', type: 'double precision', nullable: true })
+  coliformesTotalesUfc!: number;
+
+  @Column({ name: 'e_coli_ufc', type: 'double precision', nullable: true })
+  eColiUfc!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  conductividad!: number;
+
+  @Column({ name: 'dureza_total', type: 'double precision', nullable: true })
+  durezaTotal!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  nitritos!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  nitratos!: number;
+
+  @Column({ name: 'hierro_total', type: 'double precision', nullable: true })
+  hierroTotal!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  cloruros!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  sulfatos!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  fluoruros!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  calcio!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  magnesio!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  alcalinidad!: number;
+
+  @Column({ name: 'carbono_organico_total', type: 'double precision', nullable: true })
+  carbonoOrganicoTotal!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  tensoactivos!: number;
+
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @ManyToOne(() => FuenteAgua, (fuente) => fuente.analisisLaboratorio)

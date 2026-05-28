@@ -7,17 +7,14 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AccionCorrectivaAguaService } from './accion-correctiva-agua.service';
 import { CreateAccionCorrectivaAguaDto } from './dto/create-accion-correctiva-agua.dto';
 import { UpdateAccionCorrectivaAguaDto } from './dto/update-accion-correctiva-agua.dto';
 
 @Controller('acciones-correctivas-agua')
-@UseGuards(JwtAuthGuard)
 export class AccionCorrectivaAguaController {
   constructor(
     private readonly accionCorrectivaAguaService: AccionCorrectivaAguaService,

@@ -4,14 +4,17 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('uploads')
 export class UploadsController {
+  @Public()
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -38,9 +41,17 @@ export class UploadsController {
       },
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: any,
+  ) {
     if (!file)
       throw new BadRequestException('No se recibió ningún archivo');
-    return { url: `/uploads/${file.filename}` };
+
+    const protocol = req.protocol;
+    const host = req.get('host');
+    const url = `${protocol}://${host}/uploads/${file.filename}`;
+
+    return { url };
   }
 }

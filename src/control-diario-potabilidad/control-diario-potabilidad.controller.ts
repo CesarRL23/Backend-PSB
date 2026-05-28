@@ -46,6 +46,14 @@ export class ControlDiarioPotabilidadController {
     return this.controlService.findAll();
   }
 
+  @Get('registro/:registroAguaId')
+  findByRegistroAgua(
+    @Param('registroAguaId', ParseUUIDPipe) registroAguaId: string,
+    @CurrentUser() user,
+  ) {
+    return this.controlService.findByRegistroAgua(registroAguaId);
+  }
+
   @Get(':id')
   findOne(
     @Param('id', ParseUUIDPipe) id: string,

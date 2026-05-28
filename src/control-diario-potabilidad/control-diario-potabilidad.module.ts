@@ -5,16 +5,13 @@ import { ControlDiarioPotabilidad } from './entities/control-diario-potabilidad.
 import { ControlDiarioPotabilidadService } from './control-diario-potabilidad.service';
 import { ControlDiarioPotabilidadController } from './control-diario-potabilidad.controller';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { FuenteAgua } from '../fuente-agua/entities/fuente-agua.entity';
-import { RegistroModule } from '../registro/registro.module';
-import { RegistroAguaModule } from '../registro-agua/registro-agua.module';
+import { AguaSharedModule } from '../modules/agua/shared/agua-shared.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ControlDiarioPotabilidad, FuenteAgua]),
+    TypeOrmModule.forFeature([ControlDiarioPotabilidad]),
     NotificationsModule,
-    RegistroModule,
-    RegistroAguaModule,
+    AguaSharedModule,
   ],
   controllers: [ControlDiarioPotabilidadController],
   providers: [ControlDiarioPotabilidadService],

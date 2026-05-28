@@ -46,13 +46,22 @@ export class MantenimientoLavadoController {
     return this.mantenimientoService.findAll();
   }
 
+  @Get('registro/:registroAguaId')
+  findByRegistroAgua(
+    @Param('registroAguaId', ParseUUIDPipe) registroAguaId: string,
+    @CurrentUser() user,
+  ) {
+    return this.mantenimientoService.findByRegistroAgua(registroAguaId);
+  }
+
   @Patch(':id/completar')
   completar(
     @Param('id', ParseUUIDPipe) id: string,
+    @Body('fechaEjecucion') fechaEjecucion: string,
     @Body('observaciones') observaciones: string,
     @CurrentUser() user,
   ) {
-    return this.mantenimientoService.completar(id, observaciones);
+    return this.mantenimientoService.completar(id, fechaEjecucion, observaciones);
   }
 
   @Get(':id')

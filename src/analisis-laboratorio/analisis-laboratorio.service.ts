@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,51 +9,13 @@ import { Repository } from 'typeorm';
 import { AnalisisLaboratorio } from './entities/analisis-laboratorio.entity';
 import { CreateAnalisisLaboratorioDto } from './dto/create-analisis-laboratorio.dto';
 import { UpdateAnalisisLaboratorioDto } from './dto/update-analisis-laboratorio.dto';
-import { FuenteAgua } from '../fuente-agua/entities/fuente-agua.entity';
-import { RegistroService } from '../registro/registro.service';
-import { RegistroAguaService } from '../registro-agua/registro-agua.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { AccionCorrectivaAguaService } from '../accion-correctiva-agua/accion-correctiva-agua.service';
+import { EstadoAccionCorrectiva } from '../accion-correctiva-agua/entities/accion-correctiva-agua.entity';
+import { AguaRegistroCreatorService } from '../modules/agua/shared/services/agua-registro-creator.service';
+import { calcularIRCA } from '../modules/agua/shared/calculators/irca.calculator';
+import { getLimites } from '../modules/agua/shared/helpers/limites-normativos.helper';
 import { TipoActividadAgua, ResultadoGeneralAgua } from '../registro-agua/entities/registro-agua.entity';
-
-type LimitesPotabilidad = {
-  cloro: { min: number; max: number };
-  ph: { min: number; max: number };
-  turbiedad: { max: number };
-  color: { max: number };
-};
-
-const LIMITES_POR_RIESGO: Record<string, LimitesPotabilidad> = {
-  alto: {
-    cloro: { min: 0.3, max: 0.5 },
-    ph: { min: 6.5, max: 7.5 },
-    turbiedad: { max: 1 },
-    color: { max: 5 },
-  },
-  medio: {
-    cloro: { min: 0.3, max: 1.0 },
-    ph: { min: 6.5, max: 8.5 },
-    turbiedad: { max: 2 },
-    color: { max: 15 },
-  },
-  bajo: {
-    cloro: { min: 0.3, max: 2.0 },
-    ph: { min: 6.5, max: 9.0 },
-    turbiedad: { max: 2 },
-    color: { max: 15 },
-  },
-};
-
-const PUNTAJE_IRCA = {
-  colorAparente: 6,
-  turbiedad: 15,
-  ph: 1.5,
-  cloroResidual: 15,
-  coliformesTotales: 15,
-  eColi: 25,
-  mesofilos: 16,
-};
-
-const PUNTAJE_MAXIMO_IRCA = 93.5;
 
 @Injectable()
 export class AnalisisLaboratorioService {
@@ -60,11 +23,9 @@ export class AnalisisLaboratorioService {
   constructor(
     @InjectRepository(AnalisisLaboratorio)
     private readonly analisisRepository: Repository<AnalisisLaboratorio>,
-    @InjectRepository(FuenteAgua)
-    private readonly fuenteAguaRepository: Repository<FuenteAgua>,
-    private readonly registroService: RegistroService,
-    private readonly registroAguaService: RegistroAguaService,
     private readonly notificationsService: NotificationsService,
+    private readonly accionCorrectivaAguaService: AccionCorrectivaAguaService,
+    private readonly aguaRegistroCreator: AguaRegistroCreatorService,
   ) {}
 
   async create(
@@ -72,81 +33,29 @@ export class AnalisisLaboratorioService {
     usuarioId: string,
   ): Promise<AnalisisLaboratorio> {
 
-    const fuenteAgua = await this.fuenteAguaRepository.findOne({
-      where: { id: dto.fuenteAguaId },
-      relations: {
-        programaAgua: {
-          programa: {
-            planPsb: true,
-          },
-        },
-      },
-    });
+    if (new Date(dto.fechaMuestreo) > new Date()) {
+      throw new BadRequestException('La fecha de muestreo no puede ser futura');
+    }
 
-    if (!fuenteAgua)
-      throw new NotFoundException('Fuente de agua no encontrada');
+    const nivelRiesgo = await this.aguaRegistroCreator.obtenerNivelRiesgo(dto.fuenteAguaId);
+    const limites = getLimites(nivelRiesgo);
 
-    const planPsb = fuenteAgua.programaAgua?.programa?.planPsb;
-    if (!planPsb)
-      throw new NotFoundException('No se encontró un Plan PSB asociado a la fuente de agua');
+    const ircaResult = calcularIRCA({
+      cloroResidual: dto.cloroResidual,
+      ph: dto.ph,
+      turbiedad: dto.turbiedad,
+      colorAparente: dto.colorAparente,
+      coliformesTotalesPresentes: dto.coliformesTotalesPresentes,
+      eColiPresente: dto.eColiPresente,
+      mesofilos: dto.mesofilos ?? 0,
+    }, limites);
 
-    const nivelRiesgoEmpresa = (planPsb.nivel_riesgo ?? 'bajo').toLowerCase();
-    const limites = LIMITES_POR_RIESGO[nivelRiesgoEmpresa] ?? LIMITES_POR_RIESGO.bajo;
-
-    const cumpleFisicoquimica =
-      dto.cloroResidual >= limites.cloro.min &&
-      dto.cloroResidual <= limites.cloro.max &&
-      dto.ph >= limites.ph.min &&
-      dto.ph <= limites.ph.max &&
-      dto.turbiedad <= limites.turbiedad.max &&
-      dto.colorAparente <= limites.color.max;
-
-    const cumpleMicrobiologica =
-      !dto.coliformesTotalesPresentes &&
-      !dto.eColiPresente;
-
-    let puntajeIncumplido = 0;
-
-    if (dto.colorAparente > limites.color.max)
-      puntajeIncumplido += PUNTAJE_IRCA.colorAparente;
-    if (dto.turbiedad > limites.turbiedad.max)
-      puntajeIncumplido += PUNTAJE_IRCA.turbiedad;
-    if (dto.ph < limites.ph.min || dto.ph > limites.ph.max)
-      puntajeIncumplido += PUNTAJE_IRCA.ph;
-    if (dto.cloroResidual < limites.cloro.min || dto.cloroResidual > limites.cloro.max)
-      puntajeIncumplido += PUNTAJE_IRCA.cloroResidual;
-    if (dto.coliformesTotalesPresentes)
-      puntajeIncumplido += PUNTAJE_IRCA.coliformesTotales;
-    if (dto.eColiPresente)
-      puntajeIncumplido += PUNTAJE_IRCA.eColi;
-    if ((dto.mesofilos ?? 0) > 0)
-      puntajeIncumplido += PUNTAJE_IRCA.mesofilos;
-
-    const irca = parseFloat(((puntajeIncumplido / PUNTAJE_MAXIMO_IRCA) * 100).toFixed(2));
-
-    const nivelRiesgoCalculado =
-      irca <= 5 ? 'sin_riesgo' :
-      irca <= 14 ? 'riesgo_bajo' :
-      irca <= 35 ? 'riesgo_medio' :
-      irca <= 80 ? 'riesgo_alto' : 'inviable_sanitariamente';
-
-    const cumpleGeneral = cumpleFisicoquimica && cumpleMicrobiologica;
-    const resultado = cumpleGeneral ? 'apto' : 'no_apto';
-
-    const programaId = fuenteAgua.programaAgua.programa.id;
-    const programaAguaId = fuenteAgua.programaAgua.id;
-
-    const registro = await this.registroService.create({
-      programaId,
+    const { registroAguaId } = await this.aguaRegistroCreator.ejecutar({
+      fuenteAguaId: dto.fuenteAguaId,
       usuarioId,
       fecha: new Date(dto.fechaMuestreo),
-    });
-
-    const registroAgua = await this.registroAguaService.create({
-      registroId: registro.id,
-      programaAguaId,
       tipoActividad: TipoActividadAgua.ANALISIS_LABORATORIO,
-      resultadoGeneral: cumpleGeneral
+      resultadoGeneral: ircaResult.cumpleGeneral
         ? ResultadoGeneralAgua.CONFORME
         : ResultadoGeneralAgua.NO_CONFORME,
     });
@@ -168,28 +77,74 @@ export class AnalisisLaboratorioService {
       mesofilos: dto.mesofilos ?? 0,
       linkDocumentoPdf: dto.linkDocumentoPdf,
       fotoEvidencia: dto.fotoEvidencia,
-      registroAguaId: registroAgua.id,
-      cumpleNormaFisicoquimica: cumpleFisicoquimica,
-      cumpleNormaMicrobiologica: cumpleMicrobiologica,
-      cumpleNormaGeneral: cumpleGeneral,
-      irca,
-      nivelRiesgo: nivelRiesgoCalculado,
-      resultado,
+      registroAguaId,
+      cumpleNormaFisicoquimica: ircaResult.cumpleFisicoquimica,
+      cumpleNormaMicrobiologica: ircaResult.cumpleMicrobiologica,
+      cumpleNormaGeneral: ircaResult.cumpleGeneral,
+      irca: ircaResult.irca,
+      nivelRiesgo: ircaResult.nivelRiesgo,
+      resultado: ircaResult.resultado,
     });
 
     const saved = await this.analisisRepository.save(analisis);
 
-    if (!cumpleGeneral) {
+    if (!ircaResult.cumpleGeneral) {
       await this.notificationsService.create({
         usuario_id: usuarioId,
         tipo: 'alerta',
         titulo: 'Análisis de laboratorio no conforme',
-        mensaje: `El análisis N° ${dto.numeroCertificado} del laboratorio ${dto.laboratorioCertificado} no cumple la norma. IRCA: ${irca}%. Nivel de riesgo: ${nivelRiesgoCalculado}. Se requiere acción correctiva inmediata.`,
+        mensaje: `El análisis N° ${dto.numeroCertificado} del laboratorio ${dto.laboratorioCertificado} no cumple la norma. IRCA: ${ircaResult.irca}%. Nivel de riesgo: ${ircaResult.nivelRiesgo}. Se requiere acción correctiva inmediata.`,
         fecha_envio: new Date().toISOString(),
       });
+
+      const parametrosFueraRango: string[] = [];
+      if (dto.colorAparente > limites.color.max)
+        parametrosFueraRango.push('Color aparente');
+      if (dto.turbiedad > limites.turbiedad.max)
+        parametrosFueraRango.push('Turbiedad');
+      if (dto.ph < limites.ph.min || dto.ph > limites.ph.max)
+        parametrosFueraRango.push('pH');
+      if (dto.cloroResidual < limites.cloro.min || dto.cloroResidual > limites.cloro.max)
+        parametrosFueraRango.push('Cloro residual');
+      if (dto.coliformesTotalesPresentes)
+        parametrosFueraRango.push('Coliformes totales');
+      if (dto.eColiPresente)
+        parametrosFueraRango.push('E. coli');
+      if ((dto.mesofilos ?? 0) > 0)
+        parametrosFueraRango.push('Mesófilos');
+
+      const fechaLimite = new Date();
+      fechaLimite.setDate(fechaLimite.getDate() + 8);
+
+      await this.accionCorrectivaAguaService.create({
+        fuenteAguaId: dto.fuenteAguaId,
+        descripcionDesviacion: `IRCA fuera de norma: ${ircaResult.irca}%. Nivel de riesgo: ${ircaResult.nivelRiesgo}. Parámetros: ${parametrosFueraRango.join(', ')}`,
+        medidaTomada: 'Pendiente de definir por responsable',
+        fecha: new Date().toISOString().split('T')[0],
+        responsable: dto.responsableMuestra,
+        estado: EstadoAccionCorrectiva.PENDIENTE,
+        fechaLimite: fechaLimite.toISOString().split('T')[0],
+        origen: 'analisis_laboratorio',
+      }, usuarioId);
     }
 
     return saved;
+  }
+
+  async getHistoricoIrca(fuenteAguaId: string): Promise<any[]> {
+    const analisis = await this.analisisRepository.find({
+      where: { fuenteAguaId },
+      order: { fechaMuestreo: 'ASC' },
+    });
+
+    return analisis.map((a) => ({
+      id: a.id,
+      fechaMuestreo: a.fechaMuestreo,
+      irca: a.irca,
+      nivelRiesgo: a.nivelRiesgo,
+      resultado: a.resultado,
+      cumpleNormaGeneral: a.cumpleNormaGeneral,
+    }));
   }
 
   async findAll(): Promise<AnalisisLaboratorio[]> {
@@ -206,15 +161,21 @@ export class AnalisisLaboratorioService {
     });
   }
 
+  async findByRegistroAgua(registroAguaId: string): Promise<AnalisisLaboratorio[]> {
+    return this.analisisRepository.find({
+      where: { registroAguaId },
+      relations: ['fuenteAgua'],
+      order: { fechaMuestreo: 'DESC' },
+    });
+  }
+
   async findOne(id: string): Promise<AnalisisLaboratorio> {
     const analisis = await this.analisisRepository.findOne({
       where: { id },
       relations: ['fuenteAgua', 'registroAgua'],
     });
-
     if (!analisis)
       throw new NotFoundException(`AnalisisLaboratorio #${id} no encontrado`);
-
     return analisis;
   }
 

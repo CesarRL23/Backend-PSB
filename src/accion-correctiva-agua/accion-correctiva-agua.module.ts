@@ -4,15 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccionCorrectivaAgua } from './entities/accion-correctiva-agua.entity';
 import { AccionCorrectivaAguaService } from './accion-correctiva-agua.service';
 import { AccionCorrectivaAguaController } from './accion-correctiva-agua.controller';
-import { FuenteAgua } from '../fuente-agua/entities/fuente-agua.entity';
-import { RegistroModule } from '../registro/registro.module';
-import { RegistroAguaModule } from '../registro-agua/registro-agua.module';
+import { AguaSharedModule } from '../modules/agua/shared/agua-shared.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AccionCorrectivaAgua, FuenteAgua]),
-    RegistroModule,
-    RegistroAguaModule,
+    TypeOrmModule.forFeature([AccionCorrectivaAgua]),
+    AguaSharedModule,
+    NotificationsModule,
   ],
   controllers: [AccionCorrectivaAguaController],
   providers: [AccionCorrectivaAguaService],

@@ -44,6 +44,20 @@ export class AnalisisLaboratorioController {
     return this.analisisService.findAll();
   }
 
+  @Get('registro/:registroAguaId')
+  findByRegistroAgua(
+    @Param('registroAguaId', ParseUUIDPipe) registroAguaId: string,
+  ) {
+    return this.analisisService.findByRegistroAgua(registroAguaId);
+  }
+
+  @Get('fuente/:fuenteAguaId/historico')
+  getHistoricoIrca(
+    @Param('fuenteAguaId', ParseUUIDPipe) fuenteAguaId: string,
+  ) {
+    return this.analisisService.getHistoricoIrca(fuenteAguaId);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.analisisService.findOne(id);

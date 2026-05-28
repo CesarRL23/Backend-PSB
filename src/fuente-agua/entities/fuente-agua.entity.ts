@@ -41,6 +41,23 @@ export class FuenteAgua {
   @Column({ length: 100, default: 'activo' })
   estado!: string;
 
+  // ─── Campos normativos (Res. 2115/2007) ──────────────────────────────────────
+
+  @Column({ length: 150, nullable: true })
+  municipio!: string;
+
+  @Column({ length: 150, nullable: true })
+  departamento!: string;
+
+  @Column({ length: 200, nullable: true })
+  concesion!: string;
+
+  @Column({ length: 200, nullable: true })
+  tratamiento!: string;
+
+  @Column({ name: 'evidencia_foto', length: 500, nullable: true })
+  evidenciaFoto?: string;
+
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @ManyToOne(() => ProgramaAgua, (programaAgua) => programaAgua.fuentesAgua)

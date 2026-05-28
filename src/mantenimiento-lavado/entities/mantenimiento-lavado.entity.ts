@@ -10,13 +10,9 @@ import {
 import { FuenteAgua } from '../../fuente-agua/entities/fuente-agua.entity';
 import { RegistroAgua } from '../../registro-agua/entities/registro-agua.entity';
 import { InsumoQuimico } from '../../insumo-quimico/entities/insumo-quimico.entity';
+import { EstadoMantenimiento } from '../../modules/agua/shared/enums';
 
-export enum EstadoMantenimiento {
-  PROGRAMADO  = 'programado',
-  EN_PROCESO  = 'en_proceso',
-  COMPLETADO  = 'completado',
-  CANCELADO   = 'cancelado',
-}
+export { EstadoMantenimiento };
 
 @Entity('mantenimiento_lavado')
 export class MantenimientoLavado {
@@ -51,6 +47,35 @@ export class MantenimientoLavado {
 
   @Column({ name: 'evidencia_foto', length: 500, nullable: true })
   evidenciaFoto?: string;
+
+  // ─── Campos normativos ───────────────────────────────────────────────────────
+
+  @Column({ name: 'tipo_limpieza', length: 100, nullable: true })
+  tipoLimpieza!: string;
+
+  @Column({ name: 'producto_utilizado', length: 200, nullable: true })
+  productoUtilizado!: string;
+
+  @Column({ name: 'concentracion_producto', type: 'double precision', nullable: true })
+  concentracionProducto!: number;
+
+  @Column({ name: 'tiempo_contacto', type: 'integer', nullable: true })
+  tiempoContacto!: number;
+
+  @Column({ name: 'volumen_agua', type: 'double precision', nullable: true })
+  volumenAgua!: number;
+
+  @Column({ type: 'text', nullable: true })
+  proceso!: string;
+
+  @Column({ length: 200, nullable: true })
+  responsable!: string;
+
+  @Column({ name: 'proxima_limpieza', type: 'date', nullable: true })
+  proximaLimpieza!: string;
+
+  @Column({ nullable: true })
+  cumple!: boolean;
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 

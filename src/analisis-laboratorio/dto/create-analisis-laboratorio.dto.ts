@@ -87,4 +87,83 @@ export class CreateAnalisisLaboratorioDto {
   @IsOptional()
   @MaxLength(500)
   fotoEvidencia?: string;
+
+  @IsString()
+  @IsOptional()
+  concepto?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  coliformesTotalesUfc?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  eColiUfc?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  conductividad?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  durezaTotal?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  nitritos?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  nitratos?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  hierroTotal?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  cloruros?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  sulfatos?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  fluoruros?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  calcio?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  magnesio?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  alcalinidad?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  carbonoOrganicoTotal?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  tensoactivos?: number;
 }

@@ -54,11 +54,19 @@ export class ControlDiarioPotabilidad {
   @Column({ name: 'requiere_analisis_laboratorio', default: false })
   requiereAnalisisLaboratorio!: boolean;
 
-  @Column({ name: 'parametro_fuera_rango', length: 500, nullable: true })
+  @Column({ name: 'parametro_fuera_rango', type: 'varchar', length: 500, nullable: true })
   parametroFueraRango!: string | null;
 
   @Column({ name: 'evidencia_foto', length: 500, nullable: true })
   evidenciaFoto?: string;
+
+  // ─── Campos normativos ───────────────────────────────────────────────────────
+
+  @Column({ length: 50, nullable: true })
+  olor!: string;
+
+  @Column({ length: 50, nullable: true })
+  sabor!: string;
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 

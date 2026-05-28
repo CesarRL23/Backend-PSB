@@ -4,15 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MantenimientoLavado } from './entities/mantenimiento-lavado.entity';
 import { MantenimientoLavadoService } from './mantenimiento-lavado.service';
 import { MantenimientoLavadoController } from './mantenimiento-lavado.controller';
-import { FuenteAgua } from '../fuente-agua/entities/fuente-agua.entity';
-import { RegistroModule } from '../registro/registro.module';
-import { RegistroAguaModule } from '../registro-agua/registro-agua.module';
+import { AguaSharedModule } from '../modules/agua/shared/agua-shared.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MantenimientoLavado, FuenteAgua]),
-    RegistroModule,
-    RegistroAguaModule,
+    TypeOrmModule.forFeature([MantenimientoLavado]),
+    AguaSharedModule,
+    NotificationsModule,
   ],
   controllers: [MantenimientoLavadoController],
   providers: [MantenimientoLavadoService],

@@ -9,10 +9,10 @@ import { Repository } from 'typeorm';
 import { MantenimientoLavado, EstadoMantenimiento } from './entities/mantenimiento-lavado.entity';
 import { CreateMantenimientoLavadoDto } from './dto/create-mantenimiento-lavado.dto';
 import { UpdateMantenimientoLavadoDto } from './dto/update-mantenimiento-lavado.dto';
-import { FuenteAgua } from '../fuente-agua/entities/fuente-agua.entity';
-import { RegistroService } from '../registro/registro.service';
-import { RegistroAguaService } from '../registro-agua/registro-agua.service';
-import { TipoActividadAgua, ResultadoGeneralAgua } from '../registro-agua/entities/registro-agua.entity';
+import { AguaRegistroCreatorService } from '../modules/agua/shared/services/agua-registro-creator.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { validarMantenimiento } from '../modules/agua/shared/validators';
+import { TipoActividadAgua } from '../registro-agua/entities/registro-agua.entity';
 
 @Injectable()
 export class MantenimientoLavadoService {
@@ -20,59 +20,55 @@ export class MantenimientoLavadoService {
   constructor(
     @InjectRepository(MantenimientoLavado)
     private readonly mantenimientoRepository: Repository<MantenimientoLavado>,
-    @InjectRepository(FuenteAgua)
-    private readonly fuenteAguaRepository: Repository<FuenteAgua>,
-    private readonly registroService: RegistroService,
-    private readonly registroAguaService: RegistroAguaService,
+    private readonly notificationsService: NotificationsService,
+    private readonly aguaRegistroCreator: AguaRegistroCreatorService,
   ) {}
-
-  // ─── Crear ───────────────────────────────────────────────────────────────────
 
   async create(
     dto: CreateMantenimientoLavadoDto,
     usuarioId: string,
   ): Promise<MantenimientoLavado> {
-    const fuenteAgua = await this.fuenteAguaRepository.findOne({
-      where: { id: dto.fuenteAguaId },
-      relations: {
-        programaAgua: {
-          programa: true,
-        },
-      },
+
+    validarMantenimiento({
+      estado: dto.estado ?? EstadoMantenimiento.PROGRAMADO,
+      fechaEjecucion: dto.fechaEjecucion,
+      fechaProgramada: dto.fechaProgramada,
     });
 
-    if (!fuenteAgua)
-      throw new NotFoundException('Fuente de agua no encontrada');
+    if (new Date(dto.fechaProgramada) < new Date()) {
+      throw new BadRequestException('La fecha programada no puede ser anterior a hoy');
+    }
 
-    const programaAgua = fuenteAgua.programaAgua;
-    if (!programaAgua)
-      throw new NotFoundException('No se encontró un programa de agua asociado a la fuente');
-
-    const programaId = programaAgua.programa.id;
-    const programaAguaId = programaAgua.id;
-
-    const registro = await this.registroService.create({
-      programaId,
+    const { registroAguaId } = await this.aguaRegistroCreator.ejecutar({
+      fuenteAguaId: dto.fuenteAguaId,
       usuarioId,
       fecha: new Date(dto.fechaProgramada),
-    });
-
-    const registroAgua = await this.registroAguaService.create({
-      registroId: registro.id,
-      programaAguaId,
       tipoActividad: TipoActividadAgua.MANTENIMIENTO_LAVADO,
-      resultadoGeneral: ResultadoGeneralAgua.EN_PROCESO,
     });
 
     const mantenimiento = this.mantenimientoRepository.create({
       ...dto,
-      registroAguaId: registroAgua.id,
+      registroAguaId,
     });
 
-    return this.mantenimientoRepository.save(mantenimiento);
-  }
+    const saved = await this.mantenimientoRepository.save(mantenimiento);
 
-  // ─── Listar ──────────────────────────────────────────────────────────────────
+    const hoy = new Date();
+    if (
+      new Date(dto.fechaProgramada) < hoy &&
+      (dto.estado ?? EstadoMantenimiento.PROGRAMADO) === EstadoMantenimiento.PROGRAMADO
+    ) {
+      await this.notificationsService.create({
+        usuario_id: usuarioId,
+        tipo: 'alerta',
+        titulo: 'Mantenimiento no ejecutado',
+        mensaje: `El mantenimiento programado para ${dto.fechaProgramada} no ha sido ejecutado. Estado actual: ${dto.estado ?? EstadoMantenimiento.PROGRAMADO}.`,
+        fecha_envio: hoy.toISOString(),
+      });
+    }
+
+    return saved;
+  }
 
   async findAll(): Promise<MantenimientoLavado[]> {
     return this.mantenimientoRepository.find({
@@ -80,8 +76,6 @@ export class MantenimientoLavadoService {
       order: { fechaProgramada: 'DESC' },
     });
   }
-
-  // ─── Listar por fuente ───────────────────────────────────────────────────────
 
   async findByFuente(fuenteAguaId: string): Promise<MantenimientoLavado[]> {
     return this.mantenimientoRepository.find({
@@ -91,7 +85,13 @@ export class MantenimientoLavadoService {
     });
   }
 
-  // ─── Buscar uno ──────────────────────────────────────────────────────────────
+  async findByRegistroAgua(registroAguaId: string): Promise<MantenimientoLavado[]> {
+    return this.mantenimientoRepository.find({
+      where: { registroAguaId },
+      relations: ['fuenteAgua', 'insumosQuimicos'],
+      order: { fechaProgramada: 'DESC' },
+    });
+  }
 
   async findOne(id: string): Promise<MantenimientoLavado> {
     const mantenimiento = await this.mantenimientoRepository.findOne({
@@ -106,8 +106,6 @@ export class MantenimientoLavadoService {
     return mantenimiento;
   }
 
-  // ─── Actualizar ──────────────────────────────────────────────────────────────
-
   async update(id: string, dto: UpdateMantenimientoLavadoDto): Promise<MantenimientoLavado> {
     const mantenimiento = await this.findOne(id);
 
@@ -115,21 +113,34 @@ export class MantenimientoLavadoService {
       this.validarTransicionEstado(mantenimiento.estado, dto.estado);
     }
 
+    const nuevoEstado = dto.estado ?? mantenimiento.estado;
+    const nuevaFechaEjec = dto.fechaEjecucion ?? mantenimiento.fechaEjecucion;
+
+    validarMantenimiento({
+      estado: nuevoEstado,
+      fechaEjecucion: nuevaFechaEjec,
+      fechaProgramada: dto.fechaProgramada ?? mantenimiento.fechaProgramada,
+    });
+
     Object.assign(mantenimiento, dto);
     return this.mantenimientoRepository.save(mantenimiento);
   }
 
-  // ─── Completar ───────────────────────────────────────────────────────────────
+  async completar(id: string, fechaEjecucion?: string, observaciones?: string): Promise<MantenimientoLavado> {
+    const fecha = fechaEjecucion ?? new Date().toISOString().slice(0, 10);
 
-  async completar(id: string, observaciones?: string): Promise<MantenimientoLavado> {
+    const hoy = new Date();
+    hoy.setHours(23, 59, 59, 999);
+    if (new Date(fecha) > hoy) {
+      throw new BadRequestException('La fecha de ejecución no puede ser una fecha futura');
+    }
+
     return this.update(id, {
       estado: EstadoMantenimiento.COMPLETADO,
-      fechaEjecucion: new Date().toISOString().slice(0, 10),
+      fechaEjecucion: fecha,
       observaciones,
     });
   }
-
-  // ─── Eliminar ────────────────────────────────────────────────────────────────
 
   async remove(id: string): Promise<void> {
     const mantenimiento = await this.findOne(id);
@@ -142,8 +153,6 @@ export class MantenimientoLavadoService {
 
     await this.mantenimientoRepository.remove(mantenimiento);
   }
-
-  // ─── Lógica de negocio ───────────────────────────────────────────────────────
 
   private validarTransicionEstado(
     actual: EstadoMantenimiento,

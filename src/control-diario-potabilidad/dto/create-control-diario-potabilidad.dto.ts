@@ -67,4 +67,14 @@ export class CreateControlDiarioPotabilidadDto {
   @IsOptional()
   @MaxLength(500)
   evidenciaFoto?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  olor?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  sabor?: string;
 }
