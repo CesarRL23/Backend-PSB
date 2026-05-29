@@ -54,6 +54,7 @@ import { ChecklistResiduosModule } from './checklist-residuos/checklist-residuos
 import { DisposicionFinalModule } from './disposicion-final/disposicion-final.module';
 import { EvidenciaResiduosModule } from './evidencia-residuos/evidencia-residuos.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { TipoAlimentoModule } from './tipo-alimento/tipo-alimento.module';
 
 @Module({
   imports: [

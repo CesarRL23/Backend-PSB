@@ -13,3 +13,4 @@ export class CreateTipoAlimentoDto {
   @IsNotEmpty()
   nivel_riesgo?: string;
 }
+export class CreateTipoAlimentoDto {}

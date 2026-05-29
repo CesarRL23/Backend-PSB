@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TipoAlimentoService } from './tipo-alimento.service';
 import { TipoAlimentoController } from './tipo-alimento.controller';
 import { TipoAlimento } from './entities/tipo-alimento.entity';
+import { TipoAlimentoService } from './tipo-alimento.service';
+import { TipoAlimentoController } from './tipo-alimento.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TipoAlimento])],
