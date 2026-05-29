@@ -1,0 +1,360 @@
+{
+  "empresa": {
+    "tabla": "EMPRESA",
+    "descripcion": "Empresa alimentaria que usa el sistema PSB",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "nombre": { "tipo": "STRING", "requerido": true },
+      "nit": { "tipo": "STRING", "requerido": true, "unico": true },
+      "tipo_negocio": { "tipo": "STRING", "requerido": true },
+      "direccion": { "tipo": "STRING", "requerido": true },
+      "representante": { "tipo": "STRING", "requerido": true },
+      "registro_sanitario_funcionamiento": { "tipo": "STRING", "nullable": true },
+      "resolucion_invima": { "tipo": "STRING", "nullable": true }
+    },
+    "ejemplo": {
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "nombre": "Lácteos El Pomar S.A.S",
+      "nit": "900123456-1",
+      "tipo_negocio": "Procesamiento de lácteos",
+      "direccion": "Cra 15 # 32-10, Manizales, Caldas",
+      "representante": "Carlos Andrés Ríos",
+      "registro_sanitario_funcionamiento": "RSF-2024-001234",
+      "resolucion_invima": "2024010012345"
+    }
+  },
+
+  "tipo_alimento": {
+    "tabla": "TIPO_ALIMENTO",
+    "descripcion": "Categoría de alimento fabricado por la empresa, define el nivel de riesgo sanitario",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "empresa_id": { "tipo": "UUID", "fk": "EMPRESA.id", "requerido": true },
+      "nombre": { "tipo": "STRING", "requerido": true },
+      "nivel_riesgo": {
+        "tipo": "ENUM",
+        "valores": ["ALTO", "MEDIO", "BAJO"],
+        "requerido": true
+      },
+      "descripcion": { "tipo": "TEXT", "nullable": true }
+    },
+    "ejemplo": {
+      "id": "a1b2c3d4-0002-0001-0001-000000000001",
+      "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "nombre": "Leche pasteurizada entera",
+      "nivel_riesgo": "ALTO",
+      "descripcion": "Leche de vaca pasteurizada, homogeneizada, envasada en bolsa plástica de 1L"
+    }
+  },
+
+  "plan_psb": {
+    "tabla": "PLAN_PSB",
+    "descripcion": "Plan de Saneamiento Básico asociado a una empresa y tipo de alimento",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "empresa_id": { "tipo": "UUID", "fk": "EMPRESA.id", "requerido": true },
+      "tipo_alimento_id": { "tipo": "UUID", "fk": "TIPO_ALIMENTO.id", "requerido": true },
+      "version": { "tipo": "STRING", "requerido": true },
+      "estado": {
+        "tipo": "ENUM",
+        "valores": ["BORRADOR", "ACTIVO", "OBSOLETO"],
+        "requerido": true
+      },
+      "nivel_riesgo": {
+        "tipo": "ENUM",
+        "valores": ["ALTO", "MEDIO", "BAJO"],
+        "requerido": true
+      },
+      "fecha_creacion": { "tipo": "DATE", "requerido": true },
+      "fecha_actualizacion": { "tipo": "DATE", "nullable": true }
+    },
+    "ejemplo": {
+      "id": "a1b2c3d4-0003-0001-0001-000000000001",
+      "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "tipo_alimento_id": "a1b2c3d4-0002-0001-0001-000000000001",
+      "version": "1.0",
+      "estado": "ACTIVO",
+      "nivel_riesgo": "ALTO",
+      "fecha_creacion": "2024-01-15",
+      "fecha_actualizacion": "2024-06-01"
+    }
+  },
+
+  "programa": {
+    "tabla": "PROGRAMA",
+    "descripcion": "Uno de los cuatro programas obligatorios del PSB. Cada plan debe tener los cuatro tipos.",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "plan_psb_id": { "tipo": "UUID", "fk": "PLAN_PSB.id", "requerido": true },
+      "tipo": {
+        "tipo": "ENUM",
+        "valores": ["LIMPIEZA", "PLAGAS", "AGUA", "RESIDUOS"],
+        "requerido": true
+      },
+      "nombre": { "tipo": "STRING", "requerido": true },
+      "responsable": { "tipo": "STRING", "requerido": true },
+      "frecuencia": { "tipo": "STRING", "requerido": true },
+      "descripcion": { "tipo": "TEXT", "nullable": true }
+    },
+    "ejemplos": [
+      {
+        "id": "a1b2c3d4-0004-0001-0001-000000000001",
+        "plan_psb_id": "a1b2c3d4-0003-0001-0001-000000000001",
+        "tipo": "LIMPIEZA",
+        "nombre": "Programa de Limpieza y Desinfección",
+        "responsable": "Jefe de Calidad",
+        "frecuencia": "Diaria",
+        "descripcion": "Control de limpieza y desinfección de equipos, áreas y utensilios"
+      },
+      {
+        "id": "a1b2c3d4-0004-0002-0001-000000000001",
+        "plan_psb_id": "a1b2c3d4-0003-0001-0001-000000000001",
+        "tipo": "PLAGAS",
+        "nombre": "Programa de Control de Plagas",
+        "responsable": "Jefe de Calidad",
+        "frecuencia": "Mensual",
+        "descripcion": "Prevención y control de vectores y plagas en instalaciones"
+      },
+      {
+        "id": "a1b2c3d4-0004-0003-0001-000000000001",
+        "plan_psb_id": "a1b2c3d4-0003-0001-0001-000000000001",
+        "tipo": "AGUA",
+        "nombre": "Programa de Gestión del Agua",
+        "responsable": "Jefe de Mantenimiento",
+        "frecuencia": "Diaria",
+        "descripcion": "Control de potabilidad y abastecimiento de agua para procesos"
+      },
+      {
+        "id": "a1b2c3d4-0004-0004-0001-000000000001",
+        "plan_psb_id": "a1b2c3d4-0003-0001-0001-000000000001",
+        "tipo": "RESIDUOS",
+        "nombre": "Programa de Manejo de Residuos",
+        "responsable": "Operario de Planta",
+        "frecuencia": "Diaria",
+        "descripcion": "Clasificación, recolección y disposición final de residuos sólidos y líquidos"
+      }
+    ]
+  },
+
+  "usuario": {
+    "tabla": "USUARIO",
+    "descripcion": "Persona con acceso al sistema. El pin_firma_hash se usa para firmar registros desde móvil.",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "empresa_id": { "tipo": "UUID", "fk": "EMPRESA.id", "requerido": true },
+      "nombre": { "tipo": "STRING", "requerido": true },
+      "email": { "tipo": "STRING", "requerido": true, "unico": true },
+      "rol": {
+        "tipo": "ENUM",
+        "valores": ["ADMIN", "CALIDAD", "OPERARIO"],
+        "requerido": true
+      },
+      "estado": {
+        "tipo": "ENUM",
+        "valores": ["ACTIVO", "INACTIVO"],
+        "requerido": true
+      },
+      "cargo": { "tipo": "STRING", "nullable": true },
+      "pin_firma_hash": { "tipo": "STRING", "nullable": true, "nota": "Hash bcrypt de PIN de 4 dígitos" },
+      "firma_digitalizada": { "tipo": "STRING", "nullable": true, "nota": "Base64 o URL de imagen de firma" }
+    },
+    "ejemplos": [
+      {
+        "id": "a1b2c3d4-0005-0001-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "nombre": "María Fernanda López",
+        "email": "mflopez@lacteoselcampomar.com",
+        "rol": "ADMIN",
+        "estado": "ACTIVO",
+        "cargo": "Gerente General",
+        "pin_firma_hash": "$2b$10$hashedpinexample001",
+        "firma_digitalizada": "https://storage.ejemplo.com/firmas/mflopez.png"
+      },
+      {
+        "id": "a1b2c3d4-0005-0002-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "nombre": "Juliana Cárdenas",
+        "email": "jcardenas@lacteoselcampomar.com",
+        "rol": "CALIDAD",
+        "estado": "ACTIVO",
+        "cargo": "Jefe de Calidad",
+        "pin_firma_hash": "$2b$10$hashedpinexample002",
+        "firma_digitalizada": "https://storage.ejemplo.com/firmas/jcardenas.png"
+      },
+      {
+        "id": "a1b2c3d4-0005-0003-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "nombre": "Pedro Murillo",
+        "email": "pmurillo@lacteoselcampomar.com",
+        "rol": "OPERARIO",
+        "estado": "ACTIVO",
+        "cargo": "Operario de Planta",
+        "pin_firma_hash": "$2b$10$hashedpinexample003",
+        "firma_digitalizada": null
+      }
+    ]
+  },
+
+  "version_plan": {
+    "tabla": "VERSION_PLAN",
+    "descripcion": "Historial de versiones de un plan PSB. Registra quién hizo cada cambio y qué cambió.",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "plan_psb_id": { "tipo": "UUID", "fk": "PLAN_PSB.id", "requerido": true },
+      "usuario_id": { "tipo": "UUID", "fk": "USUARIO.id", "requerido": true },
+      "nro_version": { "tipo": "INTEGER", "requerido": true },
+      "cambios": { "tipo": "TEXT", "requerido": true },
+      "fecha": { "tipo": "DATE", "requerido": true }
+    },
+    "ejemplo": {
+      "id": "a1b2c3d4-0006-0001-0001-000000000001",
+      "plan_psb_id": "a1b2c3d4-0003-0001-0001-000000000001",
+      "usuario_id": "a1b2c3d4-0005-0002-0001-000000000001",
+      "nro_version": 1,
+      "cambios": "Creación inicial del plan PSB para leche pasteurizada entera. Se definen los cuatro programas obligatorios.",
+      "fecha": "2024-01-15"
+    }
+  },
+
+  "notificacion": {
+    "tabla": "NOTIFICACION",
+    "descripcion": "Alertas y recordatorios generados por el sistema hacia los usuarios.",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "usuario_id": { "tipo": "UUID", "fk": "USUARIO.id", "requerido": true },
+      "programa_id": { "tipo": "UUID", "fk": "PROGRAMA.id", "nullable": true },
+      "registro_id": { "tipo": "UUID", "fk": "REGISTRO.id", "nullable": true },
+      "tipo": { "tipo": "STRING", "requerido": true, "nota": "Ej: ALERTA_VENCIMIENTO, TAREA_PENDIENTE, NO_CONFORMIDAD" },
+      "titulo": { "tipo": "STRING", "requerido": true },
+      "mensaje": { "tipo": "TEXT", "requerido": true },
+      "fecha_envio": { "tipo": "DATETIME", "requerido": true },
+      "fecha_limite": { "tipo": "DATETIME", "nullable": true },
+      "leida": { "tipo": "BOOLEAN", "requerido": true, "default": false },
+      "estado": { "tipo": "STRING", "requerido": true, "nota": "Ej: PENDIENTE, GESTIONADA, VENCIDA" }
+    },
+    "ejemplo": {
+      "id": "a1b2c3d4-0007-0001-0001-000000000001",
+      "usuario_id": "a1b2c3d4-0005-0002-0001-000000000001",
+      "programa_id": "a1b2c3d4-0004-0001-0001-000000000001",
+      "registro_id": null,
+      "tipo": "TAREA_PENDIENTE",
+      "titulo": "Limpieza de pasteurizador pendiente",
+      "mensaje": "El registro de limpieza del pasteurizador P-01 no ha sido completado hoy. Fecha límite: 18:00.",
+      "fecha_envio": "2024-06-10T08:00:00",
+      "fecha_limite": "2024-06-10T18:00:00",
+      "leida": false,
+      "estado": "PENDIENTE"
+    }
+  },
+
+  "registro": {
+    "tabla": "REGISTRO",
+    "descripcion": "Registro maestro diario. Cada ejecución de un programa genera un registro base que luego se especializa (limpieza, plagas, agua o residuos).",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "programa_id": { "tipo": "UUID", "fk": "PROGRAMA.id", "requerido": true },
+      "usuario_id": { "tipo": "UUID", "fk": "USUARIO.id", "requerido": true },
+      "fecha": { "tipo": "DATE", "requerido": true },
+      "hora_inicio": { "tipo": "TIME", "nullable": true },
+      "hora_fin": { "tipo": "TIME", "nullable": true },
+      "observaciones": { "tipo": "TEXT", "nullable": true },
+      "evidencia_foto": { "tipo": "STRING", "nullable": true, "nota": "URL de imagen de evidencia" }
+    },
+    "ejemplo": {
+      "id": "a1b2c3d4-0008-0001-0001-000000000001",
+      "programa_id": "a1b2c3d4-0004-0001-0001-000000000001",
+      "usuario_id": "a1b2c3d4-0005-0003-0001-000000000001",
+      "fecha": "2024-06-10",
+      "hora_inicio": "06:30:00",
+      "hora_fin": "08:15:00",
+      "observaciones": "Limpieza completada sin novedades. Área de pasteurización conforme.",
+      "evidencia_foto": "https://storage.ejemplo.com/evidencias/20240610_limpieza_pasteurizador.jpg"
+    }
+  },
+
+  "equipo_area": {
+    "tabla": "EQUIPO_AREA",
+    "descripcion": "Catálogo de equipos, áreas y utensilios de la empresa que son objeto de limpieza.",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "empresa_id": { "tipo": "UUID", "fk": "EMPRESA.id", "requerido": true },
+      "nombre": { "tipo": "STRING", "requerido": true },
+      "tipo": {
+        "tipo": "ENUM",
+        "valores": ["AREA", "EQUIPO", "UTENSILIO"],
+        "requerido": true
+      },
+      "estado": {
+        "tipo": "ENUM",
+        "valores": ["ACTIVO", "INACTIVO"],
+        "requerido": true
+      }
+    },
+    "ejemplos": [
+      {
+        "id": "a1b2c3d4-0009-0001-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "nombre": "Pasteurizador P-01",
+        "tipo": "EQUIPO",
+        "estado": "ACTIVO"
+      },
+      {
+        "id": "a1b2c3d4-0009-0002-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "nombre": "Área de recepción de leche",
+        "tipo": "AREA",
+        "estado": "ACTIVO"
+      },
+      {
+        "id": "a1b2c3d4-0009-0003-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "nombre": "Paletas de agitación",
+        "tipo": "UTENSILIO",
+        "estado": "ACTIVO"
+      }
+    ]
+  },
+
+  "producto_quimico": {
+    "tabla": "PRODUCTO_QUIMICO",
+    "descripcion": "Catálogo de productos químicos autorizados por la empresa para limpieza y desinfección. El registro INVIMA es obligatorio.",
+    "campos": {
+      "id": { "tipo": "UUID", "pk": true },
+      "empresa_id": { "tipo": "UUID", "fk": "EMPRESA.id", "requerido": true },
+      "codigo": { "tipo": "STRING", "requerido": true },
+      "nombre": { "tipo": "STRING", "requerido": true },
+      "fabricante": { "tipo": "STRING", "requerido": true },
+      "registro_sanitario_invima": { "tipo": "STRING", "requerido": true, "nota": "OBLIGATORIO para aprobación INVIMA" },
+      "grado_alimenticio": { "tipo": "BOOLEAN", "requerido": true },
+      "ph_puro": { "tipo": "DOUBLE", "nullable": true },
+      "dosificacion_sugerida": { "tipo": "STRING", "nullable": true },
+      "ficha_tecnica_url": { "tipo": "STRING", "nullable": true }
+    },
+    "ejemplos": [
+      {
+        "id": "a1b2c3d4-0010-0001-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "codigo": "DET-001",
+        "nombre": "Detergente alcalino clorado",
+        "fabricante": "Ecolab Colombia",
+        "registro_sanitario_invima": "2021DI-0012345",
+        "grado_alimenticio": true,
+        "ph_puro": 12.5,
+        "dosificacion_sugerida": "5 mL/L de agua",
+        "ficha_tecnica_url": "https://storage.ejemplo.com/fichas/det-001.pdf"
+      },
+      {
+        "id": "a1b2c3d4-0010-0002-0001-000000000001",
+        "empresa_id": "a1b2c3d4-0001-0001-0001-000000000001",
+        "codigo": "DES-001",
+        "nombre": "Desinfectante a base de ácido peracético",
+        "fabricante": "Diversey Colombia",
+        "registro_sanitario_invima": "2020DI-0098765",
+        "grado_alimenticio": true,
+        "ph_puro": 2.8,
+        "dosificacion_sugerida": "2 mL/L de agua",
+        "ficha_tecnica_url": "https://storage.ejemplo.com/fichas/des-001.pdf"
+      }
+    ]
+  }
+}
