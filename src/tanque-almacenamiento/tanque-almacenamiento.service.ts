@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { TanqueAlmacenamiento } from './entities/tanque-almacenamiento.entity';
 import { CreateTanqueAlmacenamientoDto } from './dto/create-tanque-almacenamiento.dto';
 import { UpdateTanqueAlmacenamientoDto } from './dto/update-tanque-almacenamiento.dto';
+import { validarTanque } from '../modules/agua/shared/validators';
 
 @Injectable()
 export class TanqueAlmacenamientoService {
@@ -17,8 +18,6 @@ export class TanqueAlmacenamientoService {
     @InjectRepository(TanqueAlmacenamiento)
     private readonly tanqueRepository: Repository<TanqueAlmacenamiento>,
   ) {}
-
-  // ─── Crear ───────────────────────────────────────────────────────────────────
 
   async create(dto: CreateTanqueAlmacenamientoDto): Promise<TanqueAlmacenamiento> {
     const existente = await this.tanqueRepository.findOne({
@@ -31,19 +30,21 @@ export class TanqueAlmacenamientoService {
       );
     }
 
+    validarTanque({
+      tieneTapa: dto.tieneTapa,
+      tapaBuenEstado: dto.tapaBuenEstado,
+      capacidadLitros: dto.capacidadLitros,
+    });
+
     const tanque = this.tanqueRepository.create(dto);
     return this.tanqueRepository.save(tanque);
   }
-
-  // ─── Listar ──────────────────────────────────────────────────────────────────
 
   async findAll(): Promise<TanqueAlmacenamiento[]> {
     return this.tanqueRepository.find({
       relations: ['fuenteAgua'],
     });
   }
-
-  // ─── Buscar uno ──────────────────────────────────────────────────────────────
 
   async findOne(id: string): Promise<TanqueAlmacenamiento> {
     const tanque = await this.tanqueRepository.findOne({
@@ -57,8 +58,6 @@ export class TanqueAlmacenamientoService {
 
     return tanque;
   }
-
-  // ─── Buscar por fuente ───────────────────────────────────────────────────────
 
   async findByFuente(fuenteAguaId: string): Promise<TanqueAlmacenamiento> {
     const tanque = await this.tanqueRepository.findOne({
@@ -75,15 +74,18 @@ export class TanqueAlmacenamientoService {
     return tanque;
   }
 
-  // ─── Actualizar ──────────────────────────────────────────────────────────────
-
   async update(id: string, dto: UpdateTanqueAlmacenamientoDto): Promise<TanqueAlmacenamiento> {
     const tanque = await this.findOne(id);
+    const tieneTapa = dto.tieneTapa ?? tanque.tieneTapa;
+    const tapaBuenEstado = dto.tapaBuenEstado ?? tanque.tapaBuenEstado;
+    validarTanque({
+      tieneTapa,
+      tapaBuenEstado,
+      capacidadLitros: dto.capacidadLitros ?? tanque.capacidadLitros,
+    });
     Object.assign(tanque, dto);
     return this.tanqueRepository.save(tanque);
   }
-
-  // ─── Eliminar ────────────────────────────────────────────────────────────────
 
   async remove(id: string): Promise<void> {
     const tanque = await this.findOne(id);

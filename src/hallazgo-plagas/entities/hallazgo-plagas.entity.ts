@@ -6,7 +6,7 @@ import { AccionCorrectivaPlagas } from "src/accion-correctiva-plagas/entities/ac
 
 @Entity('hallazgo_plagas')
 export class HallazgoPlagas {
-              @PrimaryGeneratedColumn()
+              @PrimaryGeneratedColumn('uuid')
               id!: string;
             
               @Column()

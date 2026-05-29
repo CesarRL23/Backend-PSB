@@ -5,6 +5,7 @@ import {
   IsString,
   IsUUID,
   MaxLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateFuenteAguaDto {
@@ -23,8 +24,9 @@ export class CreateFuenteAguaDto {
   @MaxLength(100)
   tipo!: string;
 
+  @ValidateIf((o) => o.tipo === 'red_publica')
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @MaxLength(200)
   proveedor?: string;
 
@@ -41,4 +43,29 @@ export class CreateFuenteAguaDto {
   @IsOptional()
   @MaxLength(100)
   estado?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(150)
+  municipio?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(150)
+  departamento?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  concesion?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  tratamiento?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(500)
+  evidenciaFoto?: string;
 }
