@@ -46,12 +46,19 @@ export class Notification {
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
+  @Column({ name: 'remitente_id', type: 'uuid', nullable: true })
+  remitenteId!: string;
+
   @ManyToOne(() => User, (u) => u.notificaciones, {
     nullable: false,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'usuario_id' })
   usuario!: User;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'remitente_id' })
+  remitente!: User;
 
   // programa y registro se relacionan desde sus propios módulos (otro compañero)
 }

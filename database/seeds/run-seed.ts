@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-
 import { randomUUID } from 'node:crypto';
 import * as path from 'node:path';
 
+import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
@@ -242,6 +242,7 @@ async function seed() {
 
     const plan = await planRepo.save(
       planRepo.create({
+        nombre: 'Plan de Saneamiento Basico 2026',
         version: 'v2026.1',
         estado: 'vigente',
         nivel_riesgo: 'alto',
@@ -249,6 +250,12 @@ async function seed() {
         tipoAlimento: tipoAlimentoList[0],
       }),
     );
+
+    const [hash1234, hash5678, hash0000] = await Promise.all([
+      bcrypt.hash('1234', 10),
+      bcrypt.hash('5678', 10),
+      bcrypt.hash('0000', 10),
+    ]);
 
     const users = await userRepo.save([
       userRepo.create({
@@ -259,6 +266,7 @@ async function seed() {
         rol: 'admin',
         estado: 'activo',
         cargo: 'Coordinadora de calidad',
+        pinFirmaHash: hash1234,
         firmaDigitalizada: 'https://example.com/firmas/camila.png',
       }),
       userRepo.create({
@@ -269,6 +277,7 @@ async function seed() {
         rol: 'supervisor',
         estado: 'activo',
         cargo: 'Supervisor sanitario',
+        pinFirmaHash: hash5678,
         firmaDigitalizada: 'https://example.com/firmas/andres.png',
       }),
       userRepo.create({
@@ -279,6 +288,7 @@ async function seed() {
         rol: 'operario',
         estado: 'activo',
         cargo: 'Operaria de planta',
+        pinFirmaHash: hash0000,
       }),
     ]);
 
@@ -373,6 +383,7 @@ async function seed() {
     await notificationRepo.save([
       notificationRepo.create({
         usuarioId: users[1].id,
+        remitenteId: users[0].id,
         programaId: programa.id,
         registroId: registros[2].id,
         tipo: 'alerta',
@@ -385,6 +396,7 @@ async function seed() {
       }),
       notificationRepo.create({
         usuarioId: users[0].id,
+        remitenteId: users[1].id,
         programaId: programa.id,
         registroId: registros[1].id,
         tipo: 'recordatorio',

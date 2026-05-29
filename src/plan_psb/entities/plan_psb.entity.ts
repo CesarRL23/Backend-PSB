@@ -9,6 +9,9 @@ export class PlanPsb {
   id: string;
 
   @Column({ length: 300 })
+  nombre: string;
+
+  @Column({ length: 300 })
   version: string;
 
   @Column({ name: 'estado', length: 100 })
