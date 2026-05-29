@@ -20,7 +20,7 @@ export class RegistroPlagas {
           @OneToMany(() => EvidenciaPlagas, (evidenciaPlagas) => evidenciaPlagas.registroPlagas)
           evidenciasPlagas!: EvidenciaPlagas[];
     
-          @ManyToOne(() => Registro, (registro) => registro.registroPlagas)
+          @ManyToOne(() => Registro, (registro) => registro.plagas)
           registro!: Registro;
 
           @ManyToOne(() => ProgramaPlagas, (programaPlagas) => programaPlagas.registrosPlagas)

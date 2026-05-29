@@ -4,16 +4,33 @@ import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { UserResolverService } from '../common/services/user-resolver.service';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
     private readonly notificationRepo: Repository<Notification>,
+    private readonly userResolver: UserResolverService,
   ) {}
 
   async create(dto: CreateNotificationDto) {
-    const notification = this.notificationRepo.create(dto);
+    const usuarioId = await this.userResolver.resolve(dto.usuario_id);
+    const fechaEnvio = dto.fecha_envio ? new Date(dto.fecha_envio) : new Date();
+
+    const notification = this.notificationRepo.create({
+      usuarioId,
+      programaId: dto.programa_id,
+      registroId: dto.registro_id,
+      tipo: dto.tipo,
+      titulo: dto.titulo,
+      mensaje: dto.mensaje,
+      fechaEnvio,
+      fechaLimite: dto.fecha_limite ? new Date(dto.fecha_limite) : undefined,
+      leida: dto.leida,
+      estado: dto.estado,
+    });
+
     return await this.notificationRepo.save(notification);
   }
 

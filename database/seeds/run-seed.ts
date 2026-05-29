@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import * as path from 'node:path';
 
 import * as dotenv from 'dotenv';
+import { createClient } from '@supabase/supabase-js';
 import { DataSource } from 'typeorm';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -280,6 +281,29 @@ async function seed() {
         cargo: 'Operaria de planta',
       }),
     ]);
+
+    // ─── Sincronizar usuarios con Supabase Auth ──────────────────────────────
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+    if (supabaseUrl && supabaseSecretKey) {
+      const supabaseAdmin = createClient(supabaseUrl, supabaseSecretKey);
+      const password = 'Psb2026!';
+      for (const user of users) {
+        const { error } = await supabaseAdmin.auth.admin.createUser({
+          uid: user.id,
+          email: user.email,
+          password,
+          email_confirm: true,
+          user_metadata: { role: user.rol, nombre: user.nombre },
+        } as any);
+        if (error && error.message !== 'User already registered') {
+          console.error(`Error creando usuario ${user.email} en Supabase:`, error.message);
+        }
+      }
+      console.log('Usuarios sincronizados con Supabase Auth.');
+    } else {
+      console.warn('SUPABASE_URL o SUPABASE_SECRET_KEY no definidas — se omitió sincronización con Supabase Auth.');
+    }
 
     const programa = await programaRepo.save(
       programaRepo.create({
@@ -590,6 +614,9 @@ async function seed() {
         cloroResidual: 0.8,
         ph: 7.1,
         turbiedad: 0.5,
+        colorAparente: 5,
+        puntoCaptacion: 'Tanque principal',
+        responsableMuestra: 'Juan Pérez',
         cumpleNorma: true,
       }),
     );
@@ -600,8 +627,15 @@ async function seed() {
         registroAguaId: registroAgua.id,
         numeroCertificado: 'LAB-PSB-2026-0512',
         fechaMuestreo: '2026-05-12',
-        coliformesTotales: false,
-        eColi: false,
+        laboratorioCertificado: 'Laboratorio ABC',
+        responsableMuestra: 'Juan Pérez',
+        puntoMuestreo: 'Llave cocina',
+        cloroResidual: 1.2,
+        ph: 7.0,
+        turbiedad: 1.5,
+        colorAparente: 5,
+        coliformesTotalesPresentes: false,
+        eColiPresente: false,
         mesofilos: 12,
         irca: 1.2,
         nivelRiesgo: 'sin_riesgo',
@@ -643,6 +677,7 @@ async function seed() {
 
     await accionAguaRepo.save(
       accionAguaRepo.create({
+        fuenteAguaId: fuenteAgua.id,
         registroAguaId: registroAgua.id,
         descripcionDesviacion:
           'Lectura de cloro residual cercana al limite inferior de control.',

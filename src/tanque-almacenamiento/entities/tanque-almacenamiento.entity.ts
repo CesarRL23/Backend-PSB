@@ -29,6 +29,23 @@ export class TanqueAlmacenamiento {
   @Column({ name: 'tiene_tapa', default: false })
   tieneTapa!: boolean;
 
+  // ─── Campos normativos ───────────────────────────────────────────────────────
+
+  @Column({ length: 100, nullable: true })
+  tipo!: string;
+
+  @Column({ length: 300, nullable: true })
+  ubicacion!: string;
+
+  @Column({ name: 'tapa_buen_estado', nullable: true })
+  tapaBuenEstado!: boolean;
+
+  @Column({ name: 'llave_paso', nullable: true })
+  llavePaso!: boolean;
+
+  @Column({ name: 'proxima_limpieza', type: 'date', nullable: true })
+  proximaLimpieza!: string;
+
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @OneToOne(() => FuenteAgua, (fuente) => fuente.tanqueAlmacenamiento)

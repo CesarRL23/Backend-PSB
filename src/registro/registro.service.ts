@@ -35,7 +35,7 @@ export class RegistroService {
 
   async findAll(): Promise<Registro[]> {
     return this.registroRepository.find({
-      relations: ['programa', 'usuario'],
+      relations: ['programa', 'usuario', 'agua', 'residuos', 'plagas', 'limpieza'],
       order: { fecha: 'DESC', createdAt: 'DESC' },
     });
   }
@@ -45,7 +45,7 @@ export class RegistroService {
   async findOne(id: string): Promise<Registro> {
     const registro = await this.registroRepository.findOne({
       where: { id },
-      relations: ['programa', 'usuario', 'notificaciones'],
+      relations: ['programa', 'usuario', 'agua', 'residuos', 'plagas', 'limpieza'],
     });
 
     if (!registro) {

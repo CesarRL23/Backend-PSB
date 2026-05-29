@@ -72,18 +72,15 @@ export class Registro {
   @OneToMany(() => Notification, () => Notification)
   notificaciones!: Notification[];
 
-  @OneToMany(() => RegistroResiduo, () => RegistroResiduo)
+  @OneToMany(() => RegistroResiduo, (rr) => rr.registro)
   residuos!: RegistroResiduo[];
 
-  @OneToMany(() => RegistroAgua, () => RegistroAgua)
+  @OneToMany(() => RegistroAgua, (ra) => ra.registro)
   agua!: RegistroAgua[];
 
-  @OneToMany(() => RegistroPlagas, () => RegistroPlagas)
+  @OneToMany(() => RegistroPlagas, (rp) => rp.registro)
   plagas!: RegistroPlagas[];
 
-  @OneToMany(() => RegistroLimpieza, () => RegistroLimpieza)
+  @OneToMany(() => RegistroLimpieza, (rl) => rl.registro)
   limpieza!: RegistroLimpieza[];
-
-  @OneToMany(() => RegistroPlagas, (registroPlagas) => registroPlagas.registro)
-  registroPlagas!: RegistroPlagas[];
 }

@@ -8,6 +8,7 @@ import {
   IsUUID,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateTanqueAlmacenamientoDto {
@@ -33,4 +34,27 @@ export class CreateTanqueAlmacenamientoDto {
   @IsBoolean()
   @IsOptional()
   tieneTapa?: boolean;
+
+  @ValidateIf((o) => o.tieneTapa === true)
+  @IsBoolean()
+  @IsNotEmpty()
+  tapaBuenEstado?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  llavePaso?: boolean;
+
+  @IsDateString()
+  @IsOptional()
+  proximaLimpieza?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(100)
+  tipo?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(300)
+  ubicacion?: string;
 }
