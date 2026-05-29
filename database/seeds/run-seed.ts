@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { randomUUID } from 'node:crypto';
 import * as path from 'node:path';
 
+import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
@@ -249,6 +250,12 @@ async function seed() {
       }),
     );
 
+    const [hash1234, hash5678, hash0000] = await Promise.all([
+      bcrypt.hash('1234', 10),
+      bcrypt.hash('5678', 10),
+      bcrypt.hash('0000', 10),
+    ]);
+
     const users = await userRepo.save([
       userRepo.create({
         id: '9a6d4b65-08a7-4b0a-bcf6-3c2f4d8b4b11',
@@ -258,6 +265,7 @@ async function seed() {
         rol: 'admin',
         estado: 'activo',
         cargo: 'Coordinadora de calidad',
+        pinFirmaHash: hash1234,
         firmaDigitalizada: 'https://example.com/firmas/camila.png',
       }),
       userRepo.create({
@@ -268,6 +276,7 @@ async function seed() {
         rol: 'supervisor',
         estado: 'activo',
         cargo: 'Supervisor sanitario',
+        pinFirmaHash: hash5678,
         firmaDigitalizada: 'https://example.com/firmas/andres.png',
       }),
       userRepo.create({
@@ -278,6 +287,7 @@ async function seed() {
         rol: 'operario',
         estado: 'activo',
         cargo: 'Operaria de planta',
+        pinFirmaHash: hash0000,
       }),
     ]);
 
@@ -349,6 +359,7 @@ async function seed() {
     await notificationRepo.save([
       notificationRepo.create({
         usuarioId: users[1].id,
+        remitenteId: users[0].id,
         programaId: programa.id,
         registroId: registros[2].id,
         tipo: 'alerta',
@@ -361,6 +372,7 @@ async function seed() {
       }),
       notificationRepo.create({
         usuarioId: users[0].id,
+        remitenteId: users[1].id,
         programaId: programa.id,
         registroId: registros[1].id,
         tipo: 'recordatorio',

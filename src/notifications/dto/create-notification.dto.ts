@@ -14,6 +14,10 @@ export class CreateNotificationDto {
   registro_id?: string;
 
   @IsString()
+  @IsOptional()
+  remitente_id?: string;
+
+  @IsString()
   @IsNotEmpty()
   tipo!: string;
 

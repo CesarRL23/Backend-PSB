@@ -32,6 +32,9 @@ export class User {
   @Column({ length: 100, nullable: true })
   cargo!: string;
 
+  @Column({ name: 'pin_firma_hash', length: 200, nullable: true })
+  pinFirmaHash!: string;
+
   @Column({ name: 'firma_digitalizada', length: 500, nullable: true })
   firmaDigitalizada!: string;
 
