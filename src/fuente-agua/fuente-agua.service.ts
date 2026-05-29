@@ -1,9 +1,10 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, QueryFailedError } from 'typeorm';
 
 import { FuenteAgua } from './entities/fuente-agua.entity';
 import { CreateFuenteAguaDto } from './dto/create-fuente-agua.dto';
@@ -132,6 +133,15 @@ export class FuenteAguaService {
 
   async remove(id: string): Promise<void> {
     const fuenteAgua = await this.findOne(id);
-    await this.fuenteAguaRepository.remove(fuenteAgua);
+    try {
+      await this.fuenteAguaRepository.remove(fuenteAgua);
+    } catch (error) {
+      if (error instanceof QueryFailedError && (error as any).driverError?.code === '23503') {
+        throw new ConflictException(
+          'No se puede eliminar la fuente de agua porque tiene tanques, controles, análisis o mantenimientos asociados.',
+        );
+      }
+      throw error;
+    }
   }
 }

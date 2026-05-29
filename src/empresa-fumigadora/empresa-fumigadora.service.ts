@@ -18,7 +18,7 @@ export class EmpresaFumigadoraService {
   async create(dto: CreateEmpresaFumigadoraDto): Promise<EmpresaFumigadora> {
     const entity = this.repo.create({
       nit: dto.nit,
-      nombre_empresa: dto.nombreEmpresa,
+      nombre_empresa: dto.nombre_empresa,
       numCerSanitario: dto.numCerSanitario,
       registroSds: dto.registroSds,
       telefonoContacto: dto.telefonoContacto,

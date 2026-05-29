@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param,
+         Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { EvidenciaPlagasService } from './evidencia-plagas.service';
 import { CreateEvidenciaPlagasDto } from './dto/create-evidencia-plagas.dto';
 import { UpdateEvidenciaPlagasDto } from './dto/update-evidencia-plagas.dto';
@@ -18,25 +19,25 @@ export class EvidenciaPlagasController {
     return this.service.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
-  }
-
-  // GET /evidencia-plagas/registro/:registroId
+  // ⚠️ Ruta estática ANTES de la dinámica (:id)
   @Get('registro/:registroId')
-  findByRegistro(@Param('registroId', ParseIntPipe) registroId: number) {
+  findByRegistro(@Param('registroId') registroId: string) {
     return this.service.findByRegistro(registroId);
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateEvidenciaPlagasDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateEvidenciaPlagasDto) {
     return this.service.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
 }

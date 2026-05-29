@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, QueryFailedError } from 'typeorm';
 
 import { ProgramaAgua } from './entities/programa-agua.entity';
 import { CreateProgramaAguaDto } from './dto/create-programa-agua.dto';
@@ -70,6 +70,15 @@ export class ProgramaAguaService {
 
   async remove(id: string): Promise<void> {
     const programaAgua = await this.findOne(id);
-    await this.programaAguaRepository.remove(programaAgua);
+    try {
+      await this.programaAguaRepository.remove(programaAgua);
+    } catch (error) {
+      if (error instanceof QueryFailedError && (error as any).driverError?.code === '23503') {
+        throw new ConflictException(
+          'No se puede eliminar el programa de agua porque tiene fuentes de agua o registros asociados.',
+        );
+      }
+      throw error;
+    }
   }
 }

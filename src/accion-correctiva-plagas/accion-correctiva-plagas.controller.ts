@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param,
+         Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { AccionCorrectivaPlagasService } from './accion-correctiva-plagas.service';
 import { CreateAccionCorrectivaPlagasDto } from './dto/create-accion-correctiva-plagas.dto';
 import { UpdateAccionCorrectivaPlagasDto } from './dto/update-accion-correctiva-plagas.dto';
@@ -18,31 +19,31 @@ export class AccionCorrectivaPlagasController {
     return this.service.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
-  }
-
-  // GET /accion-correctiva-plagas/hallazgo/:hallazgoId
+  // ⚠️ Rutas estáticas ANTES de las dinámicas
   @Get('hallazgo/:hallazgoId')
-  findByHallazgo(@Param('hallazgoId', ParseIntPipe) hallazgoId: number) {
+  findByHallazgo(@Param('hallazgoId') hallazgoId: string) {
+    console.log('hallazgoId recibido:', hallazgoId); 
     return this.service.findByHallazgo(hallazgoId);
   }
 
-  // PATCH /accion-correctiva-plagas/:id/cerrar
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
   @Patch(':id/cerrar')
-  cerrar(@Param('id', ParseIntPipe) id: number) {
+  cerrar(@Param('id') id: string) {
     return this.service.cerrar(id);
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateAccionCorrectivaPlagasDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateAccionCorrectivaPlagasDto) {
     return this.service.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
 }
