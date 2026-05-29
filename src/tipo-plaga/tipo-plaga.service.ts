@@ -28,7 +28,7 @@ export class TipoPlagaService {
     return this.repo.find();
   }
 
-  async findOne(id: number): Promise<TipoPlaga> {
+  async findOne(id: string): Promise<TipoPlaga> {
     const entity = await this.repo.findOne({
       where: { id: id.toString() },
       relations: ['hallazgosPlagas'],
@@ -41,13 +41,13 @@ export class TipoPlagaService {
     return this.repo.find({ where: { categoria } });
   }
 
-  async update(id: number, dto: UpdateTipoPlagaDto): Promise<TipoPlaga> {
+  async update(id: string, dto: UpdateTipoPlagaDto): Promise<TipoPlaga> {
     const entity = await this.findOne(id);
     Object.assign(entity, dto);
     return this.repo.save(entity);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const entity = await this.findOne(id);
     await this.repo.remove(entity);
   }

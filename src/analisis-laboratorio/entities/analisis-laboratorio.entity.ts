@@ -24,17 +24,50 @@ export class AnalisisLaboratorio {
   @Column({ name: 'numero_certificado', length: 200 })
   numeroCertificado!: string;
 
+  @Column({ name: 'laboratorio_certificado', length: 200 })
+  laboratorioCertificado!: string;
+
   @Column({ name: 'fecha_muestreo', type: 'date' })
   fechaMuestreo!: string;
 
-  @Column({ name: 'coliformes_totales', default: false })
-  coliformesTotales!: boolean;
+  @Column({ name: 'fecha_entrega_resultado', type: 'date', nullable: true })
+  fechaEntregaResultado?: string;
 
-  @Column({ name: 'e_coli', default: false })
-  eColi!: boolean;
+  @Column({ name: 'responsable_muestra', length: 200 })
+  responsableMuestra!: string;
 
-  @Column({ type: 'double precision', nullable: true })
+  @Column({ name: 'punto_muestreo', length: 150 })
+  puntoMuestreo!: string;
+
+  @Column({ name: 'cloro_residual', type: 'double precision' })
+  cloroResidual!: number;
+
+  @Column({ type: 'double precision' })
+  ph!: number;
+
+  @Column({ type: 'double precision' })
+  turbiedad!: number;
+
+  @Column({ name: 'color_aparente', type: 'double precision' })
+  colorAparente!: number;
+
+  @Column({ name: 'coliformes_totales_presentes', default: false })
+  coliformesTotalesPresentes!: boolean;
+
+  @Column({ name: 'e_coli_presente', default: false })
+  eColiPresente!: boolean;
+
+  @Column({ type: 'double precision', default: 0 })
   mesofilos!: number;
+
+  @Column({ name: 'cumple_norma_fisicoquimica', default: false })
+  cumpleNormaFisicoquimica!: boolean;
+
+  @Column({ name: 'cumple_norma_microbiologica', default: false })
+  cumpleNormaMicrobiologica!: boolean;
+
+  @Column({ name: 'cumple_norma_general', default: false })
+  cumpleNormaGeneral!: boolean;
 
   @Column({ type: 'double precision', nullable: true })
   irca!: number;
@@ -46,7 +79,60 @@ export class AnalisisLaboratorio {
   resultado!: string;
 
   @Column({ name: 'link_documento_pdf', length: 500, nullable: true })
-  linkDocumentoPdf!: string;
+  linkDocumentoPdf?: string;
+
+  @Column({ name: 'foto_evidencia', length: 500, nullable: true })
+  fotoEvidencia?: string;
+
+  // ─── Campos normativos (Res. 2115/2007) ──────────────────────────────────────
+
+  @Column({ type: 'text', nullable: true })
+  concepto!: string;
+
+  @Column({ name: 'coliformes_totales_ufc', type: 'double precision', nullable: true })
+  coliformesTotalesUfc!: number;
+
+  @Column({ name: 'e_coli_ufc', type: 'double precision', nullable: true })
+  eColiUfc!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  conductividad!: number;
+
+  @Column({ name: 'dureza_total', type: 'double precision', nullable: true })
+  durezaTotal!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  nitritos!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  nitratos!: number;
+
+  @Column({ name: 'hierro_total', type: 'double precision', nullable: true })
+  hierroTotal!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  cloruros!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  sulfatos!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  fluoruros!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  calcio!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  magnesio!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  alcalinidad!: number;
+
+  @Column({ name: 'carbono_organico_total', type: 'double precision', nullable: true })
+  carbonoOrganicoTotal!: number;
+
+  @Column({ type: 'double precision', nullable: true })
+  tensoactivos!: number;
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 

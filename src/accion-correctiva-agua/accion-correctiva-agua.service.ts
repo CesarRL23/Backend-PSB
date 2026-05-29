@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +9,10 @@ import { Repository } from 'typeorm';
 import { AccionCorrectivaAgua, EstadoAccionCorrectiva } from './entities/accion-correctiva-agua.entity';
 import { CreateAccionCorrectivaAguaDto } from './dto/create-accion-correctiva-agua.dto';
 import { UpdateAccionCorrectivaAguaDto } from './dto/update-accion-correctiva-agua.dto';
+import { AguaRegistroCreatorService } from '../modules/agua/shared/services/agua-registro-creator.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { validarAccionCorrectiva } from '../modules/agua/shared/validators';
+import { TipoActividadAgua } from '../registro-agua/entities/registro-agua.entity';
 
 @Injectable()
 export class AccionCorrectivaAguaService {
@@ -16,16 +20,54 @@ export class AccionCorrectivaAguaService {
   constructor(
     @InjectRepository(AccionCorrectivaAgua)
     private readonly accionRepository: Repository<AccionCorrectivaAgua>,
+    private readonly notificationsService: NotificationsService,
+    private readonly aguaRegistroCreator: AguaRegistroCreatorService,
   ) {}
 
-  // ─── Crear ───────────────────────────────────────────────────────────────────
+  async create(
+    dto: CreateAccionCorrectivaAguaDto,
+    usuarioId: string,
+  ): Promise<AccionCorrectivaAgua> {
 
-  async create(dto: CreateAccionCorrectivaAguaDto): Promise<AccionCorrectivaAgua> {
-    const accion = this.accionRepository.create(dto);
-    return this.accionRepository.save(accion);
+    validarAccionCorrectiva({
+      estado: dto.estado ?? EstadoAccionCorrectiva.PENDIENTE,
+      resultadoVerificacion: dto.resultadoVerificacion,
+      descripcionDesviacion: dto.descripcionDesviacion,
+    });
+
+    const { registroAguaId } = await this.aguaRegistroCreator.ejecutar({
+      fuenteAguaId: dto.fuenteAguaId,
+      usuarioId,
+      fecha: new Date(dto.fecha),
+      tipoActividad: TipoActividadAgua.ACCION_CORRECTIVA,
+    });
+
+    const accion = this.accionRepository.create({
+      ...dto,
+      registroAguaId,
+    });
+
+    const saved = await this.accionRepository.save(accion);
+
+    const hoy = new Date();
+    const estadoFinal = dto.estado ?? EstadoAccionCorrectiva.PENDIENTE;
+
+    if (
+      dto.fechaLimite &&
+      new Date(dto.fechaLimite) < hoy &&
+      [EstadoAccionCorrectiva.PENDIENTE, EstadoAccionCorrectiva.EN_PROCESO].includes(estadoFinal)
+    ) {
+      await this.notificationsService.create({
+        usuario_id: usuarioId,
+        tipo: 'alerta',
+        titulo: 'Acción correctiva vencida',
+        mensaje: `La acción correctiva del ${dto.fecha} ha superado su fecha límite (${dto.fechaLimite}) y sigue en estado ${estadoFinal}. Se requiere atención inmediata.`,
+        fecha_envio: hoy.toISOString(),
+      });
+    }
+
+    return saved;
   }
-
-  // ─── Listar ──────────────────────────────────────────────────────────────────
 
   async findAll(): Promise<AccionCorrectivaAgua[]> {
     return this.accionRepository.find({
@@ -34,16 +76,12 @@ export class AccionCorrectivaAguaService {
     });
   }
 
-  // ─── Listar por registro agua ─────────────────────────────────────────────────
-
   async findByRegistroAgua(registroAguaId: string): Promise<AccionCorrectivaAgua[]> {
     return this.accionRepository.find({
       where: { registroAguaId },
       order: { fecha: 'DESC' },
     });
   }
-
-  // ─── Listar pendientes ───────────────────────────────────────────────────────
 
   async findPendientes(): Promise<AccionCorrectivaAgua[]> {
     return this.accionRepository.find({
@@ -53,22 +91,17 @@ export class AccionCorrectivaAguaService {
     });
   }
 
-  // ─── Buscar uno ──────────────────────────────────────────────────────────────
-
   async findOne(id: string): Promise<AccionCorrectivaAgua> {
     const accion = await this.accionRepository.findOne({
       where: { id },
       relations: ['registroAgua'],
     });
 
-    if (!accion) {
+    if (!accion)
       throw new NotFoundException(`AccionCorrectivaAgua #${id} no encontrada`);
-    }
 
     return accion;
   }
-
-  // ─── Actualizar ──────────────────────────────────────────────────────────────
 
   async update(id: string, dto: UpdateAccionCorrectivaAguaDto): Promise<AccionCorrectivaAgua> {
     const accion = await this.findOne(id);
@@ -77,11 +110,18 @@ export class AccionCorrectivaAguaService {
       this.validarTransicionEstado(accion.estado, dto.estado);
     }
 
+    const nuevoEstado = dto.estado ?? accion.estado;
+    const nuevoResultado = dto.resultadoVerificacion ?? accion.resultadoVerificacion;
+
+    validarAccionCorrectiva({
+      estado: nuevoEstado,
+      resultadoVerificacion: nuevoResultado,
+      descripcionDesviacion: dto.descripcionDesviacion ?? accion.descripcionDesviacion,
+    });
+
     Object.assign(accion, dto);
     return this.accionRepository.save(accion);
   }
-
-  // ─── Completar ───────────────────────────────────────────────────────────────
 
   async completar(id: string, resultadoVerificacion: string): Promise<AccionCorrectivaAgua> {
     if (!resultadoVerificacion?.trim()) {
@@ -96,8 +136,6 @@ export class AccionCorrectivaAguaService {
     });
   }
 
-  // ─── Eliminar ────────────────────────────────────────────────────────────────
-
   async remove(id: string): Promise<void> {
     const accion = await this.findOne(id);
 
@@ -109,8 +147,6 @@ export class AccionCorrectivaAguaService {
 
     await this.accionRepository.remove(accion);
   }
-
-  // ─── Lógica de negocio ───────────────────────────────────────────────────────
 
   private validarTransicionEstado(
     actual: EstadoAccionCorrectiva,

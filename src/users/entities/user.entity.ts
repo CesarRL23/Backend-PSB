@@ -38,6 +38,9 @@ export class User {
   @Column({ name: 'firma_digitalizada', length: 500, nullable: true })
   firmaDigitalizada!: string;
 
+  @Column({ name: 'supabase_id', type: 'uuid', unique: true, nullable: true })
+  supabaseId?: string;
+
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @OneToMany(() => Notification, (n) => n.usuario)

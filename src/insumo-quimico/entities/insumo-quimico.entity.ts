@@ -32,6 +32,26 @@ export class InsumoQuimico {
   @Column({ type: 'double precision', nullable: true })
   concentracion!: number;
 
+  // ─── Campos normativos ───────────────────────────────────────────────────────
+
+  @Column({ length: 200, nullable: true })
+  fabricante!: string;
+
+  @Column({ length: 200, nullable: true })
+  uso!: string;
+
+  @Column({ type: 'double precision', nullable: true })
+  stock!: number;
+
+  @Column({ length: 50, nullable: true })
+  unidad!: string;
+
+  @Column({ name: 'ficha_tecnica', length: 500, nullable: true })
+  fichaTecnica!: string;
+
+  @Column({ name: 'condiciones_almacenamiento', type: 'text', nullable: true })
+  condicionesAlmacenamiento!: string;
+
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
   @ManyToOne(() => MantenimientoLavado, (mantenimiento) => mantenimiento.insumosQuimicos)

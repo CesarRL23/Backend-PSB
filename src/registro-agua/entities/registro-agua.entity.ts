@@ -9,19 +9,12 @@ import {
 
 import { Registro } from '../../registro/entities/registro.entity';
 import { ProgramaAgua } from 'src/programa-agua/entities/programa-agua.entity';
+import {
+  TipoActividadAgua,
+  ResultadoGeneralAgua,
+} from '../../modules/agua/shared/enums';
 
-export enum TipoActividadAgua {
-  CONTROL_POTABILIDAD = 'control_potabilidad',
-  ANALISIS_LABORATORIO = 'analisis_laboratorio',
-  MANTENIMIENTO_LAVADO = 'mantenimiento_lavado',
-  ACCION_CORRECTIVA = 'accion_correctiva',
-}
-
-export enum ResultadoGeneralAgua {
-  CONFORME     = 'conforme',
-  NO_CONFORME  = 'no_conforme',
-  EN_PROCESO   = 'en_proceso',
-}
+export { TipoActividadAgua, ResultadoGeneralAgua };
 
 @Entity('registro_agua')
 export class RegistroAgua {
@@ -49,6 +42,23 @@ export class RegistroAgua {
     default: ResultadoGeneralAgua.EN_PROCESO,
   })
   resultadoGeneral!: ResultadoGeneralAgua;
+
+  // ─── Campos normativos ───────────────────────────────────────────────────────
+
+  @Column({ length: 100, nullable: true })
+  periodo!: string;
+
+  @Column({ length: 200, nullable: true })
+  responsable!: string;
+
+  @Column({ name: 'porcentaje_cumplimiento', type: 'double precision', nullable: true })
+  porcentajeCumplimiento!: number;
+
+  @Column({ type: 'text', nullable: true })
+  reporte!: string;
+
+  @Column({ name: 'fecha_cierre', type: 'date', nullable: true })
+  fechaCierre!: string;
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
