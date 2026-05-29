@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, QueryFailedError } from 'typeorm';
 
 import { RegistroAgua, ResultadoGeneralAgua } from './entities/registro-agua.entity';
 import { CreateRegistroAguaDto } from './dto/create-registro-agua.dto';
@@ -92,6 +92,15 @@ export class RegistroAguaService {
 
   async remove(id: string): Promise<void> {
     const registroAgua = await this.findOne(id);
-    await this.registroAguaRepository.remove(registroAgua);
+    try {
+      await this.registroAguaRepository.remove(registroAgua);
+    } catch (error) {
+      if (error instanceof QueryFailedError && (error as any).driverError?.code === '23503') {
+        throw new ConflictException(
+          'No se puede eliminar el registro de agua porque tiene acciones correctivas, controles, análisis o mantenimientos asociados.',
+        );
+      }
+      throw error;
+    }
   }
 }

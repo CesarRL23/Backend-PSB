@@ -1,10 +1,11 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, QueryFailedError } from 'typeorm';
 
 import { MantenimientoLavado, EstadoMantenimiento } from './entities/mantenimiento-lavado.entity';
 import { CreateMantenimientoLavadoDto } from './dto/create-mantenimiento-lavado.dto';
@@ -151,7 +152,16 @@ export class MantenimientoLavadoService {
       );
     }
 
-    await this.mantenimientoRepository.remove(mantenimiento);
+    try {
+      await this.mantenimientoRepository.remove(mantenimiento);
+    } catch (error) {
+      if (error instanceof QueryFailedError && (error as any).driverError?.code === '23503') {
+        throw new ConflictException(
+          'No se puede eliminar el mantenimiento porque tiene insumos químicos asociados.',
+        );
+      }
+      throw error;
+    }
   }
 
   private validarTransicionEstado(
