@@ -11,7 +11,18 @@ export class RegistroResiduosController {
   @Get('me')
   getMe(@CurrentUser() user) {
     return user;
-}
+  }
+
+  @Get('recolecciones/all')
+  findRecolecciones() {
+    return this.registroResiduosService.findRecolecciones();
+  }
+
+  @Get('recolecciones/programa/:programaResiduoId')
+  findRecoleccionesByPrograma(@Param('programaResiduoId') programaResiduoId: string) {
+    return this.registroResiduosService.findRecoleccionesByPrograma(programaResiduoId);
+  }
+
   @Post()
   create(@Body() createRegistroResiduoDto: CreateRegistroResiduoDto) {
     return this.registroResiduosService.create(createRegistroResiduoDto);

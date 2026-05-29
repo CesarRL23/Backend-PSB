@@ -157,4 +157,30 @@ export class RegistroResiduosService {
       await this.registroRepository.delete(baseRegistroId);
     }
   }
+
+  /**
+   * Obtiene solo los registros de residuos cuyo tipo_actividad sea 'recoleccion' o 'recoleccion_interna'
+   */
+  async findRecolecciones(): Promise<RegistroResiduo[]> {
+    return this.registroResiduoRepository.find({
+      where: [
+        { tipo_actividad: 'recoleccion' },
+        { tipo_actividad: 'recoleccion_interna' }
+      ],
+      relations: ['registro', 'recolecciones', 'checklistResiduo', 'evidencias', 'programaResiduo', 'programaResiduo.programa']
+    });
+  }
+
+  /**
+   * Obtiene registros de recolección filtrados por programa
+   */
+  async findRecoleccionesByPrograma(programaResiduoId: string): Promise<RegistroResiduo[]> {
+    return this.registroResiduoRepository.find({
+      where: [
+        { tipo_actividad: 'recoleccion', programaResiduoId },
+        { tipo_actividad: 'recoleccion_interna', programaResiduoId }
+      ],
+      relations: ['registro', 'recolecciones', 'checklistResiduo', 'evidencias', 'programaResiduo', 'programaResiduo.programa']
+    });
+  }
 }

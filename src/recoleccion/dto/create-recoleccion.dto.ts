@@ -29,4 +29,7 @@ export class CreateRecoleccionDto {
   @IsString()
   @IsNotEmpty()
   registroResiduoId!: string;
+
+  @IsOptional()
+  tipoResiduoId?: string | number;
 }
