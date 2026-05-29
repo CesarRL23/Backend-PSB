@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 
 @Entity('plaguicida')
 export class Plaguicida {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id!: string;
 
     @Column()

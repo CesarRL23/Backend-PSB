@@ -5,7 +5,7 @@ import { Column,Entity,OneToMany,OneToOne,PrimaryGeneratedColumn } from "typeorm
 
 @Entity('tipo_plaga')
 export class TipoPlaga {
-          @PrimaryGeneratedColumn()
+          @PrimaryGeneratedColumn('uuid')
           id!: string;
         
           @Column()

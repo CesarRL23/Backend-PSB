@@ -11,7 +11,7 @@ export class CreateEmpresaFumigadoraDto {
         
           @IsString()
           @IsNotEmpty()
-          nombreEmpresa?: string;
+          nombre_empresa?: string;
     
           @IsString()
           @IsNotEmpty()

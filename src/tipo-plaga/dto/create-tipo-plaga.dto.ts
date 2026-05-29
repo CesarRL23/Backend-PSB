@@ -13,8 +13,5 @@ export class CreateTipoPlagaDto {
               @IsNotEmpty()
               riesgoSanitario?: string;
 
-              @IsNotEmpty()
-              hallazgosPlagasId!: string[];
-        
         
 }

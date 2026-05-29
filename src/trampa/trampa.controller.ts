@@ -1,60 +1,59 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param,
+         Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { TrampaService } from './trampa.service';
 import { CreateTrampaDto } from './dto/create-trampa.dto';
 import { UpdateTrampaDto } from './dto/update-trampa.dto';
-
+ 
 @Controller('trampa')
 export class TrampaController {
   constructor(private readonly service: TrampaService) {}
-
+ 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() dto: CreateTrampaDto) {
     return this.service.create(dto);
   }
-
+ 
   @Get()
   findAll() {
     return this.service.findAll();
   }
-
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
-  }
-
-  // GET /trampa/area/:areaId — todas las trampas de un área
+ 
+  // ⚠️ Rutas estáticas ANTES de las dinámicas (:id)
   @Get('area/:areaId')
-  findByArea(@Param('areaId', ParseIntPipe) areaId: number) {
+  findByArea(@Param('areaId') areaId: string) {
     return this.service.findByArea(areaId);
   }
-
-  // PATCH /trampa/:id/activar
+ 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+ 
   @Patch(':id/activar')
-  activar(@Param('id', ParseIntPipe) id: number) {
+  activar(@Param('id') id: string) {
     return this.service.activar(id);
   }
-
-  // PATCH /trampa/:id/desactivar
+ 
   @Patch(':id/desactivar')
-  desactivar(@Param('id', ParseIntPipe) id: number) {
+  desactivar(@Param('id') id: string) {
     return this.service.desactivar(id);
   }
-
-  // PATCH /trampa/:id/revision
+ 
   @Patch(':id/revision')
-  registrarRevision(@Param('id', ParseIntPipe) id: number) {
+  registrarRevision(@Param('id') id: string) {
     return this.service.registrarRevision(id);
   }
-
+ 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateTrampaDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateTrampaDto) {
     return this.service.update(id, dto);
   }
-
+ 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
 }
+ 
