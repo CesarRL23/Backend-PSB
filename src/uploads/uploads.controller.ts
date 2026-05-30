@@ -7,14 +7,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { Public } from '../auth/decorators/public.decorator';
 import { UploadsService } from './uploads.service';
 
 @Controller('uploads')
 export class UploadsController {
   constructor(private readonly uploadsService: UploadsService) {}
 
-  @Public()
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
