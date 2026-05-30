@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { extname } from 'path';
+import ws from 'ws';
 
 @Injectable()
 export class UploadsService {
@@ -11,7 +12,7 @@ export class UploadsService {
   constructor(private config: ConfigService) {
     const url = this.config.get<string>('SUPABASE_URL')!;
     const key = this.config.get<string>('SUPABASE_SECRET_KEY')!;
-    this.supabase = createClient(url, key);
+    this.supabase = createClient(url, key, { realtime: { transport: ws } });
   }
 
   async upload(file: Express.Multer.File): Promise<string> {
