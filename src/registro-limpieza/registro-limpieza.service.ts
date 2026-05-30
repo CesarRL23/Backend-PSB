@@ -40,12 +40,22 @@ export class RegistroLimpiezaService {
     });
   }
 
+  // ─── Listar por programa de limpieza ─────────────────────────────────────────
+
+  async findByPrograma(programaLimpiezaId: string): Promise<RegistroLimpieza[]> {
+    return this.repo.find({
+      where: { programaLimpiezaId },
+      relations: ['registro', 'registro.usuario', 'equipoArea'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   // ─── Buscar uno ──────────────────────────────────────────────────────────────
 
   async findOne(id: string): Promise<RegistroLimpieza> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ['registro', 'programaLimpieza'],
+      relations: ['registro', 'registro.usuario', 'programaLimpieza', 'equipoArea'],
     });
 
     if (!entity) {
