@@ -4,16 +4,29 @@ import { Repository } from 'typeorm';
 import { CreateRegistroResiduoDto } from './dto/create-registro-residuo.dto';
 import { UpdateRegistroResiduoDto } from './dto/update-registro-residuo.dto';
 import { RegistroResiduo } from './entities/registro-residuo.entity';
+import { ProgramaResiduo } from '../programa-residuos/entities/programa-residuo.entity';
 
 @Injectable()
 export class RegistroResiduosService {
   constructor(
     @InjectRepository(RegistroResiduo)
     private readonly registroResiduoRepository: Repository<RegistroResiduo>,
+
+    @InjectRepository(ProgramaResiduo)
+    private readonly programaResiduoRepository: Repository<ProgramaResiduo>,
   ) {}
 
   async create(createRegistroResiduoDto: CreateRegistroResiduoDto): Promise<RegistroResiduo> {
-    const registroResiduo = this.registroResiduoRepository.create(createRegistroResiduoDto);
+    const programaResiduo = await this.programaResiduoRepository.findOne({
+      where: { id: createRegistroResiduoDto.programaResiduoId },
+    });
+    if (!programaResiduo) throw new NotFoundException('Programa de residuos no encontrado');
+
+    const registroResiduo = this.registroResiduoRepository.create({
+      tipo_actividad: createRegistroResiduoDto.tipo_actividad,
+      resultado_general: createRegistroResiduoDto.resultado_general,
+      programaResiduo,
+    });
     return this.registroResiduoRepository.save(registroResiduo);
   }
 
