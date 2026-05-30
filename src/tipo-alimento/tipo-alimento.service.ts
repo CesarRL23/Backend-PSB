@@ -22,7 +22,7 @@ export class TipoAlimentoService {
   }
 
   async findOne(id: number): Promise<TipoAlimento> {
-    const tipoAlimento = await this.tipoAlimentoRepository.findOne({ where: { id: String(id) } });
+    const tipoAlimento = await this.tipoAlimentoRepository.findOne({ where: { id } });
     if (!tipoAlimento) {
       throw new NotFoundException(`TipoAlimento #${id} no encontrado`);
     }
