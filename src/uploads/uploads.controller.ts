@@ -17,10 +17,18 @@ export class UploadsController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 10 * 1024 * 1024 },
       fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/^image\/(jpg|jpeg|png|webp|gif)$/)) {
-          cb(new BadRequestException('Solo se permiten imágenes'), false);
+        const permitidos = [
+          'image/jpg', 'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        if (!permitidos.includes(file.mimetype)) {
+          cb(new BadRequestException('Tipo de archivo no permitido. Se aceptan imágenes, PDF, Word y Excel'), false);
           return;
         }
         cb(null, true);
