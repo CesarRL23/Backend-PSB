@@ -31,7 +31,7 @@ export class ProgramaAgua {
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
-  @OneToOne(() => Programa)
+  @OneToOne(() => Programa, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'programa_id' })
   programa!: Programa;
 

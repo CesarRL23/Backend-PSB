@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { PlanPsb } from '../plan_psb/entities/plan_psb.entity';
 import { Empresa } from '../empresa/entities/empresa.entity';
+import { TipoAlimento } from '../tipo-alimento/entities/tipo-alimento.entity';
 import { Programa } from '../programa/entities/programa.entity';
 import { ProgramaLimpieza } from '../programa-limpieza/entities/programa-limpieza.entity';
 import { ProgramaAgua } from '../programa-agua/entities/programa-agua.entity';
@@ -21,6 +22,9 @@ export class PlanPsbService {
 
     @InjectRepository(Empresa)
     private readonly empresaRepository: Repository<Empresa>,
+
+    @InjectRepository(TipoAlimento)
+    private readonly tipoAlimentoRepository: Repository<TipoAlimento>,
 
     @InjectRepository(Programa)
     private readonly programaRepo: Repository<Programa>,
@@ -42,13 +46,19 @@ export class PlanPsbService {
     const empresa = await this.empresaRepository.findOne({
       where: { id: createPlanPsbDto.empresaId },
     });
+    if (!empresa) throw new NotFoundException('Empresa no encontrada');
 
-    if (!empresa) {
-      throw new NotFoundException('Empresa no encontrada');
+    let tipoAlimento: TipoAlimento | null = null;
+    if (createPlanPsbDto.tipoAlimentoId) {
+      tipoAlimento = await this.tipoAlimentoRepository.findOne({
+        where: { id: createPlanPsbDto.tipoAlimentoId },
+      });
+      if (!tipoAlimento) throw new NotFoundException('Tipo de alimento no encontrado');
     }
 
+    const { empresaId, tipoAlimentoId, ...rest } = createPlanPsbDto;
     const plan = await this.planPsbRepository.save(
-      this.planPsbRepository.create(createPlanPsbDto),
+      this.planPsbRepository.create({ ...rest, empresa, tipoAlimento }),
     );
 
     const programa = await this.programaRepo.save(
@@ -99,15 +109,20 @@ export class PlanPsbService {
       const empresa = await this.empresaRepository.findOne({
         where: { id: updatePlanPsbDto.empresaId },
       });
-
-      if (!empresa) {
-        throw new NotFoundException('Empresa no encontrada');
-      }
-
+      if (!empresa) throw new NotFoundException('Empresa no encontrada');
       plan.empresa = empresa;
     }
 
-    Object.assign(plan, updatePlanPsbDto);
+    if (updatePlanPsbDto.tipoAlimentoId) {
+      const tipoAlimento = await this.tipoAlimentoRepository.findOne({
+        where: { id: updatePlanPsbDto.tipoAlimentoId },
+      });
+      if (!tipoAlimento) throw new NotFoundException('Tipo de alimento no encontrado');
+      plan.tipoAlimento = tipoAlimento;
+    }
+
+    const { empresaId, tipoAlimentoId, ...rest } = updatePlanPsbDto;
+    Object.assign(plan, rest);
 
     return await this.planPsbRepository.save(plan);
   }

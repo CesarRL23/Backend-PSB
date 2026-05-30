@@ -23,7 +23,7 @@ export class ProgramaResiduo {
     @Column({ name: 'programa_id', type: 'uuid', nullable: true })
     programaId?: string;
 
-    @OneToOne(() => Programa, programa => programa.programaResiduo)
+    @OneToOne(() => Programa, programa => programa.programaResiduo, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'programa_id' })
     programa!: Programa;
     

@@ -47,7 +47,7 @@ export class ProgramaPlagas {
       @OneToMany(() => RegistroPlagas, (registroPlagas) => registroPlagas.programaPlagas)
       registrosPlagas!: RegistroPlagas[];
 
-      @OneToOne(()=> Programa,(programa)=> programa.programaPlagas)
+      @OneToOne(() => Programa, (programa) => programa.programaPlagas, { onDelete: 'CASCADE' })
       @JoinColumn({ name: 'programa_id' })
       programa?: Programa;
     

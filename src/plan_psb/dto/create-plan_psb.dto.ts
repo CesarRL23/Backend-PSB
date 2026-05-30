@@ -29,4 +29,8 @@ export class CreatePlanPsbDto {
 
   @IsUUID()
   empresaId: string;
+
+  @IsUUID()
+  @IsOptional()
+  tipoAlimentoId?: string;
 }
