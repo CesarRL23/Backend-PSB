@@ -48,16 +48,16 @@ export class PlanPsbService {
     });
     if (!empresa) throw new NotFoundException('Empresa no encontrada');
 
-    let tipoAlimento: TipoAlimento | null = null;
+    let tipoAlimento: TipoAlimento | undefined = undefined;
     if (createPlanPsbDto.tipoAlimentoId) {
       tipoAlimento = await this.tipoAlimentoRepository.findOne({
         where: { id: createPlanPsbDto.tipoAlimentoId },
-      });
+      }) ?? undefined;
       if (!tipoAlimento) throw new NotFoundException('Tipo de alimento no encontrado');
     }
 
     const { empresaId, tipoAlimentoId, ...rest } = createPlanPsbDto;
-    const plan = await this.planPsbRepository.save(
+    const plan: PlanPsb = await this.planPsbRepository.save(
       this.planPsbRepository.create({ ...rest, empresa, tipoAlimento }),
     );
 
