@@ -69,6 +69,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
         username: config.get('DB_USER'),
         password: config.get('DB_PASS'),
         database: config.get('DB_NAME'),
+        schema: 'public',
         autoLoadEntities: true,
         synchronize: true, // solo en desarrollo, en producción usar migraciones
       }),
