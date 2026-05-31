@@ -54,6 +54,7 @@ import { ChecklistResiduosModule } from './checklist-residuos/checklist-residuos
 import { DisposicionFinalModule } from './disposicion-final/disposicion-final.module';
 import { EvidenciaResiduosModule } from './evidencia-residuos/evidencia-residuos.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -123,6 +124,7 @@ import { UploadsModule } from './uploads/uploads.module';
     DisposicionFinalModule,
     EvidenciaResiduosModule,
     UploadsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
