@@ -37,7 +37,7 @@ export class RegistroResiduosService {
   async findByProgramaResiduo(programaResiduoId: number): Promise<RegistroResiduo[]> {
     return this.registroResiduoRepository.find({
       where: { programaResiduo: { id: programaResiduoId.toString() } },
-      relations: ['programaResiduo'],
+      relations: ['programaResiduo', 'registro', 'recolecciones', 'checklistResiduo', 'evidencias'],
     });
   }
 

@@ -10,7 +10,7 @@ async function bootstrap() {
   app.enableCors();
   app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
   app.enableCors({ origin: process.env.FRONTEND_URL || '*' });
   await app.listen(process.env.PORT ?? 3000);
 }

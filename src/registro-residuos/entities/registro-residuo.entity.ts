@@ -26,7 +26,7 @@ export class RegistroResiduo {
     @OneToMany(() => Recoleccion, recoleccion => recoleccion.registroResiduo)
     recolecciones!: Recoleccion[];
 
-    @OneToMany(() => ChecklistResiduo , checklistResiduo => checklistResiduo.checklistResiduo)
+    @OneToMany(() => ChecklistResiduo, checklistResiduo => checklistResiduo.registroResiduo)
     checklistResiduo!: ChecklistResiduo[];
 
     @OneToMany(() => EvidenciaResiduo, evidenciaResiduo => evidenciaResiduo.registroResiduo)

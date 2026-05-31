@@ -18,13 +18,37 @@ export class ProgramaResiduosService {
   }
 
   async findAll(): Promise<ProgramaResiduo[]> {
-    return this.programaResiduoRepository.find({ relations: ['programa', 'tipoResiduos'] });
+    return this.programaResiduoRepository.find({
+      relations: [
+        'programa',
+        'tipoResiduos',
+        'areaGenereacion',
+        'contenedeor',
+        'residuos',
+        'registros',
+        'registros.registro',
+        'registros.recolecciones',
+        'registros.checklistResiduo',
+        'registros.evidencias'
+      ]
+    });
   }
 
   async findOne(id: number): Promise<ProgramaResiduo> {
     const programaResiduo = await this.programaResiduoRepository.findOne({
       where: { id: id.toString() },
-      relations: ['programa', 'tipoResiduos'],
+      relations: [
+        'programa',
+        'tipoResiduos',
+        'areaGenereacion',
+        'contenedeor',
+        'residuos',
+        'registros',
+        'registros.registro',
+        'registros.recolecciones',
+        'registros.checklistResiduo',
+        'registros.evidencias'
+      ]
     });
     if (!programaResiduo) {
       throw new NotFoundException(`Programa de residuos con id ${id} no encontrado`);
