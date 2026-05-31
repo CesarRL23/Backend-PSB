@@ -1,52 +1,47 @@
-import { IsString, IsNotEmpty } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateProgramaPlagasDto {
-      @IsString()
-      @IsNotEmpty()
-      programaId?: string;
-    
-      @IsString()
-      @IsNotEmpty()
-      objetivo?: string;
-    
-      @IsString()
-      @IsNotEmpty()
-      nivel_riesgo?: string;
+    @IsString()
+    @IsNotEmpty()
+    programaId!: string;  // ← requerido
 
-      @IsString()
-      @IsNotEmpty()
-      alcance?: string;
-    
-      @IsString()
-      @IsNotEmpty()
-      procGeneral?: string; 
-      
-      @IsNotEmpty()
-      fecha_envio?: Date;
+    @IsString()
+    @IsNotEmpty()
+    objetivo!: string;    // ← requerido
 
-      @IsNotEmpty()
-      fecha_limite?: Date;
+    @IsString()
+    @IsNotEmpty()
+    alcance!: string;     // ← requerido
 
-      @IsNotEmpty()
-      empresaFumigadoraIds?: string[];
+    @IsString()
+    @IsOptional()         // ← opcionales
+    procGeneral?: string;
 
-      @IsNotEmpty()
-      diagnosticoPlagasIds?: string[];
+    @IsString()
+    @IsOptional()
+    nivel_riesgo?: string;
 
-      @IsNotEmpty()
-      cronogramaPlagasIds?: string[];
+    @IsOptional()
+    fecha_envio?: Date;
 
-      @IsNotEmpty()
-      areaPlagasIds?: string[];
+    @IsOptional()
+    fecha_limite?: Date;
 
-      @IsNotEmpty()
-      plaguicidaIds?: string[];
+    @IsOptional()
+    empresaFumigadoraIds?: string[];
 
-      @IsNotEmpty()
-      registroPlagasIds?: string[];
+    @IsOptional()
+    diagnosticoPlagasIds?: string[];
 
+    @IsOptional()
+    cronogramaPlagasIds?: string[];
 
+    @IsOptional()
+    areaPlagasIds?: string[];
 
+    @IsOptional()
+    plaguicidaIds?: string[];
 
-
+    @IsOptional()
+    registroPlagasIds?: string[];
 }

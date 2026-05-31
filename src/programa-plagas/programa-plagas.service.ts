@@ -1,6 +1,3 @@
-// ══════════════════════════════════════════════
-// programa-plagas.service.ts
-// ══════════════════════════════════════════════
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,20 +6,18 @@ import { CreateProgramaPlagasDto } from './dto/create-programa-plagas.dto';
 import { UpdateProgramaPlagasDto } from './dto/update-programa-plagas.dto';
 import { AreaPlagas } from 'src/area-plagas/entities/area-plagas.entity';
 import { RegistroPlagas } from 'src/registro-plagas/entities/registro-plagas.entity';
-
+ 
 @Injectable()
 export class ProgramaPlagasService {
   constructor(
     @InjectRepository(ProgramaPlagas)
     private readonly repo: Repository<ProgramaPlagas>,
-    @InjectRepository(RegistroPlagas)          // ← nuevo
+    @InjectRepository(RegistroPlagas)
     private readonly registroRepo: Repository<RegistroPlagas>,
-
-    @InjectRepository(AreaPlagas)              // ← nuevo
+    @InjectRepository(AreaPlagas)
     private readonly areaRepo: Repository<AreaPlagas>,
-  ) { }
-
-
+  ) {}
+ 
   async create(dto: CreateProgramaPlagasDto): Promise<ProgramaPlagas> {
     const entity = this.repo.create({
       objetivo: dto.objetivo,
@@ -34,7 +29,7 @@ export class ProgramaPlagasService {
     });
     return this.repo.save(entity);
   }
-
+ 
   async findAll(): Promise<ProgramaPlagas[]> {
     return this.repo.find({
       relations: [
@@ -48,10 +43,10 @@ export class ProgramaPlagasService {
       ],
     });
   }
-
-  async findOne(id: number): Promise<ProgramaPlagas> {
+ 
+  async findOne(id: string): Promise<ProgramaPlagas> {
     const entity = await this.repo.findOne({
-      where: { id: id.toString() },
+      where: { id },
       relations: [
         'programa',
         'empresasFumigadoras',
@@ -65,18 +60,23 @@ export class ProgramaPlagasService {
     if (!entity) throw new NotFoundException(`ProgramaPlagas #${id} no encontrado`);
     return entity;
   }
-
-  async update(id: number, dto: UpdateProgramaPlagasDto): Promise<ProgramaPlagas> {
+ 
+  async update(id: string, dto: UpdateProgramaPlagasDto): Promise<ProgramaPlagas> {
     const entity = await this.findOne(id);
-    Object.assign(entity, dto);
+    Object.assign(entity, {
+      ...(dto.objetivo && { objetivo: dto.objetivo }),
+      ...(dto.alcance && { alcance: dto.alcance }),
+      ...(dto.procGeneral && { procGeneral: dto.procGeneral }),
+    });
     return this.repo.save(entity);
   }
-
-  async remove(id: number): Promise<void> {
+ 
+  async remove(id: string): Promise<void> {
     const entity = await this.findOne(id);
     await this.repo.remove(entity);
   }
-  async obtenerEstadisticas(id: number): Promise<{
+ 
+  async obtenerEstadisticas(id: string): Promise<{
     totalRegistros: number;
     totalHallazgos: number;
     totalTrampas: number;
@@ -84,45 +84,36 @@ export class ProgramaPlagasService {
     totalAreas: number;
     totalPlaguicidas: number;
   }> {
-    const idStr = id.toString();
-
-    // Conteos directos desde ProgramaPlagas
     const programa = await this.repo.findOne({
-      where: { id: idStr },
+      where: { id },
       relations: ['registrosPlagas', 'areasPlagas', 'plaguicidas'],
     });
-
-    if (!programa) {
-      throw new NotFoundException(`ProgramaPlagas #${id} no encontrado`);
-    }
-
-    const totalRegistros = programa.registrosPlagas?.length ?? 0;
-    const totalAreas = programa.areasPlagas?.length ?? 0;
+ 
+    if (!programa) throw new NotFoundException(`ProgramaPlagas #${id} no encontrado`);
+ 
+    const totalRegistros  = programa.registrosPlagas?.length ?? 0;
+    const totalAreas      = programa.areasPlagas?.length ?? 0;
     const totalPlaguicidas = programa.plaguicidas?.length ?? 0;
-
-    // Hallazgos: vienen de registrosPlagas → hallazgosPlagas
-    // Se cuenta con un QueryBuilder para no cargar todos los objetos en memoria
+ 
     const totalHallazgos = await this.registroRepo
       .createQueryBuilder('rp')
       .innerJoin('rp.hallazgosPlagas', 'hp')
-      .where('rp.programaPlagasId = :id', { id: idStr })
+      .where('rp.programaPlagasId = :id', { id })
       .getCount();
-
-    // Acciones correctivas: vienen de registros → hallazgos → acciones
+ 
     const totalAcciones = await this.registroRepo
       .createQueryBuilder('rp')
       .innerJoin('rp.hallazgosPlagas', 'hp')
       .innerJoin('hp.accionCorrectivaPlagas', 'ac')
-      .where('rp.programaPlagasId = :id', { id: idStr })
+      .where('rp.programaPlagasId = :id', { id })
       .getCount();
-
-    // Trampas: vienen de areasPlagas → trampas
+ 
     const totalTrampas = await this.areaRepo
       .createQueryBuilder('ap')
       .innerJoin('ap.trampas', 't')
-      .where('ap.programaPlagasId = :id', { id: idStr })
+      .where('ap.programaPlagasId = :id', { id })
       .getCount();
-
+ 
     return {
       totalRegistros,
       totalHallazgos,
@@ -133,3 +124,4 @@ export class ProgramaPlagasService {
     };
   }
 }
+ 

@@ -1,41 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param,
+         Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { ProgramaPlagasService } from './programa-plagas.service';
 import { CreateProgramaPlagasDto } from './dto/create-programa-plagas.dto';
 import { UpdateProgramaPlagasDto } from './dto/update-programa-plagas.dto';
-
+ 
 @Controller('programa-plagas')
 export class ProgramaPlagasController {
-  constructor(private readonly service: ProgramaPlagasService) { }
-
+  constructor(private readonly service: ProgramaPlagasService) {}
+ 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   create(@Body() dto: CreateProgramaPlagasDto) {
     return this.service.create(dto);
   }
-
+ 
   @Get()
   findAll() {
     return this.service.findAll();
   }
-  
+ 
+  // ⚠️ Ruta estática ANTES de la dinámica (:id)
   @Get(':id/estadisticas')
-  estadisticas(@Param('id', ParseIntPipe) id: number) {
+  estadisticas(@Param('id') id: string) {
     return this.service.obtenerEstadisticas(id);
   }
-
+ 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
-
+ 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProgramaPlagasDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateProgramaPlagasDto) {
     return this.service.update(id, dto);
   }
-
+ 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
 }
+ 
