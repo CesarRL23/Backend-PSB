@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateTipoResiduoDto {
   @IsString()
@@ -17,7 +17,7 @@ export class CreateTipoResiduoDto {
   @IsNotEmpty()
   es_peligroso!: boolean;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  programaResiduoId!: string;
+  programaResiduoId?: string;
 }

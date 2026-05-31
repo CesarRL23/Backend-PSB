@@ -20,8 +20,8 @@ export class TipoResiduo {
     @Column()
     es_peligroso!: boolean; 
 
-    @ManyToOne(() => ProgramaResiduo, programaResiduo => programaResiduo.tipoResiduos)
-    programaResiduo!: ProgramaResiduo;
+    @ManyToOne(() => ProgramaResiduo, programaResiduo => programaResiduo.tipoResiduos, { nullable: true, eager: false })
+    programaResiduo?: ProgramaResiduo;
 
     @OneToMany(() => Residuo , residuo => residuo.tipoResiduo)
     residuos!: Residuo[];
