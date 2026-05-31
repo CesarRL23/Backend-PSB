@@ -40,11 +40,16 @@ export class RecoleccionService {
   }
 
   async findAll(): Promise<Recoleccion[]> {
-    return this.recoleccionRepository.find();
+    return this.recoleccionRepository.find({
+      relations: ['tipoResiduo', 'registroResiduo', 'registroResiduo.programaResiduo', 'registroResiduo.programaResiduo.programa'],
+    });
   }
 
   async findOne(id: number): Promise<Recoleccion> {
-    const recoleccion = await this.recoleccionRepository.findOneBy({ id: id.toString() });
+    const recoleccion = await this.recoleccionRepository.findOne({
+      where: { id: id.toString() },
+      relations: ['tipoResiduo', 'registroResiduo', 'registroResiduo.programaResiduo', 'registroResiduo.programaResiduo.programa'],
+    });
     if (!recoleccion) {
       throw new NotFoundException(`Recolección con id ${id} no encontrada`);
     }
