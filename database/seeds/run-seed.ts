@@ -873,6 +873,7 @@ async function seed() {
       cantidad_recolectada: 18,
       observaciones: 'Pesaje consolidado del turno tarde.',
       registroResiduo: { id: registroResiduoId },
+      tipoResiduo: { id: tipoRes0Id },
     });
     const recoleccionId = recoleccionResult.identifiers[0].id;
 
