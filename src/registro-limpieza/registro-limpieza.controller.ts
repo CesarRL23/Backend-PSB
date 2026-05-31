@@ -30,10 +30,15 @@ export class RegistroLimpiezaController {
     return this.registroLimpiezaService.findAll();
   }
 
-  // Ruta estática antes de :id
+  // Rutas estáticas antes de :id
   @Get('por-registro/:registroId')
   findByRegistro(@Param('registroId', ParseUUIDPipe) registroId: string) {
     return this.registroLimpiezaService.findByRegistro(registroId);
+  }
+
+  @Get('por-programa/:programaId')
+  findByPrograma(@Param('programaId', ParseUUIDPipe) programaId: string) {
+    return this.registroLimpiezaService.findByPrograma(programaId);
   }
 
   @Get(':id')

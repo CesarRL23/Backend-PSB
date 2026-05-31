@@ -22,6 +22,11 @@ export class RegistroResiduosController {
     return this.registroResiduosService.findAll();
   }
 
+  @Get('por-programa/:programaResiduoId')
+  findByProgramaResiduo(@Param('programaResiduoId') programaResiduoId: string) {
+    return this.registroResiduosService.findByProgramaResiduo(+programaResiduoId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.registroResiduosService.findOne(+id);

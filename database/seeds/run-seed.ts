@@ -5,6 +5,7 @@ import * as path from 'node:path';
 import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 import { DataSource } from 'typeorm';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -296,7 +297,7 @@ async function seed() {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
     if (supabaseUrl && supabaseSecretKey) {
-      const supabaseAdmin = createClient(supabaseUrl, supabaseSecretKey);
+      const supabaseAdmin = createClient(supabaseUrl, supabaseSecretKey, { realtime: { transport: ws } });
       const password = 'Psb2026!';
       for (const user of users) {
         const { error } = await supabaseAdmin.auth.admin.createUser({

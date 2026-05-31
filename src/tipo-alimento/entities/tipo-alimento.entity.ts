@@ -5,7 +5,7 @@ import { Empresa } from '../../empresa/entities/empresa.entity';
 @Entity('tipo_alimento')
 export class TipoAlimento {
     @PrimaryGeneratedColumn()
-    id?: string;
+    id?: number;
 
     @Column()
     nombre?: string;

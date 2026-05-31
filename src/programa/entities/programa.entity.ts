@@ -54,7 +54,7 @@ export class Programa {
 
   // ─── Relaciones ──────────────────────────────────────────────────────────────
 
-  @OneToOne(() => PlanPsb, (plan) => plan.programa)
+  @OneToOne(() => PlanPsb, (plan) => plan.programa, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'plan_psb_id' })
   planPsb!: PlanPsb;
 

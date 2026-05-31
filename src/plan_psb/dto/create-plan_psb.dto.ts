@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -29,4 +30,8 @@ export class CreatePlanPsbDto {
 
   @IsUUID()
   empresaId: string;
+
+  @IsInt()
+  @IsOptional()
+  tipoAlimentoId?: number;
 }

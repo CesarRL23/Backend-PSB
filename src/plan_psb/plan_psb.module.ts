@@ -5,6 +5,7 @@ import { PlanPsbService } from './plan_psb.service';
 import { PlanPsbController } from './plan_psb.controller';
 import { PlanPsb } from './entities/plan_psb.entity';
 import { Empresa } from 'src/empresa/entities/empresa.entity';
+import { TipoAlimento } from 'src/tipo-alimento/entities/tipo-alimento.entity';
 import { Programa } from 'src/programa/entities/programa.entity';
 import { ProgramaLimpieza } from 'src/programa-limpieza/entities/programa-limpieza.entity';
 import { ProgramaAgua } from 'src/programa-agua/entities/programa-agua.entity';
@@ -16,6 +17,7 @@ import { ProgramaResiduo } from 'src/programa-residuos/entities/programa-residuo
     TypeOrmModule.forFeature([
       PlanPsb,
       Empresa,
+      TipoAlimento,
       Programa,
       ProgramaLimpieza,
       ProgramaAgua,
