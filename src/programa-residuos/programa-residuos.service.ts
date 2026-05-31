@@ -18,13 +18,13 @@ export class ProgramaResiduosService {
   }
 
   async findAll(): Promise<ProgramaResiduo[]> {
-    return this.programaResiduoRepository.find({ relations: ['programa'] });
+    return this.programaResiduoRepository.find({ relations: ['programa', 'tipoResiduos'] });
   }
 
   async findOne(id: number): Promise<ProgramaResiduo> {
     const programaResiduo = await this.programaResiduoRepository.findOne({
       where: { id: id.toString() },
-      relations: ['programa'],
+      relations: ['programa', 'tipoResiduos'],
     });
     if (!programaResiduo) {
       throw new NotFoundException(`Programa de residuos con id ${id} no encontrado`);
