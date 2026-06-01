@@ -14,8 +14,4 @@ export class UpdateRegistroResiduoDto extends PartialType(CreateRegistroResiduoD
 	@IsOptional()
 	@IsString()
 	responsable?: string;
-
-	@IsOptional()
-	@IsString()
-	estado?: string;
 }

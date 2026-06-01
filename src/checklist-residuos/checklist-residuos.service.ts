@@ -35,7 +35,7 @@ export class ChecklistResiduosService {
   async findOne(id: string): Promise<ChecklistResiduo> {
     const checklistResiduo = await this.checklistResiduoRepository.findOneBy({ id });
     if (!checklistResiduo) {
-      throw new NotFoundException(`Checklist de residuo con id ${id} no encontrada`);
+      throw new NotFoundException(`Checklist de residuo con id ${id} no encontrado`);
     }
     return checklistResiduo;
   }

@@ -16,7 +16,6 @@ export class TipoAlimento {
     @Column()
     nivel_riesgo?: string;
 
-
     @ManyToOne(() => Empresa, (empresa) => empresa.tiposAlimento)
     empresa?: Empresa;
 

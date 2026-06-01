@@ -1,5 +1,5 @@
 import { RegistroResiduo } from "src/registro-residuos/entities/registro-residuo.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
 
 @Entity('evidencia_residuo')
 export class EvidenciaResiduo {
@@ -18,6 +18,10 @@ export class EvidenciaResiduo {
     @Column()
     fecha!: Date;
 
-    @ManyToOne(() => RegistroResiduo, registroResiduo => registroResiduo.evidencias)
+    @Column({ name: 'registro_residuo_id', nullable: true })
+    registroResiduoId?: string;
+
+    @ManyToOne(() => RegistroResiduo, registroResiduo => registroResiduo.evidencias, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'registro_residuo_id' })
     registroResiduo!: RegistroResiduo;
-} 
+}

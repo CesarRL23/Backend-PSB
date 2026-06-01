@@ -1,7 +1,7 @@
 import { DisposicionFinal } from "src/disposicion-final/entities/disposicion-final.entity";
 import { RegistroResiduo } from "src/registro-residuos/entities/registro-residuo.entity";
 import { TipoResiduo } from "src/tipo-residuo/entities/tipo-residuo.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
 
 @Entity()
 export class Recoleccion {
@@ -23,11 +23,20 @@ export class Recoleccion {
     @ManyToOne(() => RegistroResiduo, registroResiduo => registroResiduo.recolecciones, { nullable: true })
     @JoinColumn()
     registroResiduo?: RegistroResiduo;
+    @Column({ name: 'registro_residuo_id', nullable: true })
+    registroResiduoId?: string;
 
-    @ManyToOne(() => TipoResiduo, { nullable: true, onDelete: 'SET NULL' })
-    @JoinColumn()
+    @Column({ name: 'tipo_residuo_id', nullable: true })
+    tipoResiduoId?: string;
+
+    @ManyToOne(() => RegistroResiduo, registroResiduo => registroResiduo.recolecciones, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'registro_residuo_id' })
+    registroResiduo!: RegistroResiduo;
+
+    @ManyToOne(() => TipoResiduo, { onDelete: 'SET NULL', eager: true })
+    @JoinColumn({ name: 'tipo_residuo_id' })
     tipoResiduo?: TipoResiduo;
 
     @OneToOne(() => DisposicionFinal, disposicionFinal => disposicionFinal.recoleccion)
     disposicionFinal!: DisposicionFinal;
-} 
+}

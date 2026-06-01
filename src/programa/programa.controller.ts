@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -43,7 +42,7 @@ export class ProgramaController {
 
   @Get(':id')
   findOne(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @CurrentUser() user,
   ) {
     return this.programaService.findOne(id);
@@ -51,7 +50,7 @@ export class ProgramaController {
 
   @Patch(':id')
   update(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @Body() updateProgramaDto: UpdateProgramaDto,
     @CurrentUser() user,
   ) {
@@ -60,7 +59,7 @@ export class ProgramaController {
 
   @Delete(':id')
   remove(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id') id: string,
     @CurrentUser() user,
   ) {
     return this.programaService.remove(id);

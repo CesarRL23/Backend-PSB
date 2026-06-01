@@ -11,7 +11,18 @@ export class RegistroResiduosController {
   @Get('me')
   getMe(@CurrentUser() user) {
     return user;
-}
+  }
+
+  @Get('recolecciones/all')
+  findRecolecciones() {
+    return this.registroResiduosService.findRecolecciones();
+  }
+
+  @Get('recolecciones/programa/:programaResiduoId')
+  findRecoleccionesByPrograma(@Param('programaResiduoId') programaResiduoId: string) {
+    return this.registroResiduosService.findRecoleccionesByPrograma(programaResiduoId);
+  }
+
   @Post()
   create(@Body() createRegistroResiduoDto: CreateRegistroResiduoDto) {
     return this.registroResiduosService.create(createRegistroResiduoDto);
@@ -29,16 +40,16 @@ export class RegistroResiduosController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.registroResiduosService.findOne(+id);
+    return this.registroResiduosService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRegistroResiduoDto: UpdateRegistroResiduoDto) {
-    return this.registroResiduosService.update(+id, updateRegistroResiduoDto);
+    return this.registroResiduosService.update(id, updateRegistroResiduoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.registroResiduosService.remove(+id);
+    return this.registroResiduosService.remove(id);
   }
 }

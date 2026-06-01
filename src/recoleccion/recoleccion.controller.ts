@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RecoleccionService } from './recoleccion.service';
 import { CreateRecoleccionDto } from './dto/create-recoleccion.dto';
 import { UpdateRecoleccionDto } from './dto/update-recoleccion.dto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { TipoResiduo } from 'src/tipo-residuo/entities/tipo-residuo.entity';
 
 @Controller('recoleccion')
 export class RecoleccionController {
@@ -11,7 +12,8 @@ export class RecoleccionController {
   @Get('me')
   getMe(@CurrentUser() user) {
     return user;
-}
+  }
+
   @Post()
   create(@Body() createRecoleccionDto: CreateRecoleccionDto) {
     return this.recoleccionService.create(createRecoleccionDto);
@@ -20,6 +22,11 @@ export class RecoleccionController {
   @Get()
   findAll() {
     return this.recoleccionService.findAll();
+  }
+
+  @Get('tipos-residuo-by-programa/:programaResiduoId')
+  getTiposResiduoByPrograma(@Param('programaResiduoId') programaResiduoId: string): Promise<TipoResiduo[]> {
+    return this.recoleccionService.getTiposResiduoByPrograma(programaResiduoId);
   }
 
   @Get(':id')
