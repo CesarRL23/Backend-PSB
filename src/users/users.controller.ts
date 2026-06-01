@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -34,5 +34,12 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post('verify-pin')
+  async verifyPin(@Body() body: { userId: string; pin: string }) {
+    const valid = await this.usersService.verifyPin(body.userId, body.pin);
+    if (!valid) throw new UnauthorizedException('PIN incorrecto');
+    return { valid: true };
   }
 }

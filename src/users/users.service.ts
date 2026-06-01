@@ -86,4 +86,10 @@ export class UsersService {
     const user = await this.findOne(id);
     return this.userRepo.remove(user);
   }
+
+  async verifyPin(id: string, pin: string): Promise<boolean> {
+    const user = await this.findOne(id);
+    if (!user.pinFirmaHash) return false;
+    return bcrypt.compare(pin, user.pinFirmaHash);
+  }
 }
