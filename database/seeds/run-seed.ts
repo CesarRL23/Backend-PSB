@@ -156,6 +156,23 @@ async function seed() {
   });
 
   await dataSource.initialize();
+  // ── Crear tabla documentos_rag si no existe ──────────────────
+  await dataSource.query(`CREATE EXTENSION IF NOT EXISTS vector`);
+  await dataSource.query(`
+    CREATE TABLE IF NOT EXISTS documentos_rag (
+        id SERIAL PRIMARY KEY,
+        nombre_archivo VARCHAR(255),
+        tipo VARCHAR(100),
+        contenido TEXT,
+        embedding vector(384),
+        created_at TIMESTAMP DEFAULT NOW()
+    )
+`);
+  await dataSource.query(`
+    CREATE INDEX IF NOT EXISTS idx_embedding 
+    ON documentos_rag USING ivfflat (embedding vector_cosine_ops)
+    WITH (lists = 100)
+`);
   try {
     const empresaRepo = dataSource.getRepository(Empresa);
     const tipoAlimentoRepo = dataSource.getRepository(TipoAlimento);
