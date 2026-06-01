@@ -1,0 +1,483 @@
+{
+  "info": {
+    "name": "iPSB — Yahir (Limpieza + Users + Notifications)",
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "description": "Endpoints del módulo Limpieza y Desinfección, Users y Notifications.\nVariable {{baseUrl}} = http://localhost:3000\nVariable {{token}} = JWT de Supabase Auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "token",   "value": "",                     "type": "string", "description": "JWT de Supabase Auth" }
+  ],
+  "item": [
+
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/users",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"uuid-de-supabase-auth\",\n  \"empresaId\": \"00000000-0000-0000-0000-000000000001\",\n  \"nombre\": \"Carlos López\",\n  \"email\": \"carlos@empresa.com\",\n  \"rol\": \"operario\",\n  \"estado\": \"activo\",\n  \"cargo\": \"Auxiliar de limpieza\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar usuarios",
+          "request": { "method": "GET", "url": "{{baseUrl}}/users" }
+        },
+        {
+          "name": "Buscar usuario por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/users/{{usuarioId}}" }
+        },
+        {
+          "name": "Actualizar usuario",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/users/{{usuarioId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cargo\": \"Jefe de limpieza\",\n  \"estado\": \"activo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/users/{{usuarioId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Crear notificación",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/notifications",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": \"00000000-0000-0000-0000-000000000002\",\n  \"programaId\": \"00000000-0000-0000-0000-000000000003\",\n  \"tipo\": \"alerta\",\n  \"titulo\": \"Verificación pendiente\",\n  \"mensaje\": \"El programa de limpieza requiere verificación.\",\n  \"fechaEnvio\": \"2026-05-14T10:00:00Z\",\n  \"fechaLimite\": \"2026-05-15T18:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar notificaciones",
+          "request": { "method": "GET", "url": "{{baseUrl}}/notifications" }
+        },
+        {
+          "name": "Notificaciones por usuario",
+          "request": { "method": "GET", "url": "{{baseUrl}}/notifications/usuario/{{usuarioId}}" }
+        },
+        {
+          "name": "Buscar notificación por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/notifications/{{notificacionId}}" }
+        },
+        {
+          "name": "Actualizar notificación",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/notifications/{{notificacionId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"enviada\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Marcar como leída",
+          "request": { "method": "PATCH", "url": "{{baseUrl}}/notifications/{{notificacionId}}/leer" }
+        },
+        {
+          "name": "Eliminar notificación",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/notifications/{{notificacionId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Programa Limpieza",
+      "item": [
+        {
+          "name": "Crear programa limpieza",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/programas-limpieza",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"programaId\": \"00000000-0000-0000-0000-000000000010\",\n  \"objetivo\": \"Eliminar residuos orgánicos e inorgánicos de superficies de contacto con alimentos\",\n  \"alcance\": \"Todas las áreas de producción y almacenamiento\",\n  \"procedimientoGeneral\": \"Barrer, lavar con detergente, enjuagar, aplicar desinfectante y dejar secar.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar programas limpieza",
+          "request": { "method": "GET", "url": "{{baseUrl}}/programas-limpieza" }
+        },
+        {
+          "name": "Por programa",
+          "request": { "method": "GET", "url": "{{baseUrl}}/programas-limpieza/por-programa/{{programaId}}" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/programas-limpieza/{{programaLimpiezaId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/programas-limpieza/{{programaLimpiezaId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"objetivo\": \"Objetivo actualizado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/programas-limpieza/{{programaLimpiezaId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Paso Limpieza",
+      "item": [
+        {
+          "name": "Crear paso",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/pasos-limpieza",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"programaLimpiezaId\": \"{{programaLimpiezaId}}\",\n  \"orden\": 1,\n  \"descripcion\": \"Retirar residuos sólidos visibles con escoba o cepillo\",\n  \"tipoAccion\": \"barrido_en_seco\",\n  \"frecuencia\": \"diario\",\n  \"concentracion\": \"N/A\",\n  \"tiempoContacto\": \"5 min\",\n  \"temperaturaAguaMinima\": 40,\n  \"temperaturaAguaMaxima\": 60\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar pasos",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pasos-limpieza" }
+        },
+        {
+          "name": "Por programa limpieza",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pasos-limpieza/por-programa-limpieza/{{programaLimpiezaId}}" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pasos-limpieza/{{pasoLimpiezaId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/pasos-limpieza/{{pasoLimpiezaId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"temperaturaAguaMinima\": 45,\n  \"temperaturaAguaMaxima\": 65\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/pasos-limpieza/{{pasoLimpiezaId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Paso Limpieza PQ",
+      "item": [
+        {
+          "name": "Asignar producto a paso",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/pasos-limpieza-pq",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pasoLimpiezaId\": \"{{pasoLimpiezaId}}\",\n  \"productoQuimicoId\": \"{{productoQuimicoId}}\",\n  \"concentracionValor\": 200,\n  \"concentracionUnidad\": \"ppm\",\n  \"tiempoContactoMin\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Productos de un paso",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pasos-limpieza-pq/por-paso/{{pasoLimpiezaId}}" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pasos-limpieza-pq/{{pasoLimpiezaPqId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/pasos-limpieza-pq/{{pasoLimpiezaPqId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"concentracionValor\": 250,\n  \"concentracionUnidad\": \"ppm\",\n  \"tiempoContactoMin\": 15\n}"
+            }
+          }
+        },
+        {
+          "name": "Desasignar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/pasos-limpieza-pq/{{pasoLimpiezaPqId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Producto Quimico",
+      "item": [
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/productos-quimicos",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"PQ-001\",\n  \"nombre\": \"Hipoclorito de sodio al 5%\",\n  \"fabricante\": \"QuímicasColombia S.A.S\",\n  \"tipo\": \"desinfectante\",\n  \"gradoAlimenticio\": true,\n  \"ph\": \"11 - 12\",\n  \"concentracionRecomendada\": \"200 ppm\",\n  \"tiempoContactoMin\": \"10 min\",\n  \"fichaTecnicaUrl\": \"https://ejemplo.com/hipoclorito.pdf\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar productos",
+          "request": { "method": "GET", "url": "{{baseUrl}}/productos-quimicos" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/productos-quimicos/{{productoQuimicoId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/productos-quimicos/{{productoQuimicoId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"concentracionRecomendada\": \"250 ppm\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/productos-quimicos/{{productoQuimicoId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Registro Limpieza",
+      "item": [
+        {
+          "name": "Crear registro",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/registros-limpieza",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registroId\": \"{{registroId}}\",\n  \"programaLimpiezaId\": \"{{programaLimpiezaId}}\",\n  \"superficieLimpiada\": \"Mesón de acero inoxidable área de corte\",\n  \"resultadoInspeccion\": \"conforme\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar registros",
+          "request": { "method": "GET", "url": "{{baseUrl}}/registros-limpieza" }
+        },
+        {
+          "name": "Por registro base",
+          "request": { "method": "GET", "url": "{{baseUrl}}/registros-limpieza/por-registro/{{registroId}}" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/registros-limpieza/{{registroLimpiezaId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/registros-limpieza/{{registroLimpiezaId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resultadoInspeccion\": \"no_conforme\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/registros-limpieza/{{registroLimpiezaId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Checklist Limpieza",
+      "item": [
+        {
+          "name": "Crear ítem checklist",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/checklist-limpieza",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registroLimpiezaId\": \"{{registroLimpiezaId}}\",\n  \"pasoLimpiezaId\": \"{{pasoLimpiezaId}}\",\n  \"productoCorrecto\": true,\n  \"concentracionCorrecta\": true,\n  \"superficieCubierta\": true,\n  \"tiempoCumplido\": true,\n  \"estado\": \"conforme\",\n  \"observacion\": \"Todo en orden\",\n  \"productoQuimicoId\": \"{{productoQuimicoId}}\",\n  \"loteUsado\": \"L-2026-001\",\n  \"concentracionReal\": 210.5,\n  \"volumenPreparadoLitros\": 5.0\n}"
+            }
+          }
+        },
+        {
+          "name": "Por registro limpieza",
+          "request": { "method": "GET", "url": "{{baseUrl}}/checklist-limpieza/por-registro-limpieza/{{registroLimpiezaId}}" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/checklist-limpieza/{{checklistId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/checklist-limpieza/{{checklistId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"no_conforme\",\n  \"observacion\": \"Concentración fuera de rango\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/checklist-limpieza/{{checklistId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Medicion Paso",
+      "item": [
+        {
+          "name": "Registrar medición (cumple auto)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/mediciones-paso",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"checklistLimpiezaId\": \"{{checklistId}}\",\n  \"tipoParametro\": \"TEMPERATURA\",\n  \"valor\": 55.3,\n  \"unidad\": \"°C\",\n  \"valorMinimoEsperado\": 40,\n  \"valorMaximoEsperado\": 60\n}"
+            }
+          }
+        },
+        {
+          "name": "Medición ATP (sin rango)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/mediciones-paso",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"checklistLimpiezaId\": \"{{checklistId}}\",\n  \"tipoParametro\": \"ATP\",\n  \"valor\": 45,\n  \"unidad\": \"RLU\",\n  \"valorMaximoEsperado\": 100\n}"
+            }
+          }
+        },
+        {
+          "name": "Por checklist",
+          "request": { "method": "GET", "url": "{{baseUrl}}/mediciones-paso/por-checklist/{{checklistId}}" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/mediciones-paso/{{medicionId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/mediciones-paso/{{medicionId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"valor\": 58.0\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/mediciones-paso/{{medicionId}}" }
+        }
+      ]
+    },
+
+    {
+      "name": "Verificacion Limpieza",
+      "item": [
+        {
+          "name": "Crear verificación (método estándar)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/verificaciones-limpieza",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registroLimpiezaId\": \"{{registroLimpiezaId}}\",\n  \"tipo\": \"quimica\",\n  \"resultado\": \"200 ppm cloro residual\",\n  \"unidad\": \"ppm\",\n  \"limiteAceptable\": \"100 - 250 ppm\",\n  \"metodoValidacion\": \"CLORO\",\n  \"responsableId\": \"{{usuarioId}}\",\n  \"fechaPrueba\": \"2026-05-14\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Crear verificación ATP (reactivo requerido)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/verificaciones-limpieza",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registroLimpiezaId\": \"{{registroLimpiezaId}}\",\n  \"tipo\": \"microbiologica\",\n  \"resultado\": \"45 RLU\",\n  \"unidad\": \"RLU\",\n  \"limiteAceptable\": \"< 100 RLU\",\n  \"metodoValidacion\": \"ATP\",\n  \"responsableId\": \"{{usuarioId}}\",\n  \"fechaPrueba\": \"2026-05-14\",\n  \"loteReactivo\": \"ATP-2026-003\",\n  \"fechaVencimientoReactivo\": \"2026-12-31\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Por registro limpieza",
+          "request": { "method": "GET", "url": "{{baseUrl}}/verificaciones-limpieza/por-registro-limpieza/{{registroLimpiezaId}}" }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": { "method": "GET", "url": "{{baseUrl}}/verificaciones-limpieza/{{verificacionId}}" }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/verificaciones-limpieza/{{verificacionId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resultado\": \"220 ppm cloro residual\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/verificaciones-limpieza/{{verificacionId}}" }
+        }
+      ]
+    }
+
+  ]
+}
