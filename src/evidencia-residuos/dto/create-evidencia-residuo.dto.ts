@@ -7,9 +7,9 @@ export class CreateEvidenciaResiduoDto {
   tipo_archivo!: string;
 
   @IsString()
-  @IsNotEmpty()
   @MaxLength(255)
-  url!: string;
+  @IsOptional()
+  url?: string;
 
   @IsString()
   @IsNotEmpty()

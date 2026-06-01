@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateRecoleccionDto } from './dto/create-recoleccion.dto';
@@ -12,43 +12,46 @@ export class RecoleccionService {
   constructor(
     @InjectRepository(Recoleccion)
     private readonly recoleccionRepository: Repository<Recoleccion>,
-
     @InjectRepository(RegistroResiduo)
     private readonly registroResiduoRepository: Repository<RegistroResiduo>,
-
     @InjectRepository(TipoResiduo)
     private readonly tipoResiduoRepository: Repository<TipoResiduo>,
   ) {}
 
   async create(createRecoleccionDto: CreateRecoleccionDto): Promise<Recoleccion> {
-    const registroResiduo = await this.registroResiduoRepository.findOne({
-      where: { id: createRecoleccionDto.registroResiduoId },
+    const registro = await this.registroResiduoRepository.findOne({
+      where: { id: createRecoleccionDto.registroResiduoId }
     });
-    if (!registroResiduo) throw new NotFoundException('Registro de residuo no encontrado');
-
-    let tipoResiduo: TipoResiduo | undefined = undefined;
-    if (createRecoleccionDto.tipoResiduoId) {
-      tipoResiduo = await this.tipoResiduoRepository.findOne({
-        where: { id: createRecoleccionDto.tipoResiduoId.toString() },
-      }) ?? undefined;
-      if (!tipoResiduo) throw new NotFoundException('Tipo de residuo no encontrado');
+    if (!registro) {
+      throw new BadRequestException('El registro de residuo especificado no existe');
     }
 
-    const { registroResiduoId, tipoResiduoId, ...rest } = createRecoleccionDto;
-    const recoleccion = this.recoleccionRepository.create({ ...rest, registroResiduo, tipoResiduo });
+    if (createRecoleccionDto.tipoResiduoId) {
+      const tipoResiduo = await this.tipoResiduoRepository.findOne({
+        where: { id: createRecoleccionDto.tipoResiduoId.toString() }
+      });
+      if (!tipoResiduo) {
+        throw new BadRequestException('El tipo de residuo especificado no existe');
+      }
+    }
+
+    const recoleccion = this.recoleccionRepository.create({
+      ...createRecoleccionDto,
+      tipoResiduoId: createRecoleccionDto.tipoResiduoId?.toString()
+    });
     return this.recoleccionRepository.save(recoleccion);
   }
 
   async findAll(): Promise<Recoleccion[]> {
     return this.recoleccionRepository.find({
-      relations: ['tipoResiduo', 'registroResiduo', 'registroResiduo.programaResiduo', 'registroResiduo.programaResiduo.programa'],
+      relations: ['registroResiduo', 'tipoResiduo', 'registroResiduo.programaResiduo', 'registroResiduo.programaResiduo.programa']
     });
   }
 
   async findOne(id: number): Promise<Recoleccion> {
     const recoleccion = await this.recoleccionRepository.findOne({
       where: { id: id.toString() },
-      relations: ['tipoResiduo', 'registroResiduo', 'registroResiduo.programaResiduo', 'registroResiduo.programaResiduo.programa'],
+      relations: ['registroResiduo', 'tipoResiduo', 'registroResiduo.programaResiduo', 'registroResiduo.programaResiduo.programa']
     });
     if (!recoleccion) {
       throw new NotFoundException(`Recolección con id ${id} no encontrada`);
@@ -58,12 +61,31 @@ export class RecoleccionService {
 
   async update(id: number, updateRecoleccionDto: UpdateRecoleccionDto): Promise<Recoleccion> {
     const recoleccion = await this.findOne(id);
-    Object.assign(recoleccion, updateRecoleccionDto);
+
+    if (updateRecoleccionDto.tipoResiduoId) {
+      const tipoResiduo = await this.tipoResiduoRepository.findOne({
+        where: { id: updateRecoleccionDto.tipoResiduoId.toString() }
+      });
+      if (!tipoResiduo) {
+        throw new BadRequestException('El tipo de residuo especificado no existe');
+      }
+    }
+
+    Object.assign(recoleccion, {
+      ...updateRecoleccionDto,
+      tipoResiduoId: updateRecoleccionDto.tipoResiduoId?.toString()
+    });
     return this.recoleccionRepository.save(recoleccion);
   }
 
   async remove(id: number): Promise<void> {
     const recoleccion = await this.findOne(id);
     await this.recoleccionRepository.remove(recoleccion);
+  }
+
+  async getTiposResiduoByPrograma(programaResiduoId: string): Promise<TipoResiduo[]> {
+    return this.tipoResiduoRepository.find({
+      where: { programaResiduo: { id: programaResiduoId } }
+    });
   }
 }

@@ -1,6 +1,5 @@
 import {
   IsDateString,
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -31,7 +30,6 @@ export class CreateRecoleccionDto {
   @IsNotEmpty()
   registroResiduoId!: string;
 
-  @IsInt()
   @IsOptional()
-  tipoResiduoId?: number;
+  tipoResiduoId?: string | number;
 }

@@ -25,16 +25,16 @@ export class ProgramaResiduosController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.programaResiduosService.findOne(+id);
+    return this.programaResiduosService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProgramaResiduoDto: UpdateProgramaResiduoDto) {
-    return this.programaResiduosService.update(+id, updateProgramaResiduoDto);
+    return this.programaResiduosService.update(id, updateProgramaResiduoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.programaResiduosService.remove(+id);
+    return this.programaResiduosService.remove(id);
   }
 }

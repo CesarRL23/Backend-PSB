@@ -1,7 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min, IsOptional } from 'class-validator';
 
 export class CreateChecklistResiduoDto {
+  @IsString()
+  @IsOptional()
+  id?: string;
+
   @IsString()
   @IsNotEmpty()
   @MaxLength(200)
@@ -18,8 +21,6 @@ export class CreateChecklistResiduoDto {
   @Max(100)
   porcentaje_cumplimiento!: number;
 
-  // ID del registro de residuo al que pertenece este checklist
-  @Transform(({ value }) => value?.toString())
   @IsString()
   @IsNotEmpty()
   registroResiduoId!: string;

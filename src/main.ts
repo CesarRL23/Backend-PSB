@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
-import { AppModule } from './app.module';
 import { join } from 'path';
+import { AppModule } from './app.module';
 import express from 'express';
 
 async function bootstrap() {
@@ -12,6 +13,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
   app.enableCors({ origin: process.env.FRONTEND_URL || '*' });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
