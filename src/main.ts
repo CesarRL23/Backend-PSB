@@ -8,11 +8,16 @@ import express from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'https://sanify.vercel.app',
+      ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+    ],
+    credentials: true,
+  });
   app.use('/uploads', express.static(join(process.cwd(), 'uploads')));
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
-  app.enableCors({ origin: process.env.FRONTEND_URL || '*' });
 
   await app.listen(process.env.PORT ?? 3000);
 }
