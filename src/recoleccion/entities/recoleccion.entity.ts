@@ -20,9 +20,6 @@ export class Recoleccion {
     @Column({ nullable: true })
     observaciones!: string;
 
-    @ManyToOne(() => RegistroResiduo, registroResiduo => registroResiduo.recolecciones, { nullable: true })
-    @JoinColumn()
-    registroResiduo?: RegistroResiduo;
     @Column({ name: 'registro_residuo_id', nullable: true })
     registroResiduoId?: string;
 
