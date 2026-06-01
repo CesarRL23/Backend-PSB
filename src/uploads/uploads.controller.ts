@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   Controller,
+  Get,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -37,7 +39,14 @@ export class UploadsController {
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No se recibió ningún archivo');
-    const url = await this.uploadsService.upload(file);
+    const path = await this.uploadsService.upload(file);
+    return { path };
+  }
+
+  @Get('signed-url')
+  async getSignedUrl(@Query('path') path: string) {
+    if (!path) throw new BadRequestException('El parámetro path es requerido');
+    const url = await this.uploadsService.getSignedUrl(path);
     return { url };
   }
 }

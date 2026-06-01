@@ -4,6 +4,8 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { extname } from 'path';
 import ws from 'ws';
 
+const SIGNED_URL_EXPIRES_IN = 60 * 60; // 1 hora
+
 @Injectable()
 export class UploadsService {
   private supabase: SupabaseClient;
@@ -28,7 +30,16 @@ export class UploadsService {
 
     if (error) throw new InternalServerErrorException(`Error al subir archivo: ${error.message}`);
 
-    const { data } = this.supabase.storage.from(this.bucket).getPublicUrl(filename);
-    return data.publicUrl;
+    return filename;
+  }
+
+  async getSignedUrl(path: string): Promise<string> {
+    const { data, error } = await this.supabase.storage
+      .from(this.bucket)
+      .createSignedUrl(path, SIGNED_URL_EXPIRES_IN);
+
+    if (error) throw new InternalServerErrorException(`Error al generar URL firmada: ${error.message}`);
+
+    return data.signedUrl;
   }
 }
