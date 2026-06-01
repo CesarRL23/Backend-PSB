@@ -72,6 +72,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
         schema: 'public',
         autoLoadEntities: true,
         synchronize: true, // solo en desarrollo, en producción usar migraciones
+        extra: { family: 4 },
       }),
     }),
     AuthModule,
